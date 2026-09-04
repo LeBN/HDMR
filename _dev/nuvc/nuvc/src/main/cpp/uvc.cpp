@@ -378,6 +378,9 @@ void Uvc::dump_all_interfaces() {
                     if (t == 0x30 && len >= 6) // SS_ENDPOINT_COMPANION
                         LI("    SS companion: maxBurst=%u attr=0x%02x bytesPerInterval=%u",
                            ep[2], ep[3], (uint16_t)(ep[4] | (ep[5] << 8)));
+                    else if (t == 0x25 && len >= 7) // CS_ENDPOINT (UAC1 AS_GENERAL)
+                        LI("    CS_ENDPOINT: subtype=0x%02x bmAttributes=0x%02x (bit0 freqControl) lockDelayUnits=%u lockDelay=%u",
+                           ep[2], ep[3], ep[4], (uint16_t)(ep[5] | (ep[6] << 8)));
                     ep += len; el -= len;
                 }
             }

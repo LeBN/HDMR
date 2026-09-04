@@ -47,6 +47,8 @@ private:
     uint8_t  ep_in_ = 0;
     uint16_t pktsize_ = 0;
     int      rate_ = 48000, ch_ = 2, bits_ = 16;
+    int      ac_ifnum_ = -1;   // AudioControl interface (for Feature Unit requests)
+    int      fu_id_ = -1;      // Feature Unit id with the MUTE control
 
     static const int kPacketsPerXfer = 32;   // ~32ms/transfer at 1ms interval
     static const int kNumXfers = 8;          // ~256ms of ring across in-flight transfers

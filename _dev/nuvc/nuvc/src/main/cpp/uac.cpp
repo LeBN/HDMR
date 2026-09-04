@@ -11,12 +11,22 @@
 namespace nuvc {
 
 static const uint8_t CLASS_AUDIO          = 0x01;
+static const uint8_t SUB_AUDIOCONTROL     = 0x01;
 static const uint8_t SUB_AUDIOSTREAMING   = 0x02;
 static const uint8_t CS_INTERFACE         = 0x24;
 static const uint8_t AS_FORMAT_TYPE       = 0x02;
+static const uint8_t AC_FEATURE_UNIT      = 0x06;
+static const uint8_t UAC_SET_CUR          = 0x01;
+static const uint8_t UAC_MUTE_CONTROL     = 0x01;
+static const uint8_t UAC_FU_CONTROL_SEL_SHIFT = 8;
 
 bool Uac::open(int fd) {
-    if (libusb_init(&ctx_) != 0) { LE("libusb_init failed"); return false; }
+    // Android sandboxes /dev/bus/usb — without this a fresh context tries to
+    // enumerate it and libusb_init fails (matches Uvc::open()'s fix).
+    if (libusb_set_option(nullptr, LIBUSB_OPTION_NO_DEVICE_DISCOVERY, nullptr) != 0)
+        LW("set_option NO_DEVICE_DISCOVERY failed (continuing)");
+    int ir = libusb_init(&ctx_);
+    if (ir != 0) { LE("libusb_init failed: %s", libusb_error_name(ir)); return false; }
     int r = libusb_wrap_sys_device(ctx_, (intptr_t)fd, &h_);
     if (r != 0 || !h_) { LE("wrap_sys_device: %s", libusb_error_name(r)); close(); return false; }
     LI("open ok");
@@ -35,6 +45,22 @@ bool Uac::scan() {
     libusb_device* dev = libusb_get_device(h_);
     libusb_config_descriptor* cfg = nullptr;
     if (libusb_get_active_config_descriptor(dev, &cfg) != 0 || !cfg) { LE("no config desc"); return false; }
+
+    // AudioControl: find the Feature Unit id (for an explicit UNMUTE before capture —
+    // some cheap chips gate the isochronous payload entirely while muted).
+    for (int i = 0; i < cfg->bNumInterfaces; i++) {
+        const libusb_interface_descriptor& id = cfg->interface[i].altsetting[0];
+        if (id.bInterfaceClass != CLASS_AUDIO || id.bInterfaceSubClass != SUB_AUDIOCONTROL) continue;
+        ac_ifnum_ = id.bInterfaceNumber;
+        const uint8_t* p = id.extra; int left = id.extra_length;
+        while (left >= 3) {
+            uint8_t len = p[0], type = p[1], sub = p[2];
+            if (len < 3 || len > left) break;
+            if (type == CS_INTERFACE && sub == AC_FEATURE_UNIT && len >= 5) fu_id_ = p[3];
+            p += len; left -= len;
+        }
+        LI("AC iface %d, feature unit id %d", ac_ifnum_, fu_id_);
+    }
 
     bool found = false;
     for (int i = 0; i < cfg->bNumInterfaces && !found; i++) {
@@ -88,6 +114,34 @@ bool Uac::start() {
     r = libusb_set_interface_alt_setting(h_, ifnum_, alt_);
     if (r != 0) { LE("set alt %d: %s", alt_, libusb_error_name(r)); libusb_release_interface(h_, ifnum_); return false; }
 
+    // UAC1 endpoints with a Class-Specific AS Isochronous Data Endpoint
+    // descriptor (bmAttributes bit0 = sampling-freq-control present) need an
+    // explicit SET_CUR sample-rate lock before the device actually starts
+    // streaming. This device's descriptor says it isn't present, but the
+    // request is harmless, so still try it.
+    {
+        uint8_t freq[3] = { (uint8_t)(rate_ & 0xFF), (uint8_t)((rate_ >> 8) & 0xFF), (uint8_t)((rate_ >> 16) & 0xFF) };
+        int fr = libusb_control_transfer(h_, 0x22 /*class, EP, host->dev*/, UAC_SET_CUR,
+                                         (0x01 << UAC_FU_CONTROL_SEL_SHIFT) /*SAMPLING_FREQ_CONTROL, ch0*/,
+                                         ep_in_, freq, 3, 1000);
+        LI("SET_CUR sampling freq %dHz on ep 0x%02x -> %d", rate_, ep_in_, fr);
+    }
+    // Explicit UNMUTE on the Feature Unit — some cheap chips gate the whole
+    // isochronous payload (zero-length packets, not zero-value samples) while
+    // muted, and PAL's own init sequence likely does this implicitly. Some
+    // usbfs paths reject an interface-recipient class request unless that
+    // interface is claimed first (AC has no endpoints, so this is harmless).
+    if (fu_id_ >= 0 && ac_ifnum_ >= 0) {
+        int cr = libusb_claim_interface(h_, ac_ifnum_);
+        if (cr != 0) LW("claim AC IF %d: %s", ac_ifnum_, libusb_error_name(cr));
+        uint8_t mute0 = 0;
+        int mr = libusb_control_transfer(h_, 0x21 /*class, interface, host->dev*/, UAC_SET_CUR,
+                                         (UAC_MUTE_CONTROL << UAC_FU_CONTROL_SEL_SHIFT) /*ch0*/,
+                                         (uint16_t)((fu_id_ << 8) | ac_ifnum_), &mute0, 1, 1000);
+        LI("SET_CUR unmute FU %d (IF %d, claim=%d) -> %d", fu_id_, ac_ifnum_, cr, mr);
+        if (cr == 0) libusb_release_interface(h_, ac_ifnum_);
+    }
+
     pcm_.assign((size_t)rate_ * ch_ * (bits_ / 8) / 2, 0);   // 0.5s ring
     r_ = w_ = count_ = 0;
 
@@ -132,11 +186,29 @@ void LIBUSB_CALL Uac::on_xfer(libusb_transfer* x) {
 
 void Uac::handle_xfer(libusb_transfer* x) {
     if (!running_) return;
+    static std::atomic<uint64_t> xfers{0}, pkt_ok{0}, pkt_zero{0}, pkt_err{0}, bytes{0};
+    static int64_t last_log = 0;
+
     if (x->status == LIBUSB_TRANSFER_COMPLETED) {
+        int okThis = 0, zeroThis = 0, errThis = 0; int firstStatus = -1, firstLen = -1;
         for (int i = 0; i < x->num_iso_packets; i++) {
             const auto& d = x->iso_packet_desc[i];
-            if (d.status == LIBUSB_TRANSFER_COMPLETED && d.actual_length > 0)
+            if (i == 0) { firstStatus = d.status; firstLen = (int)d.actual_length; }
+            if (d.status != LIBUSB_TRANSFER_COMPLETED) { errThis++; continue; }
+            if (d.actual_length > 0) {
                 push(libusb_get_iso_packet_buffer_simple(x, i), d.actual_length);
+                okThis++; bytes += d.actual_length;
+            } else zeroThis++;
+        }
+        xfers++; pkt_ok += okThis; pkt_zero += zeroThis; pkt_err += errThis;
+
+        timespec t; clock_gettime(CLOCK_MONOTONIC, &t);
+        int64_t now = (int64_t)t.tv_sec * 1000000000LL + t.tv_nsec;
+        if (now - last_log > 1000000000LL) {
+            last_log = now;
+            LI("iso stats: xfers=%llu okPkt=%llu zeroPkt=%llu errPkt=%llu bytes=%llu  (last xfer: pkt0 status=%d len=%d)",
+               (unsigned long long)xfers, (unsigned long long)pkt_ok, (unsigned long long)pkt_zero,
+               (unsigned long long)pkt_err, (unsigned long long)bytes, firstStatus, firstLen);
         }
     } else if (x->status == LIBUSB_TRANSFER_CANCELLED) {
         return;
