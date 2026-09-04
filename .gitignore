@@ -12,3 +12,8 @@
 *.aab
 _archive/*.apk
 _dev/uvcbuild/
+_dev/nuvc/**/build/
+_dev/nuvc/**/.cxx/
+_dev/nuvc/.gradle/
+_dev/nuvc/local.properties
+_dev/nuvc/**/third_party/libusb/
