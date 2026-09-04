@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.natis.nuvc.Nuvc;
 
+import java.nio.ByteBuffer;
+
 public class MainActivity extends Activity {
     private static final String TAG = "nuvctest";
     private static final String ACTION_PERM = "com.natis.nuvctest.USB_PERM";
@@ -29,6 +31,9 @@ public class MainActivity extends Activity {
     private final Handler h = new Handler(Looper.getMainLooper());
     private boolean started;
     private long t0;
+    private final ByteBuffer frameBuf = ByteBuffer.allocateDirect(3840 * 2160 * 2);
+    private long lastSeq;
+    private long pulls;
 
     private final BroadcastReceiver rx = new BroadcastReceiver() {
         @Override public void onReceive(Context c, Intent i) {
@@ -94,17 +99,32 @@ public class MainActivity extends Activity {
         @Override public void run() {
             int[] s = nuvc.stats();
             String speed = s[7] == 4 ? "USB3 SuperSpeed" : s[7] == 3 ? "USB2 High" : "speed " + s[7];
+            String fmt = s.length > 8 && s[8] == 2 ? "MJPEG" : s.length > 8 && s[8] == 1 ? "YUY2" : "NV12";
             long sec = (System.currentTimeMillis() - t0) / 1000;
+
+            // pull the newest frame and fingerprint it — proves real image bytes
+            frameBuf.clear();
+            long seq = nuvc.latestInto(frameBuf, lastSeq);
+            String pull = "waiting for first frame";
+            if (seq != 0) {
+                lastSeq = seq; pulls++;
+                int n = s[2] > 0 ? s[2] : 1382400;
+                long sum = 0; int step = Math.max(1, n / 4096);
+                for (int i = 0; i < n; i += step) sum += (frameBuf.get(i) & 0xff);
+                int y0 = frameBuf.get(0) & 0xff, ymid = frameBuf.get(n / 3) & 0xff;
+                pull = String.format("pulled %d  seq=%d  Ysum≈%d  Y[0]=%d Y[n/3]=%d", pulls, seq, sum, y0, ymid);
+            }
+
             say(String.format(
                 "RUNNING  %ds%n%n" +
                 "link      %s%n" +
                 "mode      %dx%d  %s%n" +
                 "frames    %d   (bad %d)%n" +
                 "fps       %.1f%n" +
-                "last frame %,d bytes%n" +
-                "expected   %,d bytes  (raw = w*h*2)%n",
-                sec, speed, s[4], s[5], s[6] == 1 ? "MJPEG" : "raw YUY2/NV12",
-                s[0], s[1], s[3] / 100f, s[2], s[4] * s[5] * 2));
+                "last frame %,d bytes  (NV12 = w*h*3/2 = %,d)%n" +
+                "consumer  %s%n",
+                sec, speed, s[4], s[5], fmt,
+                s[0], s[1], s[3] / 100f, s[2], s[4] * s[5] * 3 / 2, pull));
             h.postDelayed(this, 500);
         }
     };

@@ -7,6 +7,8 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+
 /**
  * nuvc — from-scratch USB Video Class capture. P1: open a UVC device by fd,
  * negotiate a 720p mode, bulk-stream, expose frame stats. No decode, no display.
@@ -63,8 +65,21 @@ public final class Nuvc {
         if (conn != null) { conn.close(); conn = null; }
     }
 
-    /** [frames, badFrames, lastBytes, fpsx100, w, h, mjpeg, linkSpeed] */
-    public int[] stats() { return handle != 0 ? nativeStats(handle) : new int[8]; }
+    /** [frames, badFrames, lastBytes, fpsx100, w, h, mjpeg, linkSpeed, fmt] */
+    public int[] stats() { return handle != 0 ? nativeStats(handle) : new int[9]; }
+
+    public static final int FMT_NV12 = 0, FMT_YUY2 = 1, FMT_MJPEG = 2;
+
+    /**
+     * Copy the newest frame into {@code dst} (must be a direct ByteBuffer big
+     * enough for one frame — w*h*2 covers every raw format). Returns the frame's
+     * sequence number (monotonic from 1), or 0 if nothing is newer than
+     * {@code since}. Pass the last returned value as {@code since} to poll.
+     * The consumer never blocks the USB thread beyond one memcpy.
+     */
+    public long latestInto(ByteBuffer dst, long since) {
+        return handle != 0 ? nativeLatestInto(handle, dst, since) : 0;
+    }
 
     private static boolean isUvc(UsbDevice d) {
         if (d.getDeviceClass() == 0x0E /*video*/) return true;
@@ -78,4 +93,5 @@ public final class Nuvc {
     private static native void nativeStop(long h);
     private static native void nativeClose(long h);
     private static native int[] nativeStats(long h);
+    private static native long nativeLatestInto(long h, ByteBuffer dst, long since);
 }

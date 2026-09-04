@@ -28,10 +28,18 @@ public:
     bool open(int fd);
     void close();
 
-    // P1: negotiate & bulk-stream the first available 1280x720 mode
+    // negotiate & bulk-stream the first available 1280x720 mode
     // (uncompressed preferred, else MJPEG); returns false with a reason in log.
-    bool start_preferred(FrameCb cb);
+    // cb may be null — the newest frame is always kept for latest_into().
+    bool start_preferred(FrameCb cb = nullptr);
     void stop();
+
+    // Copy the most recent assembled frame into dst (>= cap bytes).
+    // Returns its sequence number (monotonic from 1), or 0 if there is no
+    // frame or none newer than `since`. Fills w/h/fmt when it returns > 0.
+    // fmt: 0 = NV12, 1 = YUY2, 2 = MJPEG.
+    uint64_t latest_into(uint8_t* dst, size_t cap, uint64_t since,
+                         uint16_t* w, uint16_t* h, uint8_t* fmt);
 
     // live stats (event thread writes, any thread reads)
     uint64_t frames()      const { return frames_; }
@@ -40,6 +48,7 @@ public:
     float    fps()         const { return fps_; }
     const Mode& mode()     const { return mode_; }
     int      link_speed()  const { return speed_; }   // libusb_speed enum
+    uint8_t  fmt()         const { return fmt_; }      // 0 NV12, 1 YUY2, 2 MJPEG
 
 private:
     bool negotiate(const Mode& m);
@@ -67,6 +76,12 @@ private:
     int                    fid_ = -1;
     FrameCb                cb_;
     Mode                   mode_;
+
+    // newest complete frame, for the polling consumer (Unity)
+    std::mutex             latest_mu_;
+    std::vector<uint8_t>   latest_;
+    uint64_t               latest_seq_ = 0;
+    uint8_t                fmt_ = 0;   // 0 NV12, 1 YUY2, 2 MJPEG
 
     std::atomic<uint64_t>  frames_{0}, bad_{0};
     std::atomic<uint32_t>  last_bytes_{0};

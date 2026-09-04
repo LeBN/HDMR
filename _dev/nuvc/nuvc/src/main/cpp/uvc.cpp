@@ -304,6 +304,13 @@ void Uvc::handle_xfer(libusb_transfer* x) {
                 if (!frame_.empty()) {
                     last_bytes_ = (uint32_t)frame_.size();
                     frames_++;
+                    if (mode_.mjpeg) fmt_ = 2;
+                    else fmt_ = (frame_.size() >= (size_t)mode_.w * mode_.h * 2) ? 1 : 0;
+                    {
+                        std::lock_guard<std::mutex> lk(latest_mu_);
+                        latest_.assign(frame_.begin(), frame_.end());
+                        latest_seq_++;
+                    }
                     if (cb_) cb_(frame_.data(), frame_.size(), mode_.w, mode_.h, mode_.mjpeg);
                     // fps every ~1s
                     int64_t t = now_ns();
@@ -327,6 +334,18 @@ void Uvc::handle_xfer(libusb_transfer* x) {
         int r = libusb_submit_transfer(x);
         if (r != 0) LW("resubmit: %s", libusb_error_name(r));
     }
+}
+
+uint64_t Uvc::latest_into(uint8_t* dst, size_t cap, uint64_t since,
+                          uint16_t* w, uint16_t* h, uint8_t* fmt) {
+    std::lock_guard<std::mutex> lk(latest_mu_);
+    if (latest_seq_ == 0 || latest_seq_ == since || latest_.empty()) return 0;
+    size_t n = latest_.size() < cap ? latest_.size() : cap;
+    memcpy(dst, latest_.data(), n);
+    if (w)   *w   = mode_.w;
+    if (h)   *h   = mode_.h;
+    if (fmt) *fmt = fmt_;
+    return latest_seq_;
 }
 
 } // namespace nuvc
