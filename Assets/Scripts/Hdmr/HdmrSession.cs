@@ -53,7 +53,7 @@ namespace Hdmr
         public static bool ShowStream { get => GetI("show", 0) == 1; set => SetI("show", value ? 1 : 0); }
         public static bool FlipX { get => GetI("fx", 0) == 1; set => SetI("fx", value ? 1 : 0); }
         public static bool FlipY { get => GetI("fy", 0) == 1; set => SetI("fy", value ? 1 : 0); }
-        public static bool WantSound { get => GetI("snd", 0) == 1; set => SetI("snd", value ? 1 : 0); }
+        public static bool WantSound { get => GetI("snd", 1) == 1; set => SetI("snd", value ? 1 : 0); }  // on by default
         public static int SelfTestIndex { get => GetI("st", -1); set => SetI("st", value); }
         public static int LastCmdSeq { get => GetI("cmdseq", 0); set => SetI("cmdseq", value); }
 

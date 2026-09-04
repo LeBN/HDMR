@@ -116,25 +116,60 @@ namespace Hdmr
         }
 
         // ---------------------------------------------------------- page 3
+        bool _overlayOn = true;
+
         void DrawStreaming()
         {
-            // video quad is world-space behind; just a small overlay
-            var box = new Rect(16, 16, 430, 132);
+            float w = Screen.width, h = Screen.height;
+
+            // video fills the WHOLE panel, centred, cropped to fill on any aspect
+            var tex = drawer != null ? drawer.CurrentTex : null;
+            if (tex != null)
+            {
+                var uv = FillUv(tex.width, (float)tex.height, w / h,
+                                HdmrSession.FlipX, HdmrSession.FlipY);
+                GUI.DrawTextureWithTexCoords(new Rect(0, 0, w, h), tex, uv);
+            }
+            else
+            {
+                GUI.color = Color.black; GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+                GUILayout.BeginArea(new Rect(w * 0.2f, h * 0.45f, w * 0.6f, 80));
+                GUILayout.Label("signal perdu — vérifiez la console / la carte", _body);
+                GUILayout.EndArea();
+            }
+
+            // tap the top-left corner to toggle the debug strip
+            if (GUI.Button(new Rect(0, 0, 90, 60), GUIContent.none, GUIStyle.none)) _overlayOn = !_overlayOn;
+            if (!_overlayOn) return;
+
+            var box = new Rect(12, 12, 440, 116);
             GUI.color = new Color(0, 0, 0, 0.55f); GUI.DrawTexture(box, Texture2D.whiteTexture);
             GUI.color = Color.white;
-
             GUILayout.BeginArea(new Rect(box.x + 12, box.y + 8, box.width - 24, box.height - 16));
-            GUILayout.Label($"{ctrl.CurrentModeLabel}", _body);
-            GUILayout.Label($"video {drawer.Fps:0} fps ({drawer.FrameIntervalMs:0}ms)  ·  app {drawer.AppFps:0} fps" +
-                            (drawer.AudioPlaying ? "  ·  son" : ""), _small);
-            GUILayout.Label($"live={drawer.FramesLive}   {drawer.LastEvent}", _small);
+            GUILayout.Label($"{ctrl.CurrentModeLabel}   ·   app {drawer.AppFps:0} fps" +
+                            (drawer.AudioPlaying ? "   ·   son" : "   ·   pas de son"), _small);
+            GUILayout.Label($"{drawer.LastEvent}", _small);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("◀ Changer les réglages", _btn, GUILayout.Width(260))) ctrl.BackToConfig();
+            if (GUILayout.Button("◀ Réglages", _btn, GUILayout.Width(150))) ctrl.BackToConfig();
             bool fy = GUILayout.Toggle(HdmrSession.FlipY, "flipV", _small, GUILayout.Width(70));
             bool fx = GUILayout.Toggle(HdmrSession.FlipX, "flipH", _small, GUILayout.Width(70));
             if (fx != HdmrSession.FlipX || fy != HdmrSession.FlipY) ctrl.SetFlip(fx, fy);
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
+        }
+
+        // texcoords that make `tex` cover a `panelAspect` rect fully (crop overflow, keep centre)
+        static Rect FillUv(float tw, float th, float panelAspect, bool flipX, bool flipY)
+        {
+            float texAspect = tw / th;
+            float uw = 1f, uh = 1f;
+            if (texAspect > panelAspect) uw = panelAspect / texAspect;   // crop sides
+            else                         uh = texAspect / panelAspect;   // crop top/bottom
+            float ux = (1f - uw) * 0.5f, uy = (1f - uh) * 0.5f;
+            if (flipX) { ux += uw; uw = -uw; }
+            if (flipY) { uy += uh; uh = -uh; }
+            return new Rect(ux, uy, uw, uh);
         }
     }
 }

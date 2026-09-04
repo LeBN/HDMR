@@ -142,25 +142,14 @@ public static class HDMRBuild
         Directory.CreateDirectory("Assets/Scenes");
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-        // camera
+        // camera — just clears the panel to black; the video is drawn full-panel
+        // by HdmrUi via GUI.DrawTextureWithTexCoords (always centred, fills, crops)
         var camGo = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener));
         camGo.tag = "MainCamera";
         var cam = camGo.GetComponent<Camera>();
         cam.clearFlags = CameraClearFlags.SolidColor;
-        cam.backgroundColor = new Color(0.03f, 0.04f, 0.06f);
-        cam.fieldOfView = 60f;
-        camGo.transform.position = new Vector3(0.55f, 1f, -2f);
-
-        // video quad (shifted right so the debug panel doesn't cover it)
-        var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        quad.name = "VideoQuad";
-        quad.transform.position = new Vector3(0.95f, 1f, 0f);
-        quad.transform.localScale = new Vector3(3.2f, 1.8f, 1f);
-        UnityEngine.Object.DestroyImmediate(quad.GetComponent<Collider>());
-        var mat = new Material(Shader.Find("Unlit/Texture")) { name = "HdmrVideo" };
-        mat.color = Color.white;
-        var quadRenderer = quad.GetComponent<Renderer>();
-        quadRenderer.sharedMaterial = mat;
+        cam.backgroundColor = Color.black;
+        camGo.transform.position = new Vector3(0f, 0f, -2f);
 
         // UVC rig
         var rig = new GameObject("UVC");
@@ -179,7 +168,7 @@ public static class HDMRBuild
         mgr.DefaultHeight = 720;
         mgr.UVCDrawers = new Component[] { drawer };
 
-        drawer.quad = quadRenderer;
+        drawer.quad = null;              // no world quad — HdmrUi draws the video full-panel
         drawer.audioSource = audio;
 
         ctrl.manager = mgr;
