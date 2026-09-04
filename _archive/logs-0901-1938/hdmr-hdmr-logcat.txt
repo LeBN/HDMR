@@ -1,0 +1,216 @@
+--------- beginning of main
+09-01 12:33:23.167  8398  8398 I com.natis.hdmr: Using CollectorTypeCC GC.
+09-01 12:33:23.188  8398  8398 D nativeloader: Configuring clns-6 for other apk /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64:/data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/base.apk!/lib/arm64-v8a:/apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.natis.hdmr
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment: Currently set values for:
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment: ANGLE GameManagerService for com.natis.hdmr: false
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment: com.natis.hdmr is not listed in per-application setting
+09-01 12:33:23.200  8398  8398 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-01 12:33:23.208  8398  8398 D GameActivity: GameActivity_register
+09-01 12:33:23.210  8398  8398 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+09-01 12:33:23.225  8398  8398 I VrosSpatialAudio: init with android.os.BinderProxy@e0f42ed
+09-01 12:33:23.233  8398  8398 D gti.InputConnection: InputConnection created
+09-01 12:33:23.233  8398  8398 D gti.InputConnection: setEditorInfo
+09-01 12:33:23.270  8398  8398 I IL2CPP  : JNI_OnLoad
+09-01 12:33:23.270  8398  8398 V Unity   : Context Type: GameActivity
+09-01 12:33:23.284  8398  8398 I GameActivity: Looking for library libgame.so
+09-01 12:33:23.284  8398  8398 I GameActivity: Found library libgame.so. Loading...
+09-01 12:33:23.285  8398  8398 D GameActivity: SDK version: 34
+09-01 12:33:23.286  8398  8418 I Unity   : UnityApplication::CreateInstance
+09-01 12:33:23.286  8398  8418 I Unity   : GameActivity Package Version '4.4.0'
+09-01 12:33:23.286  8398  8418 I Unity   : Starting Game Loop
+09-01 12:33:23.288  8398  8418 I Unity   : Handle cmd APP_CMD_START(11)
+09-01 12:33:23.295  8398  8418 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 12:33:23.317  8398  8398 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:33:23.317  8398  8418 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:33:23.324  8398  8418 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 12:33:23.326  8398  8418 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+09-01 12:33:23.338  8398  8418 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+09-01 12:33:23.340  8398  8398 I AdrenoUtils: <ReadGpuID:1293>: Reading chip ID through GSL
+09-01 12:33:23.355  8398  8418 E Unity   : java.lang.ClassNotFoundException: Didn't find class "com.google.android.play.core.assetpacks.AssetPackManager" on path: DexPathList[[zip file "/data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/base.apk"],nativeLibraryDirectories=[/data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64, /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/base.apk!/lib/arm64-v8a, /apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+09-01 12:33:23.359  8398  8418 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 6, Memory = 7756mb
+09-01 12:33:23.359  8398  8418 I Unity   : SystemInfo ARM big.LITTLE configuration: 4 big (mask: 0x3c), 2 little (mask: 0x3)
+09-01 12:33:23.359  8398  8418 I Unity   : ApplicationInfo 'com.natis.hdmr', Version '1.0', Min API Level '29', Target API Level '34'
+09-01 12:33:23.359  8398  8418 I Unity   : Built from '6000.5/staging' branch, Version '6000.5.10f1 (3bd4f66ad299)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+09-01 12:33:23.359  8398  8418 I Unity   : Device Model 'Oculus Quest 3', OS 'Android OS 14 (API 34)'
+09-01 12:33:23.386  8398  8418 I Unity   : Company Name: natis
+09-01 12:33:23.386  8398  8418 I Unity   : Product Name: HDMR Spike
+09-01 12:33:23.387  8398  8398 W com.natis.hdmr: type=1400 audit(0.0:3146): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="u:object_r:gpuprofiler_prop:s0" dev="tmpfs" ino=257 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:gpuprofiler_prop:s0 tclass=file permissive=0 app=com.natis.hdmr
+09-01 12:33:23.390  8398  8418 W libc    : Access denied finding property "vendor.debug.egl.profiler"
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: QUALCOMM build                   : 3dbacedba8, I13e643cb5c
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Build Date                       : 01/12/26
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: OpenGL ES Shader Compiler Version: E031.50.14.00
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Local Branch                     : 
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Remote Branch                    : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.12.3.11.00.00.934.442
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Remote Branch                    : NONE
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Reconstruct Branch               : NOTHING
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Build Config                     : S P 12.1.6 AArch64
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Driver Version                   : 0837.0.7
+09-01 12:33:23.391  8398  8418 I AdrenoGLES-0: Process Name                     : com.natis.hdmr
+09-01 12:33:23.398  8398  8398 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:33:23.401  8398  8418 I AdrenoGLES-0: PFP: 0x01511181, ME: 0x00000000
+09-01 12:33:23.403  8398  8418 W Adreno-AppProfiles: Could not find QSPM HAL service. Skipping adreno profile processing.
+09-01 12:33:23.418  8398  8418 I SwappyWrapper: SwappyWrapperInit() succeeded. Build: Tue Sep  1 18:55:59 2026
+09-01 12:33:23.421  8398  8418 E SwappyDisplayManager: dalvik.system.InMemoryDexClassLoader[DexPathList[[dex file "InMemoryDexFile[cookie=[-5476376663323946688, -5476376663324841696]]"],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]] couldn't find "libgame.so"
+09-01 12:33:23.422  8398  8455 I SwappyDisplayManager: Starting looper thread
+09-01 12:33:23.433  8398  8418 I AAudio  : AAudioStreamBuilder_openStream() called ----------------------------------------
+09-01 12:33:23.433  8398  8418 I AudioStreamBuilder: rate   =  24000, channels  = 2, channelMask = 0x80000003, format   = 5, sharing = SH, dir = OUTPUT
+09-01 12:33:23.433  8398  8418 I AudioStreamBuilder: device =      0, sessionId = 0, perfMode = 12, callback: ON with frames = 512
+09-01 12:33:23.433  8398  8418 I AudioStreamBuilder: usage  =      0, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+09-01 12:33:23.433  8398  8418 I AudioStreamBuilder: privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+09-01 12:33:23.433  8398  8418 D AudioStreamBuilder: build() disable aaudio output mmap via gk
+09-01 12:33:23.433  8398  8418 D AudioStreamBuilder: build() MMAP not used because this is a 2D activity and spatialization is notdisabled on this stream.
+09-01 12:33:23.433  8398  8418 D AudioStreamBuilder: build() MMAP not used because sessionId specified.
+09-01 12:33:23.433  8398  8418 D com.natis.hdmr: PlayerBase::PlayerBase()
+09-01 12:33:23.433  8398  8418 D AudioStreamTrack: open(), request notificationFrames = 0, frameCount = 8192
+09-01 12:33:23.443  8398  8418 I AudioTrack: registerVolumetricWindowToken_l session=2857 token=0xb400007096479c80 force=true
+09-01 12:33:23.443  8398  8418 I AudioTrack: setPackageForSession_l session=2857 packageName=
+09-01 12:33:23.443  8398  8418 W AudioTrack: setPackageForSession_l: packageName is empty
+09-01 12:33:23.445  8398  8418 D AudioStreamTrack: open() flags changed from 0x00000004 to 0x00000000
+09-01 12:33:23.445  8398  8418 D AudioStreamTrack: open() perfMode changed from 12 to 10
+09-01 12:33:23.445  8398  8418 D AAudioStream: setState(s#1) from 0 to 2
+09-01 12:33:23.445  8398  8418 W libaudiotapper: connection to audiotapper service failed: not enabled
+09-01 12:33:23.446  8398  8418 I AAudio  : AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+09-01 12:33:23.446  8398  8418 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 12:33:23.446  8398  8418 D AAudioStream: setState(s#1) from 2 to 3
+09-01 12:33:23.446  8398  8418 I AudioTrack: registerVolumetricWindowToken_l session=2857 token=0xb400007096479c80 force=false
+09-01 12:33:23.447  8398  8418 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 12:33:23.456  8398  8420 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 12:33:23.469  8398  8457 D AAudioStream: setState(s#1) from 3 to 4
+09-01 12:33:23.504  8398  8418 I Unity   :     HasWindow = 1, HasFocus = 0
+09-01 12:33:23.504  8398  8418 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 12:33:23.504  8398  8418 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 12:33:23.504  8398  8418 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 12:33:23.504  8398  8418 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:33:23.511  8398  8418 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 12:33:23.512  8398  8418 I MediaRouter: Skip setBluetoothA2dpOn(): types=8388615, isPlaybackActive()=true, BT route=null
+09-01 12:33:25.592  8398  8398 D GameActivity: ************** mainWorkCallback *********
+09-01 12:33:25.592  8398  8398 D gti.InputConnection: setSoftKeyboardActive, active: false
+09-01 12:33:25.593  8398  8398 I ImeTracker: com.natis.hdmr:aaadded6: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+09-01 12:33:25.603  8398  8418 I IL2CPP  : Locale fr-FR
+09-01 12:33:25.831  8398  8398 W com.natis.hdmr: type=1400 audit(0.0:3147): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="devices" dev="sysfs" ino=50582 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0 app=com.natis.hdmr
+09-01 12:33:25.841  8398  8418 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@263c65
+09-01 12:33:26.370  8398  8484 I UnityUVCPlugin: [8484*unity_uvc_plugin.cpp:698:get_uvc_holder_locked]:create UnityUVCHolderGLES,id=1368064521,unity_graphics_type=11
+09-01 12:33:26.378  8398  8484 I Unity   : [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+09-01 12:33:26.378  8398  8484 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:26.378  8398  8484 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCAttachEvent(UVCManager, UVCDevice)
+09-01 12:33:26.378  8398  8484 I Unity   : Serenegiant.UVC.UVCManager:HandleOnAttachEvent(UVCDevice)
+09-01 12:33:26.378  8398  8484 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 12:33:26.378  8398  8484 I Unity   : 
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:142:init]:unsupported frame type:0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 E uvc_format: [8484*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:26.379  8398  8484 W uvc_descriptor: [8484*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x04
+09-01 12:33:26.379  8398  8484 W uvc_descriptor: [8484*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x21
+09-01 12:33:26.381  8398  8484 W aandusb : [8484*interface.cpp:182:claim]:failed to claim interface:intf=0,err=-4
+09-01 12:33:26.402  8398  8484 W aandusb : [8484*interface.cpp:182:claim]:failed to claim interface:intf=1,err=-4
+09-01 12:33:27.080  8398  8484 I Unity   : [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+09-01 12:33:27.080  8398  8484 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:27.080  8398  8484 I Unity   : Serenegiant.UVC.UVCManager:StartPreview(UVCDevice, UVCVideoSize)
+09-01 12:33:27.080  8398  8484 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 12:33:27.080  8398  8484 I Unity   : 
+09-01 12:33:27.158  8398  8418 I Unity   : [HDMR] Start(id=1368064521, 1280x720) = 0
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:27.158  8398  8418 I Unity   : Serenegiant.UVC.<>c__DisplayClass77_0:<StartPreview>b__0(Object)
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 12:33:27.158  8398  8418 I Unity   : 
+09-01 12:33:27.158  8398  8418 I Unity   : [HDMR] start preview 1280x720
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:27.158  8398  8418 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCStartEvent(UVCManager, UVCDevice, Texture)
+09-01 12:33:27.158  8398  8418 I Unity   : Serenegiant.UVC.UVCManager:HandleOnStartPreviewEvent(CameraInfo)
+09-01 12:33:27.158  8398  8418 I Unity   : Serenegiant.UVC.<>c__DisplayClass77_0:<StartPreview>b__0(Object)
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 12:33:27.158  8398  8418 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 12:33:27.158  8398  8418 I Unity   : 
+09-01 12:33:30.274  8398  8418 I Unity   : [HDMR] switch mode -> MJPEG 4096x2160 @60
+09-01 12:33:30.274  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:30.274  8398  8418 I Unity   : Hdmr.HdmrController:StartStream(UVCVideoSize)
+09-01 12:33:30.274  8398  8418 I Unity   : Hdmr.HdmrUi:DrawConfig()
+09-01 12:33:30.274  8398  8418 I Unity   : 
+09-01 12:33:30.275  8398  8418 I Unity   : [HDMR] switch begin -> ft=0x7 4096x2160
+09-01 12:33:30.275  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:30.275  8398  8418 I Unity   : Serenegiant.UVC.<HdmrSwitchVideoSize>d__76:MoveNext()
+09-01 12:33:30.275  8398  8418 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+09-01 12:33:30.275  8398  8418 I Unity   : Serenegiant.UVC.UVCManager:SetVideoSize(UVCDevice, UVCVideoSize)
+09-01 12:33:30.275  8398  8418 I Unity   : Hdmr.HdmrController:StartStream(UVCVideoSize)
+09-01 12:33:30.275  8398  8418 I Unity   : Hdmr.HdmrUi:DrawConfig()
+09-01 12:33:30.275  8398  8418 I Unity   : 
+09-01 12:33:30.275  8398  8418 I Unity   : [HDMR] stop preview
+09-01 12:33:30.275  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:30.275  8398  8418 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCStopEvent(UVCManager, UVCDevice)
+09-01 12:33:30.275  8398  8418 I Unity   : Serenegiant.UVC.UVCManager:HandleOnStopPreviewEvent(CameraInfo)
+09-01 12:33:30.275  8398  8418 I Unity   : Serenegiant.UVC.<HdmrSwitchVideoSize>d__76:MoveNext()
+09-01 12:33:30.275  8398  8418 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+09-01 12:33:30.275  8398  8418 I Unity   : Serenegiant.UVC.UVCManager:SetVideoSize(UVCDevice, UVCVideoSize)
+09-01 12:33:30.275  8398  8418 I Unity   : Hdmr.HdmrController:StartStream(UVCVideoSize)
+09-01 12:33:30.275  8398  8418 I Unity   : Hdmr.HdmrUi:DrawConfig()
+09-01 12:33:30.275  8398  8418 I Unity   : 
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:142:init]:unsupported frame type:0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 E uvc_format: [8418*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:33:30.648  8398  8418 W uvc_descriptor: [8418*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x04
+09-01 12:33:30.648  8398  8418 W uvc_descriptor: [8418*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x21
+09-01 12:33:30.650  8398  8418 W aandusb : [8418*interface.cpp:182:claim]:failed to claim interface:intf=0,err=-4
+09-01 12:33:30.669  8398  8418 W aandusb : [8418*interface.cpp:182:claim]:failed to claim interface:intf=1,err=-4
+09-01 12:33:31.412  8398  8418 I Unity   : [HDMR] switch Resize(ft=0x7, 4096x2160) = 0
+09-01 12:33:31.412  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:31.412  8398  8418 I Unity   : Serenegiant.UVC.<HdmrSwitchVideoSize>d__76:MoveNext()
+09-01 12:33:31.412  8398  8418 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+09-01 12:33:31.412  8398  8418 I Unity   : 
+09-01 12:33:31.651  8398  8418 I Unity   : [HDMR] switch Start(4096x2160) = 0
+09-01 12:33:31.651  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:31.651  8398  8418 I Unity   : Serenegiant.UVC.<HdmrSwitchVideoSize>d__76:MoveNext()
+09-01 12:33:31.651  8398  8418 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+09-01 12:33:31.651  8398  8418 I Unity   : 
+09-01 12:33:31.651  8398  8418 I Unity   : [HDMR] start preview 4096x2160
+09-01 12:33:31.651  8398  8418 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:33:31.651  8398  8418 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCStartEvent(UVCManager, UVCDevice, Texture)
+09-01 12:33:31.651  8398  8418 I Unity   : Serenegiant.UVC.UVCManager:HandleOnStartPreviewEvent(CameraInfo)
+09-01 12:33:31.651  8398  8418 I Unity   : Serenegiant.UVC.<HdmrSwitchVideoSize>d__76:MoveNext()
+09-01 12:33:31.651  8398  8418 I Unity   : UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+09-01 12:33:31.651  8398  8418 I Unity   : 
+09-01 12:33:35.862  8398  8480 W aandusb : [8480*transfer.cpp:347:handle_timeout]:id(17) async cancel failed -5 errno=22
+09-01 12:33:35.862  8398  8480 W aandusb : [8480*transfer.cpp:347:handle_timeout]:id(18) async cancel failed -5 errno=22
+09-01 12:33:35.862  8398  8480 W aandusb : [8480*transfer.cpp:347:handle_timeout]:id(19) async cancel failed -5 errno=22
+--------- beginning of crash
+09-01 12:33:35.867  8398  8480 F libc    : FORTIFY: pthread_mutex_lock called on a destroyed mutex (0xb400006f484cf030)
+09-01 12:33:35.876  8398  8480 E CRASH   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-01 12:33:35.876  8398  8480 E CRASH   : Version '6000.5.10f1 (3bd4f66ad299)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+09-01 12:33:35.876  8398  8480 E libc    : The property "ro.build.fingerprint" has a value with length 129 that is too large for __system_property_get()/__system_property_read(); use __system_property_read_callback() instead.
+09-01 12:33:35.876  8398  8480 E CRASH   : Build fingerprint: 'Must use __system_property_read_callback() to read'
+09-01 12:33:35.876  8398  8480 E CRASH   : Revision: '0'
+09-01 12:33:35.876  8398  8480 E CRASH   : ABI: 'arm64'
+09-01 12:33:35.876  8398  8480 E CRASH   : Timestamp: 2026-09-01 12:33:35.876253275+0200
+09-01 12:33:35.876  8398  8480 E CRASH   : pid: 8398, tid: 8480, name: Unity Main Thre  >>> com.natis.hdmr <<<
+09-01 12:33:35.876  8398  8480 E CRASH   : uid: 10000
+09-01 12:33:35.876  8398  8480 E CRASH   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-01 12:33:35.876  8398  8480 E CRASH   :     x0  0000000000000000  x1  0000000000002120  x2  0000000000000006  x3  0000006f45044520
+09-01 12:33:35.876  8398  8480 E CRASH   :     x4  6b6b60621f6a626e  x5  6b6b60621f6a626e  x6  6b6b60621f6a626e  x7  7f7f7f7f7f7f7f7f
+09-01 12:33:35.876  8398  8480 E CRASH   :     x8  00000000000000f0  x9  00000000000020ce  x10 ffffff80fffffbdf  x11 0000000000000000
+09-01 12:33:35.876  8398  8480 E CRASH   :     x12 0000007170234020  x13 000000007fffffff  x14 0000000000fa02cc  x15 000000b0af00d6b4
+09-01 12:33:35.876  8398  8480 E CRASH   :     x16 0000007134595b48  x17 000000713456fca0  x18 0000006f44cce000  x19 00000000000020ce
+09-01 12:33:35.876  8398  8480 E CRASH   :     x20 0000000000002120  x21 00000000ffffffff  x22 0000000000000000  x23 0000006f45044d40
+09-01 12:33:35.876  8398  8480 E CRASH   :     x24 b400006f4858ca38  x25 000000000000007d  x26 0000000000000001  x27 0000006f450d72ba
+09-01 12:33:35.876  8398  8480 E CRASH   :     x28 00000000ffffffff  x29 0000006f450445a0
+09-01 12:33:35.876  8398  8480 E CRASH   :     lr  000000713451b5f8  sp  0000006f45044500  pc  000000713451b628  pst 0000000000001000
+09-01 12:33:35.876  8398  8480 E CRASH   : backtrace:
+09-01 12:33:35.876  8398  8480 E CRASH   :       #00 pc 0000000000094628  /apex/com.android.runtime/lib64/bionic/libc.so (abort+168) (BuildId: a53e2446c160ae0666e920bc84a1b66e)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #01 pc 000000000009657c  /apex/com.android.runtime/lib64/bionic/libc.so (fdopendir) (BuildId: a53e2446c160ae0666e920bc84a1b66e)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #02 pc 00000000000ff2ac  /apex/com.android.runtime/lib64/bionic/libc.so (NonPI::MutexLockWithTimeout(pthread_mutex_internal_t*, bool, timespec const*)) (BuildId: a53e2446c160ae0666e920bc84a1b66e)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #03 pc 00000000000ff140  /apex/com.android.runtime/lib64/bionic/libc.so (pthread_mutex_lock+224) (BuildId: a53e2446c160ae0666e920bc84a1b66e)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #04 pc 00000000000e04c0  /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64/libc++_shared.so (std::__ndk1::mutex::lock()+12) (BuildId: b04675a35ad96f8a9dcaa073e3bd31d4536f00ad)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #05 pc 000000000011e188  /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64/libaandusb.so (serenegiant::usb::Transfer::reap_bulk_transfer(usbdevfs_urb*)+48) (BuildId: caf0647429c4da14290344531c9d600a1725ebbe)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #06 pc 000000000011db64  /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64/libaandusb.so (serenegiant::usb::Transfer::reap(serenegiant::usb::Device*)+116) (BuildId: caf0647429c4da14290344531c9d600a1725ebbe)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #07 pc 00000000001197f8  /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64/libaandusb.so (serenegiant::usb::Context::handle_events_device(pollfd const*, unsigned int const&, int, int const&)+320) (BuildId: caf0647429c4da14290344531c9d600a1725ebbe)
+09-01 12:33:35.876  8398  8480 E CRASH   :       #08 pc 0000000000119420  /data/app/~~dkyHM1AJ-60Eue9FBvlW3A==/com.natis.hdmr-R5i1NLuz7oXvE27mcTBN1g==/lib/arm64/libaandusb.so 

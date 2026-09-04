@@ -1,0 +1,216 @@
+--------- beginning of main
+09-01 11:48:59.426 14661 14661 I com.natis.hdmr: Using CollectorTypeCC GC.
+09-01 11:48:59.445 14661 14661 D nativeloader: Configuring clns-6 for other apk /data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/lib/arm64:/data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/base.apk!/lib/arm64-v8a:/apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.natis.hdmr
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment: Currently set values for:
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment: ANGLE GameManagerService for com.natis.hdmr: false
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment: com.natis.hdmr is not listed in per-application setting
+09-01 11:48:59.450 14661 14661 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-01 11:48:59.457 14661 14680 W libc    : Access denied finding property "vendor.debug.egl.profiler"
+09-01 11:48:59.453 14661 14661 W RenderThread: type=1400 audit(0.0:2987): avc:  denied  { read } for  name="u:object_r:gpuprofiler_prop:s0" dev="tmpfs" ino=257 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:gpuprofiler_prop:s0 tclass=file permissive=0 app=com.natis.hdmr
+09-01 11:48:59.463 14661 14661 I VrosSpatialAudio: init with android.os.BinderProxy@e0f42ed
+09-01 11:48:59.490 14661 14661 D GameActivity: GameActivity_register
+09-01 11:48:59.491 14661 14661 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+09-01 11:48:59.492 14661 14661 I VrosSpatialAudio: init with android.os.BinderProxy@6f7a207
+09-01 11:48:59.495 14661 14661 D gti.InputConnection: InputConnection created
+09-01 11:48:59.495 14661 14661 D gti.InputConnection: setEditorInfo
+09-01 11:48:59.513 14661 14661 I IL2CPP  : JNI_OnLoad
+09-01 11:48:59.513 14661 14661 V Unity   : Context Type: GameActivity
+09-01 11:48:59.528 14661 14661 I GameActivity: Looking for library libgame.so
+09-01 11:48:59.528 14661 14661 I GameActivity: Found library libgame.so. Loading...
+09-01 11:48:59.529 14661 14661 D GameActivity: SDK version: 34
+09-01 11:48:59.529 14661 14691 I Unity   : UnityApplication::CreateInstance
+09-01 11:48:59.529 14661 14691 I Unity   : GameActivity Package Version '4.4.0'
+09-01 11:48:59.530 14661 14691 I Unity   : Starting Game Loop
+09-01 11:48:59.532 14661 14691 I Unity   : Handle cmd APP_CMD_START(11)
+09-01 11:48:59.536 14661 14691 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 11:48:59.554 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:48:59.554 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:48:59.560 14661 14691 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 11:48:59.562 14661 14691 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+09-01 11:48:59.567 14661 14691 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+09-01 11:48:59.568 14661 14661 I AdrenoUtils: <ReadGpuID:1293>: Reading chip ID through GSL
+09-01 11:48:59.591 14661 14691 E Unity   : java.lang.ClassNotFoundException: Didn't find class "com.google.android.play.core.assetpacks.AssetPackManager" on path: DexPathList[[zip file "/data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/base.apk"],nativeLibraryDirectories=[/data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/lib/arm64, /data/app/~~09KscEvV67-xXEooU-hVIA==/com.natis.hdmr-6-7s5H9_wCUe0dsj0KzrKg==/base.apk!/lib/arm64-v8a, /apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+09-01 11:48:59.609 14661 14691 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 6, Memory = 7756mb
+09-01 11:48:59.609 14661 14691 I Unity   : SystemInfo ARM big.LITTLE configuration: 4 big (mask: 0x3c), 2 little (mask: 0x3)
+09-01 11:48:59.609 14661 14691 I Unity   : ApplicationInfo 'com.natis.hdmr', Version '1.0', Min API Level '29', Target API Level '34'
+09-01 11:48:59.609 14661 14691 I Unity   : Built from '6000.5/staging' branch, Version '6000.5.10f1 (3bd4f66ad299)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+09-01 11:48:59.609 14661 14691 I Unity   : Device Model 'Oculus Quest 3', OS 'Android OS 14 (API 34)'
+09-01 11:48:59.638 14661 14691 I Unity   : Company Name: natis
+09-01 11:48:59.638 14661 14691 I Unity   : Product Name: HDMR Spike
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: QUALCOMM build                   : 3dbacedba8, I13e643cb5c
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Build Date                       : 01/12/26
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: OpenGL ES Shader Compiler Version: E031.50.14.00
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Local Branch                     : 
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Remote Branch                    : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.12.3.11.00.00.934.442
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Remote Branch                    : NONE
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Reconstruct Branch               : NOTHING
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Build Config                     : S P 12.1.6 AArch64
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Driver Version                   : 0837.0.7
+09-01 11:48:59.639 14661 14691 I AdrenoGLES-0: Process Name                     : com.natis.hdmr
+09-01 11:48:59.641 14661 14691 I AdrenoGLES-0: PFP: 0x01511181, ME: 0x00000000
+09-01 11:48:59.643 14661 14691 W Adreno-AppProfiles: Could not find QSPM HAL service. Skipping adreno profile processing.
+09-01 11:48:59.650 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:48:59.666 14661 14691 I SwappyWrapper: SwappyWrapperInit() succeeded. Build: Tue Sep  1 17:08:02 2026
+09-01 11:48:59.673 14661 14691 E SwappyDisplayManager: dalvik.system.InMemoryDexClassLoader[DexPathList[[dex file "InMemoryDexFile[cookie=[-5476376663689520384, -5476376663495789152]]"],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]] couldn't find "libgame.so"
+09-01 11:48:59.673 14661 14736 I SwappyDisplayManager: Starting looper thread
+09-01 11:48:59.683 14661 14691 I AAudio  : AAudioStreamBuilder_openStream() called ----------------------------------------
+09-01 11:48:59.683 14661 14691 I AudioStreamBuilder: rate   =  24000, channels  = 2, channelMask = 0x80000003, format   = 5, sharing = SH, dir = OUTPUT
+09-01 11:48:59.683 14661 14691 I AudioStreamBuilder: device =      0, sessionId = 0, perfMode = 12, callback: ON with frames = 512
+09-01 11:48:59.683 14661 14691 I AudioStreamBuilder: usage  =      0, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+09-01 11:48:59.683 14661 14691 I AudioStreamBuilder: privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+09-01 11:48:59.684 14661 14691 D AudioStreamBuilder: build() disable aaudio output mmap via gk
+09-01 11:48:59.684 14661 14691 D AudioStreamBuilder: build() MMAP not used because this is a 2D activity and spatialization is notdisabled on this stream.
+09-01 11:48:59.684 14661 14691 D AudioStreamBuilder: build() MMAP not used because sessionId specified.
+09-01 11:48:59.684 14661 14691 D com.natis.hdmr: PlayerBase::PlayerBase()
+09-01 11:48:59.684 14661 14691 D AudioStreamTrack: open(), request notificationFrames = 0, frameCount = 8192
+09-01 11:48:59.690 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=true
+09-01 11:48:59.690 14661 14691 I AudioTrack: setPackageForSession_l session=2113 packageName=
+09-01 11:48:59.690 14661 14691 W AudioTrack: setPackageForSession_l: packageName is empty
+09-01 11:48:59.691 14661 14691 D AudioStreamTrack: open() flags changed from 0x00000004 to 0x00000000
+09-01 11:48:59.691 14661 14691 D AudioStreamTrack: open() perfMode changed from 12 to 10
+09-01 11:48:59.691 14661 14691 D AAudioStream: setState(s#1) from 0 to 2
+09-01 11:48:59.692 14661 14691 W libaudiotapper: connection to audiotapper service failed: not enabled
+09-01 11:48:59.697 14661 14691 I AAudio  : AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+09-01 11:48:59.697 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 11:48:59.697 14661 14691 D AAudioStream: setState(s#1) from 2 to 3
+09-01 11:48:59.697 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=false
+09-01 11:48:59.698 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 11:48:59.710 14661 14694 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 11:48:59.723 14661 14739 D AAudioStream: setState(s#1) from 3 to 4
+09-01 11:48:59.754 14661 14691 I Unity   :     HasWindow = 1, HasFocus = 0
+09-01 11:48:59.754 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 11:48:59.755 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 11:48:59.755 14661 14691 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 11:48:59.755 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:48:59.759 14661 14691 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:48:59.759 14661 14691 I MediaRouter: Skip setBluetoothA2dpOn(): types=8388615, isPlaybackActive()=true, BT route=null
+09-01 11:49:00.240 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:00.240 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:00.406 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:00.406 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:00.697 14661 14661 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@7567760
+09-01 11:49:00.706 14661 14691 I Unity   : Handle cmd APP_CMD_PAUSE(14)
+09-01 11:49:00.714 14661 14661 I VrosSpatialAudio: init with android.os.BinderProxy@4d97ef0
+09-01 11:49:00.751 14661 14691 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 11:49:00.751 14661 14691 D AAudioStream: setState(s#1) from 4 to 9
+09-01 11:49:00.751 14661 14691 D AudioTrack: stop(266): called with 26880 frames delivered
+09-01 11:49:00.752 14661 14691 D AAudioStream: setState(s#1) from 9 to 10
+09-01 11:49:00.871 14661 14691 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 11:49:00.876 14661 14661 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@7ea3c08
+09-01 11:49:00.912 14661 14691 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 11:49:00.913 14661 14691 I Unity   : Handle cmd APP_CMD_PAUSE(14)
+09-01 11:49:00.955 14661 14691 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 11:49:00.956 14661 14661 I VrosSpatialAudio: clear token android.os.BinderProxy@4d97ef0
+09-01 11:49:00.956 14661 14661 I AudioTrack: clearDefaultVolumetricWindowToken: clearing token 0xb40000709647a4a0
+09-01 11:49:01.830 14661 14661 D GameActivity: ************** mainWorkCallback *********
+09-01 11:49:01.830 14661 14661 D gti.InputConnection: setSoftKeyboardActive, active: false
+09-01 11:49:01.832 14661 14661 I ImeTracker: com.natis.hdmr:68fd743a: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+09-01 11:49:01.842 14661 14691 I IL2CPP  : Locale fr-FR
+09-01 11:49:02.066 14661 14661 W com.natis.hdmr: type=1400 audit(0.0:2990): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="devices" dev="sysfs" ino=50582 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0 app=com.natis.hdmr
+09-01 11:49:02.076 14661 14691 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@a6524dd
+09-01 11:49:02.086 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 11:49:02.086 14661 14691 D AAudioStream: setState(s#1) from 10 to 3
+09-01 11:49:02.086 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=false
+09-01 11:49:02.087 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 11:49:02.089 14661 14774 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 11:49:02.094 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:49:02.097 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:02.097 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:02.143 14661 14739 D AAudioStream: setState(s#1) from 3 to 4
+09-01 11:49:02.143 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:49:02.662 14661 14780 I UnityUVCPlugin: [14780*unity_uvc_plugin.cpp:698:get_uvc_holder_locked]:create UnityUVCHolderGLES,id=653585958,unity_graphics_type=11
+09-01 11:49:02.669 14661 14780 I Unity   : [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+09-01 11:49:02.669 14661 14780 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 11:49:02.669 14661 14780 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCAttachEvent(UVCManager, UVCDevice)
+09-01 11:49:02.669 14661 14780 I Unity   : Serenegiant.UVC.UVCManager:HandleOnAttachEvent(UVCDevice)
+09-01 11:49:02.669 14661 14780 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 11:49:02.669 14661 14780 I Unity   : 
+09-01 11:49:02.670 14661 14780 E uvc_format: [14780*uvc_format.cpp:142:init]:unsupported frame type:0x00
+09-01 11:49:02.670 14661 14780 E uvc_format: [14780*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 11:49:02.670 14661 14780 E uvc_format: [14780*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 11:49:02.670 14661 14780 E uvc_format: [14780*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 11:49:02.670 14661 14780 W uvc_descriptor: [14780*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x04
+09-01 11:49:02.670 14661 14780 W uvc_descriptor: [14780*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x21
+09-01 11:49:02.672 14661 14780 W aandusb : [14780*interface.cpp:182:claim]:failed to claim interface:intf=0,err=-4
+09-01 11:49:02.688 14661 14780 W aandusb : [14780*interface.cpp:182:claim]:failed to claim interface:intf=1,err=-4
+09-01 11:49:03.380 14661 14780 I Unity   : [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+09-01 11:49:03.380 14661 14780 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 11:49:03.380 14661 14780 I Unity   : Serenegiant.UVC.UVCManager:StartPreview(UVCDevice, UVCVideoSize)
+09-01 11:49:03.380 14661 14780 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 11:49:03.380 14661 14780 I Unity   : 
+09-01 11:49:03.464 14661 14691 I Unity   : [HDMR] Start(id=653585958, 1280x720) = 0
+09-01 11:49:03.464 14661 14691 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 11:49:03.464 14661 14691 I Unity   : Serenegiant.UVC.<>c__DisplayClass75_0:<StartPreview>b__0(Object)
+09-01 11:49:03.464 14661 14691 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 11:49:03.464 14661 14691 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 11:49:03.464 14661 14691 I Unity   : 
+09-01 11:49:03.465 14661 14691 I Unity   : [HDMR] start preview 1280x720
+09-01 11:49:03.465 14661 14691 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 11:49:03.465 14661 14691 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCStartEvent(UVCManager, UVCDevice, Texture)
+09-01 11:49:03.465 14661 14691 I Unity   : Serenegiant.UVC.UVCManager:HandleOnStartPreviewEvent(CameraInfo)
+09-01 11:49:03.465 14661 14691 I Unity   : Serenegiant.UVC.<>c__DisplayClass75_0:<StartPreview>b__0(Object)
+09-01 11:49:03.465 14661 14691 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 11:49:03.465 14661 14691 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 11:49:03.465 14661 14691 I Unity   : 
+09-01 11:49:22.032 14661 14669 W com.natis.hdmr: Cleared Reference was only reachable from finalizer (only reported once)
+09-01 11:49:38.853 14661 14691 I Unity   : Handle cmd APP_CMD_LOST_FOCUS(8)
+09-01 11:49:38.853 14661 14691 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 11:49:38.853 14661 14691 D AAudioStream: setState(s#1) from 4 to 9
+09-01 11:49:38.853 14661 14691 D AudioTrack: stop(266): called with 884160 frames delivered
+09-01 11:49:38.853 14661 14691 D AAudioStream: setState(s#1) from 9 to 10
+09-01 11:49:38.858 14661 14691 I Unity   : Handle cmd APP_CMD_CONFIG_CHANGED(9)
+09-01 11:49:38.875 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:49:38.875 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:49:38.876 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 11:49:38.877 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 11:49:38.877 14661 14691 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 11:49:40.971 14661 14691 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 11:49:40.974 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 11:49:40.974 14661 14691 D AAudioStream: setState(s#1) from 10 to 3
+09-01 11:49:40.974 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=false
+09-01 11:49:40.975 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 11:49:40.976 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:40.976 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:40.992 14661 14675 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 11:49:41.043 14661 14739 D AAudioStream: setState(s#1) from 3 to 4
+09-01 11:49:45.569 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:49:45.590 14661 14691 I Unity   : Handle cmd APP_CMD_LOST_FOCUS(8)
+09-01 11:49:45.590 14661 14691 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 11:49:45.590 14661 14691 D AAudioStream: setState(s#1) from 4 to 9
+09-01 11:49:45.590 14661 14691 D AudioTrack: stop(266): called with 112320 frames delivered
+09-01 11:49:45.591 14661 14691 D AAudioStream: setState(s#1) from 9 to 10
+09-01 11:49:45.591 14661 14691 I Unity   : Handle cmd APP_CMD_CONFIG_CHANGED(9)
+09-01 11:49:45.591 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:49:45.591 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 11:49:45.591 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 11:49:45.591 14661 14691 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 11:49:49.499 14661 14691 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 11:49:49.501 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 11:49:49.501 14661 14691 D AAudioStream: setState(s#1) from 10 to 3
+09-01 11:49:49.501 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=false
+09-01 11:49:49.503 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 11:49:49.504 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:49.504 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:49.512 14661 14694 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 11:49:49.563 14661 14739 D AAudioStream: setState(s#1) from 3 to 4
+09-01 11:49:50.770 14661 14691 I Unity   : Handle cmd APP_CMD_LOST_FOCUS(8)
+09-01 11:49:50.770 14661 14691 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 11:49:50.770 14661 14691 D AAudioStream: setState(s#1) from 4 to 9
+09-01 11:49:50.770 14661 14691 D AudioTrack: stop(266): called with 32160 frames delivered
+09-01 11:49:50.770 14661 14691 D AAudioStream: setState(s#1) from 9 to 10
+09-01 11:49:50.773 14661 14691 I Unity   : Handle cmd APP_CMD_CONFIG_CHANGED(9)
+09-01 11:49:50.788 14661 14661 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 11:49:50.788 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 11:49:50.791 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 11:49:50.792 14661 14691 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 11:49:50.792 14661 14691 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 11:49:55.416 14661 14691 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 11:49:55.422 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 11:49:55.422 14661 14691 D AAudioStream: setState(s#1) from 10 to 3
+09-01 11:49:55.422 14661 14691 I AudioTrack: registerVolumetricWindowToken_l session=2113 token=0xb40000709647a040 force=false
+09-01 11:49:55.423 14661 14691 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 11:49:55.424 14661 14661 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 11:49:55.424 14661 14661 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Sys

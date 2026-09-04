@@ -1,0 +1,7 @@
+      horizonos.permission.USB_CAMERA
+      android.permission.REORDER_TASKS: granted=true
+      com.natis.hdmr.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: granted=true
+        horizonos.permission.USB_CAMERA: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        android.permission.CAMERA: granted=true, flags=[ USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        horizonos.permission.HEADSET_CAMERA: granted=true, flags=[ REVOKE_WHEN_REQUESTED|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]
+        horizonos.permission.AVATAR_CAMERA: granted=true, flags=[ REVOKE_WHEN_REQUESTED|USER_SENSITIVE_WHEN_GRANTED|USER_SENSITIVE_WHEN_DENIED]

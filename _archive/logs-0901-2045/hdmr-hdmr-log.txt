@@ -1,0 +1,445 @@
+11:48:00.611 I [APP] === HDMR start 2026-09-01 11:48:00Z ===
+11:48:00.611 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:48:00.612 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:48:00.612 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+11:48:00.628 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:48:00.631 I [APP] native logcat capture: pid=14370 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+11:48:05.735 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+11:48:06.454 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+11:48:06.549 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+11:48:06.550 I [HDMR] [HDMR] start preview 1280x720
+11:48:27.706 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @60
+11:48:27.707 I [HDMR] [HDMR] stop preview
+11:48:43.929 I [HDMR] [HDMR] switch mode -> MJPEG 1280x720 @60
+11:49:02.069 I [APP] === HDMR start 2026-09-01 11:49:01Z ===
+11:49:02.070 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:49:02.070 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:49:02.071 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+11:49:02.072 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:49:02.075 I [APP] native logcat capture: pid=14661 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+11:49:02.669 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+11:49:03.380 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+11:49:03.464 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+11:49:03.465 I [HDMR] [HDMR] start preview 1280x720
+11:50:09.053 I [SELFTEST] === self-test  2026-09-01 11:50:09 ===
+11:50:09.053 I [SELFTEST] /dev/bus/usb/001/003  345F:2132   ·   now: MJPEG 1280x720 @60
+11:50:09.053 I [SELFTEST] 13 modes, timeout 5s each
+11:50:09.053 I [SELFTEST] --> switching to MJPEG 1920x1080 @60
+11:50:09.057 I [HDMR] [HDMR] stop preview
+11:50:15.622 I [SELFTEST] FAIL  MJPEG 1920x1080 @60       tex 1280x720   0,0 fps
+11:50:15.622 I [SELFTEST] --> switching to MJPEG 1280x720 @60
+11:50:22.164 I [SELFTEST] FAIL  MJPEG 1280x720 @60        tex 1280x720   0,0 fps
+11:50:22.164 I [SELFTEST] --> switching to MJPEG 720x576 @60
+11:50:28.705 I [SELFTEST] FAIL  MJPEG 720x576 @60         tex 1280x720   0,0 fps
+11:50:28.705 I [SELFTEST] --> switching to MJPEG 720x480 @60
+11:50:35.246 I [SELFTEST] FAIL  MJPEG 720x480 @60         tex 1280x720   0,0 fps
+11:50:35.246 I [SELFTEST] --> switching to MJPEG 640x480 @60
+11:50:41.788 I [SELFTEST] FAIL  MJPEG 640x480 @60         tex 1280x720   0,0 fps
+11:50:41.789 I [SELFTEST] --> switching to NV12 1280x720 @30
+11:50:48.329 I [SELFTEST] FAIL  NV12 1280x720 @30         tex 1280x720   0,0 fps
+11:50:48.329 I [SELFTEST] --> switching to YUY2 1280x720 @25
+11:50:54.872 I [SELFTEST] FAIL  YUY2 1280x720 @25         tex 1280x720   0,0 fps
+11:50:54.872 I [SELFTEST] --> switching to NV12 720x576 @60
+11:51:01.413 I [SELFTEST] FAIL  NV12 720x576 @60          tex 1280x720   0,0 fps
+11:51:01.413 I [SELFTEST] --> switching to YUY2 720x576 @50
+11:51:07.955 I [SELFTEST] FAIL  YUY2 720x576 @50          tex 1280x720   0,0 fps
+11:51:07.955 I [SELFTEST] --> switching to YUY2 720x480 @60
+11:51:14.496 I [SELFTEST] FAIL  YUY2 720x480 @60          tex 1280x720   0,0 fps
+11:51:14.496 I [SELFTEST] --> switching to NV12 720x480 @60
+11:51:21.037 I [SELFTEST] FAIL  NV12 720x480 @60          tex 1280x720   0,0 fps
+11:51:21.037 I [SELFTEST] --> switching to YUY2 640x480 @60
+11:51:27.580 I [SELFTEST] FAIL  YUY2 640x480 @60          tex 1280x720   0,0 fps
+11:51:27.580 I [SELFTEST] --> switching to NV12 640x480 @60
+11:51:34.121 I [SELFTEST] FAIL  NV12 640x480 @60          tex 1280x720   0,0 fps
+11:51:34.121 I [SELFTEST] --- 0/13 modes delivered frames ---
+11:58:53.896 I [APP] === HDMR start 2026-09-01 11:58:53Z ===
+11:58:53.896 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:58:53.897 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:58:53.897 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+11:58:53.908 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:58:53.912 I [APP] native logcat capture: pid=26446 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+11:58:54.515 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+11:58:55.232 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+11:58:55.337 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+11:58:55.338 I [HDMR] [HDMR] start preview 1280x720
+11:58:59.995 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @60
+11:58:59.996 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+11:58:59.996 I [HDMR] [HDMR] stop preview
+11:59:01.109 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+11:59:01.335 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+11:59:01.335 I [HDMR] [HDMR] start preview 1920x1080
+12:00:26.029 I [HDMR] [HDMR] stop preview
+12:00:26.034 E [UNITY] ArgumentNullException: Value cannot be null.
+Parameter name: obj
+12:00:26.034 E [UNITY] UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) (at <00000000000000000000000000000000>:0) | UnityEngine.MonoBehaviour.IsObjectMonoBehaviour (UnityEngine.Object obj) (at <00000000000000000000000000000000>:0) | UnityEngine.MonoBehaviour.StopCoroutine (UnityEngine.Coroutine routine) (at <00000000000000000000000000000000>:0) | Serenegiant.UVC.UVCManager+CameraInfo.StopRender (Serenegiant.UVC.UVCManager manager) (at <00000000000000000000000000000000>:0) | Serenegiant.UVC.UVCManager+<>c__DisplayClass78_0.<StopPreview>b__0 (System.Object __) (at <00000000000000000000000000000000>:0) | UnityEngine.UnitySynchronizationContext+WorkRequest.Invoke () (at <00000000000000000000000000000000>:0) | UnityEngine.UnitySynchronizationContext.Exec () (at <00000000000000000000000000000000>:0) | 
+12:00:44.596 I [APP] === HDMR start 2026-09-01 12:00:44Z ===
+12:00:44.596 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:00:44.597 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:00:44.597 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:00:44.598 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:00:44.602 I [APP] native logcat capture: pid=26852 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:00:45.203 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+12:00:45.919 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+12:00:45.989 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+12:00:45.990 I [HDMR] [HDMR] start preview 1280x720
+12:00:51.441 I [HDMR] [HDMR] switch mode -> NV12 640x480 @60
+12:00:51.442 I [HDMR] [HDMR] switch begin -> ft=0xB0005 640x480
+12:00:51.442 I [HDMR] [HDMR] stop preview
+12:00:52.556 I [HDMR] [HDMR] switch Resize(ft=0xB0005, 640x480) = 0
+12:00:52.729 I [HDMR] [HDMR] switch Start(640x480) = 0
+12:00:52.729 I [HDMR] [HDMR] start preview 640x480
+12:01:16.120 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @60
+12:01:16.121 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+12:01:16.121 I [HDMR] [HDMR] stop preview
+12:01:17.085 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+12:01:17.313 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+12:01:17.314 I [HDMR] [HDMR] start preview 1920x1080
+12:06:39.571 I [APP] === HDMR start 2026-09-01 12:06:39Z ===
+12:06:39.571 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:06:39.572 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:06:39.572 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:06:39.574 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:06:39.577 I [APP] native logcat capture: pid=8401 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:06:40.182 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+12:06:40.895 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+12:06:40.971 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+12:06:40.971 I [HDMR] [HDMR] start preview 1280x720
+12:07:12.174 I [APP] === HDMR start 2026-09-01 12:07:11Z ===
+12:07:12.174 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:07:12.175 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:07:12.175 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:07:12.176 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:07:12.179 I [APP] native logcat capture: pid=8654 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:09:32.690 I [APP] === HDMR start 2026-09-01 12:09:32Z ===
+12:09:32.691 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:09:32.692 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:09:32.692 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:09:32.694 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:09:32.697 I [APP] native logcat capture: pid=9158 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:09:36.755 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:09:37.457 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:09:37.542 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:09:37.543 I [HDMR] [HDMR] start preview 1280x720
+12:09:47.368 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+12:09:47.369 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+12:09:47.369 I [HDMR] [HDMR] stop preview
+12:09:48.468 I [HDMR] [HDMR] switch Resize(ft=0x7, 3840x2160) = 0
+12:09:48.596 I [HDMR] [HDMR] switch Start(3840x2160) = 0
+12:09:48.596 I [HDMR] [HDMR] start preview 3840x2160
+12:09:58.325 I [APP] === HDMR start 2026-09-01 12:09:58Z ===
+12:09:58.325 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:09:58.326 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:09:58.326 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:09:58.328 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:09:58.330 I [APP] native logcat capture: pid=9319 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:09:58.870 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:09:59.569 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:09:59.638 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:09:59.638 I [HDMR] [HDMR] start preview 1280x720
+12:10:01.713 I [HDMR] [HDMR] switch mode -> MJPEG 4096x2160 @60
+12:10:01.714 I [HDMR] [HDMR] switch begin -> ft=0x7 4096x2160
+12:10:01.716 I [HDMR] [HDMR] stop preview
+12:10:02.786 I [HDMR] [HDMR] switch Resize(ft=0x7, 4096x2160) = 0
+12:10:03.030 I [HDMR] [HDMR] switch Start(4096x2160) = 0
+12:10:03.030 I [HDMR] [HDMR] start preview 4096x2160
+12:10:22.588 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @>240
+12:10:22.588 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+12:10:22.589 I [HDMR] [HDMR] stop preview
+12:10:23.602 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+12:10:23.667 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+12:10:23.668 I [HDMR] [HDMR] start preview 1920x1080
+12:10:29.435 I [HDMR] [HDMR] switch mode -> MJPEG 2560x1440 @144
+12:10:29.436 I [HDMR] [HDMR] switch begin -> ft=0x7 2560x1440
+12:10:29.436 I [HDMR] [HDMR] stop preview
+12:10:30.329 I [HDMR] [HDMR] switch Resize(ft=0x7, 2560x1440) = 0
+12:10:30.498 I [HDMR] [HDMR] switch Start(2560x1440) = 0
+12:10:30.499 I [HDMR] [HDMR] start preview 2560x1440
+12:10:59.215 I [APP] === HDMR start 2026-09-01 12:10:58Z ===
+12:10:59.215 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:10:59.216 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:10:59.216 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:10:59.217 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:10:59.220 I [APP] native logcat capture: pid=9568 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:10:59.757 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:11:00.457 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:11:00.540 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:11:00.540 I [HDMR] [HDMR] start preview 1280x720
+12:11:09.908 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+12:11:09.909 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+12:11:09.910 I [HDMR] [HDMR] stop preview
+12:11:10.992 I [HDMR] [HDMR] switch Resize(ft=0x7, 3840x2160) = 0
+12:11:11.237 I [HDMR] [HDMR] switch Start(3840x2160) = 0
+12:11:11.237 I [HDMR] [HDMR] start preview 3840x2160
+12:11:37.254 I [HDMR] [HDMR] switch mode -> MJPEG 4096x2160 @60
+12:11:37.254 I [HDMR] [HDMR] switch begin -> ft=0x7 4096x2160
+12:11:37.254 I [HDMR] [HDMR] stop preview
+12:11:38.210 I [HDMR] [HDMR] switch Resize(ft=0x7, 4096x2160) = 0
+12:11:38.344 I [HDMR] [HDMR] switch Start(4096x2160) = 0
+12:11:38.344 I [HDMR] [HDMR] start preview 4096x2160
+12:12:55.959 I [HDMR] [HDMR] detach
+12:14:29.457 I [APP] === HDMR start 2026-09-01 12:14:29Z ===
+12:14:29.457 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:14:29.458 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:14:29.458 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:14:29.460 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:14:29.463 I [APP] native logcat capture: pid=13051 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:14:30.069 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+12:14:30.801 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+12:14:30.871 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+12:14:30.872 I [HDMR] [HDMR] start preview 1280x720
+12:14:43.790 I [APP] === HDMR start 2026-09-01 12:14:43Z ===
+12:14:43.790 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:14:43.791 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:14:43.791 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:14:43.793 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:14:43.797 I [APP] native logcat capture: pid=13429 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:14:44.332 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:14:45.029 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:14:45.122 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:14:45.123 I [HDMR] [HDMR] start preview 1280x720
+12:14:53.340 I [HDMR] [HDMR] detach
+12:28:44.456 I [APP] === HDMR start 2026-09-01 12:28:44Z ===
+12:28:44.456 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:28:44.457 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:28:44.457 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:28:44.459 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:28:44.463 I [APP] native logcat capture: pid=6750 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:28:45.000 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:28:45.699 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:28:45.756 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:28:45.757 I [HDMR] [HDMR] start preview 1280x720
+12:28:50.415 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @>240
+12:28:50.416 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+12:28:50.417 I [HDMR] [HDMR] stop preview
+12:28:50.467 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2333ms  app=24fps  live=False
+12:28:51.421 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+12:28:51.483 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+12:28:51.483 I [HDMR] [HDMR] start preview 1920x1080
+12:28:53.872 I [RENDER] MJPEG 1920x1080 @>240  video=0fps interval=2425ms  app=24fps  live=False
+12:29:04.454 I [APP] === HDMR start 2026-09-01 12:29:04Z ===
+12:29:04.455 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:29:04.455 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:29:04.455 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:29:04.457 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:29:04.461 I [APP] native logcat capture: pid=7088 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:29:05.004 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:29:05.700 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:29:05.784 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:29:05.784 I [HDMR] [HDMR] start preview 1280x720
+12:29:09.943 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @>240
+12:29:09.944 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+12:29:09.945 I [HDMR] [HDMR] stop preview
+12:29:09.996 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2008ms  app=24fps  live=False
+12:29:11.036 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+12:29:11.100 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+12:29:11.100 I [HDMR] [HDMR] start preview 1920x1080
+12:29:13.483 I [RENDER] MJPEG 1920x1080 @>240  video=0fps interval=2051ms  app=24fps  live=False
+12:29:31.901 I [APP] === HDMR start 2026-09-01 12:29:31Z ===
+12:29:31.901 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:29:31.902 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:29:31.902 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:29:31.903 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:29:31.907 I [APP] native logcat capture: pid=7325 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:29:32.443 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:29:33.141 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:29:33.214 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:29:33.215 I [HDMR] [HDMR] start preview 1280x720
+12:29:36.707 I [RENDER] MJPEG 1280x720 @>240  video=2fps interval=2008ms  app=24fps  live=True
+12:29:39.733 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2008ms  app=24fps  live=False
+12:29:42.774 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2008ms  app=24fps  live=False
+12:29:45.817 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2008ms  app=24fps  live=False
+12:29:48.858 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=1922ms  app=24fps  live=True
+12:29:51.900 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=715ms  app=24fps  live=False
+12:29:54.941 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=105ms  app=24fps  live=True
+12:29:57.983 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:30:01.025 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:30:04.066 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:30:07.108 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:30:10.150 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:30:15.193 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+12:30:15.193 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+12:30:15.194 I [HDMR] [HDMR] stop preview
+12:30:21.690 I [APP] === HDMR start 2026-09-01 12:30:21Z ===
+12:30:21.690 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:30:21.691 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:30:21.691 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:30:21.693 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:30:21.696 I [APP] native logcat capture: pid=7531 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:30:22.235 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:30:22.989 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:30:23.158 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:30:23.158 I [HDMR] [HDMR] start preview 1280x720
+12:30:25.734 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @>240
+12:30:25.734 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+12:30:25.735 I [HDMR] [HDMR] stop preview
+12:30:25.767 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=86ms  app=24fps  live=False
+12:30:26.805 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+12:30:26.871 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+12:30:26.871 I [HDMR] [HDMR] start preview 1920x1080
+12:30:29.260 I [RENDER] MJPEG 1920x1080 @>240  video=0fps interval=175ms  app=24fps  live=False
+12:30:36.579 I [APP] === HDMR start 2026-09-01 12:30:36Z ===
+12:30:36.580 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:30:36.581 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:30:36.581 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:30:36.582 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:30:36.586 I [APP] native logcat capture: pid=7656 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:30:37.130 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:30:37.829 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:30:37.908 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:30:37.908 I [HDMR] [HDMR] start preview 1280x720
+12:30:55.235 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+12:30:55.235 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+12:30:55.236 I [HDMR] [HDMR] stop preview
+12:31:01.148 I [APP] === HDMR start 2026-09-01 12:31:00Z ===
+12:31:01.148 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:31:01.149 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:31:01.150 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:31:01.151 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:31:01.155 I [APP] native logcat capture: pid=7833 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:31:01.693 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:31:02.456 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:31:02.617 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:31:02.618 I [HDMR] [HDMR] start preview 1280x720
+12:31:04.692 I [HDMR] [HDMR] switch mode -> MJPEG 720x576 @60
+12:31:04.692 I [HDMR] [HDMR] switch begin -> ft=0x7 720x576
+12:31:04.693 I [HDMR] [HDMR] stop preview
+12:31:04.727 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=0ms  app=24fps  live=False
+12:31:05.773 I [HDMR] [HDMR] switch Resize(ft=0x7, 720x576) = 0
+12:31:05.937 I [HDMR] [HDMR] switch Start(720x576) = 0
+12:31:05.937 I [HDMR] [HDMR] start preview 720x576
+12:31:08.330 I [RENDER] MJPEG 720x576 @60  video=0fps interval=2694ms  app=24fps  live=False
+12:31:23.231 I [APP] === HDMR start 2026-09-01 12:31:22Z ===
+12:31:23.231 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:31:23.232 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:31:23.232 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:31:23.234 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:31:23.237 I [APP] native logcat capture: pid=7949 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:31:23.776 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:31:24.473 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:31:24.560 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:31:24.560 I [HDMR] [HDMR] start preview 1280x720
+12:31:43.678 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:31:46.690 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:31:49.732 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:31:52.774 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:31:55.815 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:31:58.857 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:01.898 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:04.940 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:07.982 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:11.023 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:14.065 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:17.107 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:20.148 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:23.190 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:26.231 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:29.273 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:32.315 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:35.356 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:38.398 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:41.440 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:44.481 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:47.523 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:50.565 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:53.606 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+12:32:55.856 I [HDMR] [HDMR] detach
+12:33:14.631 I [APP] === HDMR start 2026-09-01 12:33:14Z ===
+12:33:14.631 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:33:14.632 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:33:14.632 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:33:14.634 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:33:14.638 I [APP] native logcat capture: pid=8271 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:33:15.183 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:33:15.945 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:33:16.116 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:33:16.116 I [HDMR] [HDMR] start preview 1280x720
+12:33:25.832 I [APP] === HDMR start 2026-09-01 12:33:25Z ===
+12:33:25.832 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:33:25.835 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:33:25.835 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+12:33:25.837 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:33:25.840 I [APP] native logcat capture: pid=8398 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+12:33:26.378 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+12:33:27.080 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+12:33:27.158 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+12:33:27.158 I [HDMR] [HDMR] start preview 1280x720
+12:33:30.274 I [HDMR] [HDMR] switch mode -> MJPEG 4096x2160 @60
+12:33:30.275 I [HDMR] [HDMR] switch begin -> ft=0x7 4096x2160
+12:33:30.275 I [HDMR] [HDMR] stop preview
+12:33:30.367 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=678ms  app=24fps  live=False
+12:33:31.412 I [HDMR] [HDMR] switch Resize(ft=0x7, 4096x2160) = 0
+12:33:31.651 I [HDMR] [HDMR] switch Start(4096x2160) = 0
+12:33:31.651 I [HDMR] [HDMR] start preview 4096x2160
+12:33:33.995 I [RENDER] MJPEG 4096x2160 @60  video=0fps interval=693ms  app=24fps  live=False
+13:42:28.930 I [APP] === HDMR start 2026-09-01 13:42:28Z ===
+13:42:28.930 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+13:42:28.931 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+13:42:28.931 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+13:42:28.932 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+13:42:28.935 I [APP] native logcat capture: pid=13760 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+13:42:48.994 I [APP] === HDMR start 2026-09-01 13:42:48Z ===
+13:42:48.994 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+13:42:48.995 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+13:42:48.995 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+13:42:48.997 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+13:42:49.001 I [APP] native logcat capture: pid=16358 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+13:42:49.563 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+13:42:50.256 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+13:42:50.552 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+13:42:50.553 I [HDMR] [HDMR] start preview 1280x720
+13:42:54.287 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @60
+13:42:54.288 I [HDMR] [HDMR] switch begin -> ft=0x7 1920x1080
+13:42:54.288 I [HDMR] [HDMR] stop preview
+13:42:54.362 I [RENDER] MJPEG 1280x720 @60  video=0fps interval=167ms  app=24fps  live=False
+13:42:54.883 I [HDMR] [HDMR] switch Resize(ft=0x7, 1920x1080) = 0
+13:42:55.806 I [HDMR] [HDMR] switch Start(1920x1080) = 0
+13:42:55.806 I [HDMR] [HDMR] start preview 1920x1080
+13:42:57.896 I [RENDER] MJPEG 1920x1080 @60  video=0fps interval=817ms  app=24fps  live=False
+13:43:00.939 I [RENDER] MJPEG 1920x1080 @60  video=0fps interval=817ms  app=24fps  live=False
+13:43:03.981 I [RENDER] MJPEG 1920x1080 @60  video=0fps interval=817ms  app=24fps  live=False
+13:43:07.022 I [RENDER] MJPEG 1920x1080 @60  video=0fps interval=817ms  app=24fps  live=False
+13:43:26.941 I [APP] === HDMR start 2026-09-01 13:43:26Z ===
+13:43:26.941 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+13:43:26.942 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+13:43:26.942 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+13:43:26.943 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+13:43:26.946 I [APP] native logcat capture: pid=16733 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+13:43:37.908 I [APP] === HDMR start 2026-09-01 13:43:37Z ===
+13:43:37.908 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+13:43:37.910 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+13:43:37.910 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+13:43:37.912 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+13:43:37.916 I [APP] native logcat capture: pid=16836 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+13:43:38.476 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+13:43:39.157 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+13:43:39.441 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+13:43:39.441 I [HDMR] [HDMR] start preview 1280x720
+13:43:51.038 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2083ms  app=24fps  live=False
+13:43:54.049 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2083ms  app=24fps  live=False
+13:43:57.091 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=2083ms  app=24fps  live=False
+13:44:00.133 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=3614ms  app=24fps  live=False
+13:44:03.174 I [RENDER] MJPEG 1280x720 @>240  video=10fps interval=398ms  app=24fps  live=True
+13:44:06.217 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=84ms  app=24fps  live=True
+13:44:09.258 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+13:44:12.300 I [RENDER] MJPEG 1280x720 @>240  video=12fps interval=83ms  app=24fps  live=True
+13:44:16.719 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+13:44:16.720 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+13:44:16.720 I [HDMR] [HDMR] stop preview
+13:44:16.783 I [RENDER] MJPEG 1280x720 @>240  video=0fps interval=83ms  app=24fps  live=False
+13:44:17.203 I [HDMR] [HDMR] switch Resize(ft=0x7, 3840x2160) = 0
+13:44:18.321 I [HDMR] [HDMR] switch Start(3840x2160) = 0
+13:44:18.322 I [HDMR] [HDMR] start preview 3840x2160
+13:44:20.535 I [RENDER] MJPEG 3840x2160 @60  video=0fps interval=206ms  app=24fps  live=False
+13:44:28.366 I [APP] === HDMR start 2026-09-01 13:44:28Z ===
+13:44:28.366 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+13:44:28.367 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+13:44:28.367 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+13:44:28.369 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+13:44:28.373 I [APP] native logcat capture: pid=17084 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+13:44:28.932 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+13:44:29.614 I [HDMR] [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+13:44:29.895 I [HDMR] [HDMR] Start(id=1368064521, 1280x720) = 0
+13:44:29.896 I [HDMR] [HDMR] start preview 1280x720
+13:44:32.398 I [HDMR] [HDMR] switch mode -> MJPEG 3840x2160 @60
+13:44:32.400 I [HDMR] [HDMR] switch begin -> ft=0x7 3840x2160
+13:44:32.401 I [HDMR] [HDMR] stop preview

@@ -1,0 +1,4 @@
+<linker>
+  <!-- keep the UVC plugin's P/Invoke + MonoPInvokeCallback glue and our code -->
+  <assembly fullname="Assembly-CSharp" preserve="all"/>
+</linker>

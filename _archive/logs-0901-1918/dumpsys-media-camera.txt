@@ -1,0 +1,120 @@
+
+== Service global info: ==
+
+Number of all camera devices: 5
+Number of camera devices visible to API1: 5
+Number of public camera devices visible to API1: 5
+    Device 0 maps to "1"
+    Device 1 maps to "50"
+    Device 2 maps to "51"
+    Device 3 maps to "60"
+    Device 4 maps to "70"
+Active Camera Clients:
+[]
+Allowed user IDs: 0
+
+== Camera service events log (most recent at top): ==
+  09-01 09:20:37 : ADD device 1, reason: (Device added)
+  09-01 09:20:35 : REMOVE device 1, reason: (Device status changed from 1 to 0)
+  09-01 01:36:33 : ADD device 1, reason: (Device added)
+  09-01 01:36:33 : USER_SWITCH previous allowed user IDs: <None>, current allowed user IDs: 0
+  09-01 01:36:33 : ADD device 50, reason: (Device added)
+  09-01 01:36:33 : ADD device 70, reason: (Device added)
+  09-01 01:36:33 : ADD device 51, reason: (Device added)
+  09-01 01:36:33 : ADD device 60, reason: (Device added)
+
+== Camera device 1 dynamic info: ==
+  Device 1 is closed, no client instance
+== Camera device 50 dynamic info: ==
+  Device 50 is closed, no client instance
+== Camera device 51 dynamic info: ==
+  Device 51 is closed, no client instance
+== Camera device 60 dynamic info: ==
+  Device 60 is closed, no client instance
+== Camera device 70 dynamic info: ==
+  Device 70 is closed, no client instance
+================================================== Camera Provider HAL android.hardware.camera.provider.ICameraProvider/virtual/0-0 (v2.1735553800, remote) static info: 5 devices: ==================================================
+
+==================== Camera HAL device device@1.1/virtual/50 (v3.1) static information: ====================
+  Resource cost: 100
+  Conflicting devices: None
+  API1 info:
+    Has a flash unit: false
+    Facing: Back
+    Orientation: 0
+  API2 camera characteristics:
+    Dumping camera metadata array: 63 / 63 entries, 3512 / 3512 bytes of extra data.
+      Version: 1, Flags: 00000000
+      android.colorCorrection.availableAberrationModes (00004): byte[1]
+        [0 ]
+      android.control.aeRegions (10004): int32[5]
+        [0 0 0 0 ]
+        [0 ]
+      android.control.afRegions (10008): int32[5]
+        [0 0 0 0 ]
+        [0 ]
+      android.control.awbRegions (1000c): int32[5]
+        [0 0 0 0 ]
+        [0 ]
+      android.control.aeAvailableAntibandingModes (10012): byte[1]
+        [3 ]
+      android.control.aeAvailableModes (10013): byte[1]
+        [1 ]
+      android.control.aeAvailableTargetFpsRanges (10014): int32[12]
+        [1 15 15 15 ]
+        [1 30 30 30 ]
+        [1 60 60 60 ]
+      android.control.aeCompensationRange (10015): int32[2]
+        [0 0 ]
+      android.control.aeCompensationStep (10016): rational[1]
+        [(0 / 1) ]
+      android.control.afAvailableModes (10017): byte[1]
+        [0 ]
+      android.control.availableEffects (10018): byte[1]
+        [0 ]
+      android.control.availableSceneModes (10019): byte[1]
+        [0 ]
+      android.control.availableVideoStabilizationModes (1001a): byte[1]
+        [0 ]
+      android.control.awbAvailableModes (1001b): byte[1]
+        [1 ]
+      android.control.maxRegions (1001c): int32[3]
+        [0 0 0 ]
+      android.control.aeLockAvailable (10024): byte[1]
+        [FALSE ]
+      android.control.awbLockAvailable (10025): byte[1]
+        [FALSE ]
+      android.control.availableModes (10026): byte[1]
+        [1 ]
+      android.control.zoomRatioRange (1002e): float[2]
+        [1.00000000 1.00000000 ]
+      android.flash.info.available (50000): byte[1]
+        [FALSE ]
+      android.jpeg.availableThumbnailSizes (70007): int32[12]
+        [0 0 176 144 ]
+        [240 144 256 144 ]
+        [240 160 240 180 ]
+      android.jpeg.maxSize (70008): int32[1]
+        [3145728 ]
+      android.lens.facing (80005): byte[1]
+        [BACK ]
+      android.lens.poseRotation (80006): float[4]
+        [-0.99522907 -0.00222654 -0.00554954 0.09738264 ]
+      android.lens.poseTranslation (80007): float[3]
+        [-0.03196698 -0.01754101 -0.06214166 ]
+      android.lens.intrinsicCalibration (8000a): float[5]
+        [865.06665039 865.06665039 640.81683350 642.20068359 0.00000000 ]
+      android.lens.poseReference (8000c): byte[1]
+        [GYROSCOPE ]
+      android.lens.info.availableFocalLengths (90002): float[1]
+        [43.00000000 ]
+      android.noiseReduction.availableNoiseReductionModes (a0002): byte[1]
+        [0 ]
+      android.request.maxNumOutputStreams (c0006): int32[3]
+        [0 3 1 ]
+      android.request.pipelineMaxDepth (c000a): byte[1]
+        [2 ]
+      android.request.partialResultCount (c000b): int32[1]
+        [1 ]
+      android.request.availableCapabilities (c000c): byte[1]
+        [BACKWARD_COMPATIBLE ]

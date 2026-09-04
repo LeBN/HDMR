@@ -1,0 +1,145 @@
+--------- beginning of main
+09-01 12:14:41.040 13429 13429 I com.natis.hdmr: Using CollectorTypeCC GC.
+09-01 12:14:41.058 13429 13429 D nativeloader: Configuring clns-6 for other apk /data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/lib/arm64:/data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/base.apk!/lib/arm64-v8a:/apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.natis.hdmr
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment: Currently set values for:
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment: ANGLE GameManagerService for com.natis.hdmr: false
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment: com.natis.hdmr is not listed in per-application setting
+09-01 12:14:41.062 13429 13429 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-01 12:14:41.066 13429 13429 W RenderThread: type=1400 audit(0.0:3074): avc:  denied  { read } for  name="u:object_r:gpuprofiler_prop:s0" dev="tmpfs" ino=257 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:gpuprofiler_prop:s0 tclass=file permissive=0 app=com.natis.hdmr
+09-01 12:14:41.069 13429 13450 W libc    : Access denied finding property "vendor.debug.egl.profiler"
+09-01 12:14:41.076 13429 13429 I VrosSpatialAudio: init with android.os.BinderProxy@e0f42ed
+09-01 12:14:41.106 13429 13429 D GameActivity: GameActivity_register
+09-01 12:14:41.108 13429 13429 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+09-01 12:14:41.110 13429 13429 I VrosSpatialAudio: init with android.os.BinderProxy@6f7a207
+09-01 12:14:41.113 13429 13429 D gti.InputConnection: InputConnection created
+09-01 12:14:41.113 13429 13429 D gti.InputConnection: setEditorInfo
+09-01 12:14:41.137 13429 13429 I IL2CPP  : JNI_OnLoad
+09-01 12:14:41.137 13429 13429 V Unity   : Context Type: GameActivity
+09-01 12:14:41.210 13429 13429 I GameActivity: Looking for library libgame.so
+09-01 12:14:41.210 13429 13429 I GameActivity: Found library libgame.so. Loading...
+09-01 12:14:41.212 13429 13429 D GameActivity: SDK version: 34
+09-01 12:14:41.212 13429 13501 I Unity   : UnityApplication::CreateInstance
+09-01 12:14:41.212 13429 13501 I Unity   : GameActivity Package Version '4.4.0'
+09-01 12:14:41.213 13429 13501 I Unity   : Starting Game Loop
+09-01 12:14:41.215 13429 13501 I Unity   : Handle cmd APP_CMD_START(11)
+09-01 12:14:41.219 13429 13501 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 12:14:41.281 13429 13429 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:14:41.281 13429 13501 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:14:41.294 13429 13501 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 12:14:41.300 13429 13501 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+09-01 12:14:41.307 13429 13501 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+09-01 12:14:41.311 13429 13429 I AdrenoUtils: <ReadGpuID:1293>: Reading chip ID through GSL
+09-01 12:14:41.322 13429 13501 E Unity   : java.lang.ClassNotFoundException: Didn't find class "com.google.android.play.core.assetpacks.AssetPackManager" on path: DexPathList[[zip file "/data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/base.apk"],nativeLibraryDirectories=[/data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/lib/arm64, /data/app/~~iWO_4XCBdKPi_q2MwUrgsA==/com.natis.hdmr-bT2SJU2RccL2VK4u1OHwQQ==/base.apk!/lib/arm64-v8a, /apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+09-01 12:14:41.328 13429 13501 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 6, Memory = 7756mb
+09-01 12:14:41.328 13429 13501 I Unity   : SystemInfo ARM big.LITTLE configuration: 4 big (mask: 0x3c), 2 little (mask: 0x3)
+09-01 12:14:41.328 13429 13501 I Unity   : ApplicationInfo 'com.natis.hdmr', Version '1.0', Min API Level '29', Target API Level '34'
+09-01 12:14:41.328 13429 13501 I Unity   : Built from '6000.5/staging' branch, Version '6000.5.10f1 (3bd4f66ad299)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+09-01 12:14:41.328 13429 13501 I Unity   : Device Model 'Oculus Quest 3', OS 'Android OS 14 (API 34)'
+09-01 12:14:41.356 13429 13501 I Unity   : Company Name: natis
+09-01 12:14:41.356 13429 13501 I Unity   : Product Name: HDMR Spike
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: QUALCOMM build                   : 3dbacedba8, I13e643cb5c
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Build Date                       : 01/12/26
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: OpenGL ES Shader Compiler Version: E031.50.14.00
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Local Branch                     : 
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Remote Branch                    : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.12.3.11.00.00.934.442
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Remote Branch                    : NONE
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Reconstruct Branch               : NOTHING
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Build Config                     : S P 12.1.6 AArch64
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Driver Version                   : 0837.0.7
+09-01 12:14:41.357 13429 13501 I AdrenoGLES-0: Process Name                     : com.natis.hdmr
+09-01 12:14:41.360 13429 13501 I AdrenoGLES-0: PFP: 0x01511181, ME: 0x00000000
+09-01 12:14:41.365 13429 13429 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:14:41.365 13429 13501 W Adreno-AppProfiles: Could not find QSPM HAL service. Skipping adreno profile processing.
+09-01 12:14:41.379 13429 13501 I SwappyWrapper: SwappyWrapperInit() succeeded. Build: Tue Sep  1 18:55:59 2026
+09-01 12:14:41.382 13429 13501 E SwappyDisplayManager: dalvik.system.InMemoryDexClassLoader[DexPathList[[dex file "InMemoryDexFile[cookie=[-5476376663688451264, -5476376663495788928]]"],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]] couldn't find "libgame.so"
+09-01 12:14:41.383 13429 13573 I SwappyDisplayManager: Starting looper thread
+09-01 12:14:41.395 13429 13501 I AAudio  : AAudioStreamBuilder_openStream() called ----------------------------------------
+09-01 12:14:41.395 13429 13501 I AudioStreamBuilder: rate   =  24000, channels  = 2, channelMask = 0x80000003, format   = 5, sharing = SH, dir = OUTPUT
+09-01 12:14:41.395 13429 13501 I AudioStreamBuilder: device =      0, sessionId = 0, perfMode = 12, callback: ON with frames = 512
+09-01 12:14:41.395 13429 13501 I AudioStreamBuilder: usage  =      0, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+09-01 12:14:41.395 13429 13501 I AudioStreamBuilder: privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+09-01 12:14:41.398 13429 13501 D AudioStreamBuilder: build() disable aaudio output mmap via gk
+09-01 12:14:41.398 13429 13501 D AudioStreamBuilder: build() MMAP not used because this is a 2D activity and spatialization is notdisabled on this stream.
+09-01 12:14:41.398 13429 13501 D AudioStreamBuilder: build() MMAP not used because sessionId specified.
+09-01 12:14:41.398 13429 13501 D com.natis.hdmr: PlayerBase::PlayerBase()
+09-01 12:14:41.399 13429 13501 D AudioStreamTrack: open(), request notificationFrames = 0, frameCount = 8192
+09-01 12:14:41.405 13429 13501 I AudioTrack: registerVolumetricWindowToken_l session=2649 token=0xb40000709647a040 force=true
+09-01 12:14:41.405 13429 13501 I AudioTrack: setPackageForSession_l session=2649 packageName=
+09-01 12:14:41.405 13429 13501 W AudioTrack: setPackageForSession_l: packageName is empty
+09-01 12:14:41.406 13429 13501 D AudioStreamTrack: open() flags changed from 0x00000004 to 0x00000000
+09-01 12:14:41.406 13429 13501 D AudioStreamTrack: open() perfMode changed from 12 to 10
+09-01 12:14:41.406 13429 13501 D AAudioStream: setState(s#1) from 0 to 2
+09-01 12:14:41.406 13429 13501 W libaudiotapper: connection to audiotapper service failed: not enabled
+09-01 12:14:41.408 13429 13501 I AAudio  : AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+09-01 12:14:41.409 13429 13501 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 12:14:41.409 13429 13501 D AAudioStream: setState(s#1) from 2 to 3
+09-01 12:14:41.409 13429 13501 I AudioTrack: registerVolumetricWindowToken_l session=2649 token=0xb40000709647a040 force=false
+09-01 12:14:41.410 13429 13501 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 12:14:41.415 13429 13532 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 12:14:41.428 13429 13582 D AAudioStream: setState(s#1) from 3 to 4
+09-01 12:14:41.464 13429 13501 I Unity   :     HasWindow = 1, HasFocus = 0
+09-01 12:14:41.464 13429 13501 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 12:14:41.464 13429 13501 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 12:14:41.464 13429 13501 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 12:14:41.464 13429 13501 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:14:41.472 13429 13501 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 12:14:41.472 13429 13501 I MediaRouter: Skip setBluetoothA2dpOn(): types=8388615, isPlaybackActive()=true, BT route=null
+09-01 12:14:42.237 13429 13429 D MediaRouter: onRestoreRoute() : route=RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 12:14:42.237 13429 13429 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 12:14:43.557 13429 13429 D GameActivity: ************** mainWorkCallback *********
+09-01 12:14:43.557 13429 13429 D gti.InputConnection: setSoftKeyboardActive, active: false
+09-01 12:14:43.558 13429 13429 I ImeTracker: com.natis.hdmr:1dab0169: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+09-01 12:14:43.567 13429 13501 I IL2CPP  : Locale fr-FR
+09-01 12:14:43.790 13429 13429 W com.natis.hdmr: type=1400 audit(0.0:3075): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="devices" dev="sysfs" ino=50582 scontext=u:r:untrusted_app:s0:c0,c256,c512,c768 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0 app=com.natis.hdmr
+09-01 12:14:43.799 13429 13501 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@7567760
+09-01 12:14:44.326 13429 13613 I UnityUVCPlugin: [13613*unity_uvc_plugin.cpp:698:get_uvc_holder_locked]:create UnityUVCHolderGLES,id=1368064521,unity_graphics_type=11
+09-01 12:14:44.332 13429 13613 I Unity   : [HDMR] attach 345F:2132 /dev/bus/usb/002/002
+09-01 12:14:44.332 13429 13613 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:14:44.332 13429 13613 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCAttachEvent(UVCManager, UVCDevice)
+09-01 12:14:44.332 13429 13613 I Unity   : Serenegiant.UVC.UVCManager:HandleOnAttachEvent(UVCDevice)
+09-01 12:14:44.332 13429 13613 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 12:14:44.332 13429 13613 I Unity   : 
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:142:init]:unsupported frame type:0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 E uvc_format: [13613*uvc_format.cpp:287:add_frame]:frame type mismatch: 0x05, expected 0x00
+09-01 12:14:44.333 13429 13613 W uvc_descriptor: [13613*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x04
+09-01 12:14:44.333 13429 13613 W uvc_descriptor: [13613*uvc_descriptor.cpp:494:parse_interface_descriptor_other]:unexpected descriptor structure:bDescriptorType=0x21
+09-01 12:14:44.335 13429 13613 W aandusb : [13613*interface.cpp:182:claim]:failed to claim interface:intf=0,err=-4
+09-01 12:14:44.351 13429 13613 W aandusb : [13613*interface.cpp:182:claim]:failed to claim interface:intf=1,err=-4
+09-01 12:14:45.029 13429 13613 I Unity   : [HDMR] Resize(id=1368064521, ft=0x7, 1280x720) = 0
+09-01 12:14:45.029 13429 13613 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:14:45.029 13429 13613 I Unity   : Serenegiant.UVC.UVCManager:StartPreview(UVCDevice, UVCVideoSize)
+09-01 12:14:45.029 13429 13613 I Unity   : Serenegiant.UVC.UVCManager:OnDeviceChanged(IntPtr, Boolean)
+09-01 12:14:45.029 13429 13613 I Unity   : 
+09-01 12:14:45.122 13429 13501 I Unity   : [HDMR] Start(id=1368064521, 1280x720) = 0
+09-01 12:14:45.122 13429 13501 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:14:45.122 13429 13501 I Unity   : Serenegiant.UVC.<>c__DisplayClass77_0:<StartPreview>b__0(Object)
+09-01 12:14:45.122 13429 13501 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 12:14:45.122 13429 13501 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 12:14:45.122 13429 13501 I Unity   : 
+09-01 12:14:45.123 13429 13501 I Unity   : [HDMR] start preview 1280x720
+09-01 12:14:45.123 13429 13501 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+09-01 12:14:45.123 13429 13501 I Unity   : Hdmr.HdmrQuadDrawer:OnUVCStartEvent(UVCManager, UVCDevice, Texture)
+09-01 12:14:45.123 13429 13501 I Unity   : Serenegiant.UVC.UVCManager:HandleOnStartPreviewEvent(CameraInfo)
+09-01 12:14:45.123 13429 13501 I Unity   : Serenegiant.UVC.<>c__DisplayClass77_0:<StartPreview>b__0(Object)
+09-01 12:14:45.123 13429 13501 I Unity   : UnityEngine.WorkRequest:Invoke()
+09-01 12:14:45.123 13429 13501 I Unity   : UnityEngine.UnitySynchronizationContext:Exec()
+09-01 12:14:45.123 13429 13501 I Unity   : 
+09-01 12:14:52.651 13429 13501 I Unity   : Handle cmd APP_CMD_PAUSE(14)
+09-01 12:14:52.675 13429 13437 W com.natis.hdmr: Cleared Reference was only reachable from finalizer (only reported once)
+09-01 12:14:52.683 13429 13501 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 12:14:52.683 13429 13501 D AAudioStream: setState(s#1) from 4 to 9
+09-01 12:14:52.683 13429 13501 D AudioTrack: stop(371): called with 272160 frames delivered
+09-01 12:14:52.685 13429 13501 D AAudioStream: setState(s#1) from 9 to 10
+09-01 12:14:52.689 13429 13501 I Unity   : Handle cmd APP_CMD_TERM_WINDOW(2)
+09-01 12:14:52.737 13429 13610 E Context : [13610*context.cpp:717:handle_events_device]:イベントの起こったfdに対応するdeviceが見つからなかったfd=290,err=0
+09-01 12:14:52.737 13429 13429 E libEGL  : call to OpenGL ES API with no current context (logged once per thread)
+09-01 12:14:53.340 13429 13429 I Unity   : [HDMR] detach
+09-01 12:14:53.340 13429 13429 I Unity   : UnityEngine.DebugLogHandler:Internal_Log(LogType, L

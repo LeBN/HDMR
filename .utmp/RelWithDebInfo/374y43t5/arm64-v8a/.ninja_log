@@ -1,0 +1,23 @@
+# ninja log v5
+768	2118	8099598152066729	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	390ccb25f45170d
+17	9867	8099598229460620	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	39b4ed4720bae414
+2119	3691	8099598165879722	C:/Users/user/OneDrive/Documents/Natis/HDMR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/374y43t5/obj/arm64-v8a/libswappywrapper.so	67f7389b1eec0804
+168	6201	8099598191819431	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	d5e71dc287f300d3
+445	7020	8099598198596823	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	3be4795cc822dab3
+239	6446	8099598192688495	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	c7c16f01fbfcddf2
+112	6472	8099598194643148	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	614bc224d25e4585
+300	7963	8099598206343554	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f01130d985edb349
+415	9537	8099598226077793	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	df18ee74a134a41a
+605	8723	8099598216622440	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	399fd0724f348bbc
+9868	10135	8099598232391496	C:/Users/user/OneDrive/Documents/Natis/HDMR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/374y43t5/obj/arm64-v8a/libgame.so	7901a35785105e7b
+365	1895	8099638258882506	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	390ccb25f45170d
+1947	3974	8099638281858572	C:/Users/user/OneDrive/Documents/Natis/HDMR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/374y43t5/obj/arm64-v8a/libswappywrapper.so	67f7389b1eec0804
+247	9329	8099638335196966	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f01130d985edb349
+212	10930	8099638352068990	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	3be4795cc822dab3
+95	11822	8099638357467230	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	614bc224d25e4585
+137	11951	8099638361713357	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	c7c16f01fbfcddf2
+175	12321	8099638362886556	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	d5e71dc287f300d3
+340	13881	8099638382005415	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	399fd0724f348bbc
+312	14713	8099638389657586	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	df18ee74a134a41a
+51	14779	8099638391512295	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	39b4ed4720bae414
+14780	15557	8099638398147856	C:/Users/user/OneDrive/Documents/Natis/HDMR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/374y43t5/obj/arm64-v8a/libgame.so	7901a35785105e7b

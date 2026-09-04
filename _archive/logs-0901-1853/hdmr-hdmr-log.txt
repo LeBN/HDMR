@@ -1,0 +1,54 @@
+11:48:00.611 I [APP] === HDMR start 2026-09-01 11:48:00Z ===
+11:48:00.611 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:48:00.612 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:48:00.612 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+11:48:00.628 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:48:00.631 I [APP] native logcat capture: pid=14370 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+11:48:05.735 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+11:48:06.454 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+11:48:06.549 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+11:48:06.550 I [HDMR] [HDMR] start preview 1280x720
+11:48:27.706 I [HDMR] [HDMR] switch mode -> MJPEG 1920x1080 @60
+11:48:27.707 I [HDMR] [HDMR] stop preview
+11:48:43.929 I [HDMR] [HDMR] switch mode -> MJPEG 1280x720 @60
+11:49:02.069 I [APP] === HDMR start 2026-09-01 11:49:01Z ===
+11:49:02.070 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:49:02.070 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:49:02.071 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr/files
+11:49:02.072 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:49:02.075 I [APP] native logcat capture: pid=14661 -> /storage/emulated/0/Android/data/com.natis.hdmr/files/hdmr-logcat.txt
+11:49:02.669 I [HDMR] [HDMR] attach 345F:2132 /dev/bus/usb/001/003
+11:49:03.380 I [HDMR] [HDMR] Resize(id=653585958, ft=0x7, 1280x720) = 0
+11:49:03.464 I [HDMR] [HDMR] Start(id=653585958, 1280x720) = 0
+11:49:03.465 I [HDMR] [HDMR] start preview 1280x720
+11:50:09.053 I [SELFTEST] === self-test  2026-09-01 11:50:09 ===
+11:50:09.053 I [SELFTEST] /dev/bus/usb/001/003  345F:2132   ·   now: MJPEG 1280x720 @60
+11:50:09.053 I [SELFTEST] 13 modes, timeout 5s each
+11:50:09.053 I [SELFTEST] --> switching to MJPEG 1920x1080 @60
+11:50:09.057 I [HDMR] [HDMR] stop preview
+11:50:15.622 I [SELFTEST] FAIL  MJPEG 1920x1080 @60       tex 1280x720   0,0 fps
+11:50:15.622 I [SELFTEST] --> switching to MJPEG 1280x720 @60
+11:50:22.164 I [SELFTEST] FAIL  MJPEG 1280x720 @60        tex 1280x720   0,0 fps
+11:50:22.164 I [SELFTEST] --> switching to MJPEG 720x576 @60
+11:50:28.705 I [SELFTEST] FAIL  MJPEG 720x576 @60         tex 1280x720   0,0 fps
+11:50:28.705 I [SELFTEST] --> switching to MJPEG 720x480 @60
+11:50:35.246 I [SELFTEST] FAIL  MJPEG 720x480 @60         tex 1280x720   0,0 fps
+11:50:35.246 I [SELFTEST] --> switching to MJPEG 640x480 @60
+11:50:41.788 I [SELFTEST] FAIL  MJPEG 640x480 @60         tex 1280x720   0,0 fps
+11:50:41.789 I [SELFTEST] --> switching to NV12 1280x720 @30
+11:50:48.329 I [SELFTEST] FAIL  NV12 1280x720 @30         tex 1280x720   0,0 fps
+11:50:48.329 I [SELFTEST] --> switching to YUY2 1280x720 @25
+11:50:54.872 I [SELFTEST] FAIL  YUY2 1280x720 @25         tex 1280x720   0,0 fps
+11:50:54.872 I [SELFTEST] --> switching to NV12 720x576 @60
+11:51:01.413 I [SELFTEST] FAIL  NV12 720x576 @60          tex 1280x720   0,0 fps
+11:51:01.413 I [SELFTEST] --> switching to YUY2 720x576 @50
+11:51:07.955 I [SELFTEST] FAIL  YUY2 720x576 @50          tex 1280x720   0,0 fps
+11:51:07.955 I [SELFTEST] --> switching to YUY2 720x480 @60
+11:51:14.496 I [SELFTEST] FAIL  YUY2 720x480 @60          tex 1280x720   0,0 fps
+11:51:14.496 I [SELFTEST] --> switching to NV12 720x480 @60
+11:51:21.037 I [SELFTEST] FAIL  NV12 720x480 @60          tex 1280x720   0,0 fps
+11:51:21.037 I [SELFTEST] --> switching to YUY2 640x480 @60
+11:51:27.580 I [SELFTEST] FAIL  YUY2 640x480 @60          tex 1280x720   0,0 fps
+11:51:27.580 I [SELFTEST] --> switching to NV12 640x480 @60
+11:51:34.121 I [SELFTEST] FAIL  NV12 640x480 @60          tex 1280x720   0,0 fps
+11:51:34.121 I [SELFTEST] --- 0/13 modes delivered frames ---

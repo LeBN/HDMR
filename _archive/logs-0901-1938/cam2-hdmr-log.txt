@@ -1,0 +1,79 @@
+11:36:03.317 I [APP] === HDMR start 2026-09-01 11:36:03Z ===
+11:36:03.317 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:36:03.318 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:36:03.318 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files
+11:36:03.320 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:36:03.323 I [APP] native logcat capture: pid=32140 -> /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files/hdmr-logcat.txt
+11:36:03.432 I [CAMERA2] === Camera2 enumeration probe ===
+11:36:03.438 I [CAMERA2] CAMERA permission granted=True
+11:36:03.972 I [CAMERA2] getCameraIdList => 3: [1, 50, 51]
+11:36:03.977 I [CAMERA2] --- id=1  LENS_FACING=FRONT  HW_LEVEL=4
+11:36:03.979 I [CAMERA2]    formats=256,34,35  (34=PRIVATE 35=YUV_420_888 256=JPEG 20=YUY2 37=RAW10)
+11:36:03.980 I [CAMERA2]    fmt 256: 320x240@30 640x360@30 640x480@30 720x480@30 854x480@30 800x600@30 1024x576@30 1024x768@30 1280x720@30 1280x960@30 1600x1200@30 
+11:36:03.981 I [CAMERA2]    fmt 34: 320x240@30 640x360@30 640x480@30 720x480@30 854x480@30 800x600@30 1024x576@30 1024x768@30 1280x720@30 1280x960@30 1600x1200@30 
+11:36:03.981 I [CAMERA2]    fmt 35: 320x240@30 640x360@30 640x480@30 720x480@30 854x480@30 800x600@30 1024x576@30 1024x768@30 1280x720@30 1280x960@30 1600x1200@30 
+11:36:03.983 I [CAMERA2]    AE fps ranges: [1, 15] [15, 15] [1, 30] [30, 30] 
+11:36:03.984 I [CAMERA2] --- id=50  LENS_FACING=BACK  HW_LEVEL=4
+11:36:03.984 I [CAMERA2]    formats=256,34,35  (34=PRIVATE 35=YUV_420_888 256=JPEG 20=YUY2 37=RAW10)
+11:36:03.984 I [CAMERA2]    fmt 256: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.985 I [CAMERA2]    fmt 34: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.985 I [CAMERA2]    fmt 35: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.986 I [CAMERA2]    AE fps ranges: [1, 15] [15, 15] [1, 30] [30, 30] [1, 60] [60, 60] 
+11:36:03.986 I [CAMERA2] --- id=51  LENS_FACING=BACK  HW_LEVEL=4
+11:36:03.987 I [CAMERA2]    formats=256,34,35  (34=PRIVATE 35=YUV_420_888 256=JPEG 20=YUY2 37=RAW10)
+11:36:03.987 I [CAMERA2]    fmt 256: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.988 I [CAMERA2]    fmt 34: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.988 I [CAMERA2]    fmt 35: 320x240@60 640x360@60 640x480@60 720x480@60 720x576@60 800x600@60 1024x576@60 1280x720@60 1280x960@60 1280x1080@60 1280x1280@60 
+11:36:03.988 I [CAMERA2]    AE fps ranges: [1, 15] [15, 15] [1, 30] [30, 30] [1, 60] [60, 60] 
+11:36:03.988 I [CAMERA2] VERDICT: NO EXTERNAL camera — Camera2 path NOT available for this card
+11:43:41.803 I [APP] === HDMR start 2026-09-01 11:43:41Z ===
+11:43:41.804 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:43:41.806 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:43:41.806 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files
+11:43:41.814 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:43:41.817 I [APP] native logcat capture: pid=12401 -> /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files/hdmr-logcat.txt
+11:43:41.823 I [CAMERA2] === Camera2 enumeration probe ===
+11:43:41.828 I [CAMERA2] CAMERA permission granted=True
+11:43:41.834 I [CAMERA2] getCameraIdList => 3: [1, 50, 51]
+11:43:41.838 I [CAMERA2] --- id=1 (quest built-in)  LENS_FACING=FRONT  HW_LEVEL=EXTERNAL
+11:43:41.839 I [CAMERA2] --- id=50 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:43:41.840 I [CAMERA2] --- id=51 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:43:57.065 I [CAMERA2] VERDICT: NO non-Quest camera appeared — the UVC card is NOT exposed via Camera2. Stay on UVC4UnityAndroid.
+11:44:55.321 I [APP] === HDMR start 2026-09-01 11:44:55Z ===
+11:44:55.322 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:44:55.323 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:44:55.323 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files
+11:44:55.325 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:44:55.329 I [APP] native logcat capture: pid=13095 -> /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files/hdmr-logcat.txt
+11:44:55.333 I [CAMERA2] === Camera2 enumeration probe ===
+11:44:55.339 I [CAMERA2] CAMERA permission granted=True
+11:44:55.343 I [CAMERA2] getCameraIdList => 3: [1, 50, 51]
+11:44:55.348 I [CAMERA2] --- id=1 (quest built-in)  LENS_FACING=FRONT  HW_LEVEL=EXTERNAL
+11:44:55.348 I [CAMERA2] --- id=50 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:44:55.349 I [CAMERA2] --- id=51 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:45:10.538 I [CAMERA2] VERDICT: NO non-Quest camera appeared — the UVC card is NOT exposed via Camera2. Stay on UVC4UnityAndroid.
+11:46:10.629 I [APP] === HDMR start 2026-09-01 11:46:10Z ===
+11:46:10.630 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+11:46:10.631 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+11:46:10.631 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files
+11:46:10.634 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+11:46:10.636 I [APP] native logcat capture: pid=13678 -> /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files/hdmr-logcat.txt
+11:46:10.641 I [CAMERA2] === Camera2 enumeration probe ===
+11:46:10.648 I [CAMERA2] CAMERA permission granted=True
+11:46:10.652 I [CAMERA2] getCameraIdList => 3: [1, 50, 51]
+11:46:10.657 I [CAMERA2] --- id=1 (quest built-in)  LENS_FACING=FRONT  HW_LEVEL=EXTERNAL
+11:46:10.658 I [CAMERA2] --- id=50 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:46:10.659 I [CAMERA2] --- id=51 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+11:46:25.961 I [CAMERA2] VERDICT: NO non-Quest camera appeared — the UVC card is NOT exposed via Camera2. Stay on UVC4UnityAndroid.
+12:29:25.238 I [APP] === HDMR start 2026-09-01 12:29:24Z ===
+12:29:25.238 I [APP] Unity 6000.5.10f1 · Oculus Quest 3 · Android OS 14 / API-34 (UP1A.231005.007.A1/52345320040100520)
+12:29:25.239 I [APP] gfx OpenGLES3 OpenGL ES 3.2 V@0837.0.7 (GIT@3dbacedba8, I13e643cb5c, 1768227585) (Date:01/12/26) · asyncReadback=True
+12:29:25.239 I [APP] log dir: /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files
+12:29:25.240 E [USB] speed scan: Access to the path '/sys/bus/usb/devices' is denied.
+12:29:25.243 I [APP] native logcat capture: pid=7225 -> /storage/emulated/0/Android/data/com.natis.hdmr.cam2/files/hdmr-logcat.txt
+12:29:25.247 I [CAMERA2] === Camera2 enumeration probe ===
+12:29:25.253 I [CAMERA2] CAMERA permission granted=True
+12:29:25.257 I [CAMERA2] getCameraIdList => 3: [1, 50, 51]
+12:29:25.263 I [CAMERA2] --- id=1 (quest built-in)  LENS_FACING=FRONT  HW_LEVEL=EXTERNAL
+12:29:25.264 I [CAMERA2] --- id=50 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL
+12:29:25.265 I [CAMERA2] --- id=51 (quest built-in)  LENS_FACING=BACK  HW_LEVEL=EXTERNAL

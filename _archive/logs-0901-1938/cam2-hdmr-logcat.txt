@@ -1,0 +1,111 @@
+--------- beginning of main
+09-01 12:29:22.593  7225  7225 I natis.hdmr.cam2: Using CollectorTypeCC GC.
+09-01 12:29:22.616  7225  7225 D nativeloader: Configuring clns-6 for other apk /data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/lib/arm64:/data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/base.apk!/lib/arm64-v8a:/apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.natis.hdmr.cam2
+09-01 12:29:22.621  7225  7225 V GraphicsEnvironment: Currently set values for:
+09-01 12:29:22.621  7225  7225 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+09-01 12:29:22.622  7225  7225 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+09-01 12:29:22.622  7225  7225 V GraphicsEnvironment: ANGLE GameManagerService for com.natis.hdmr.cam2: false
+09-01 12:29:22.622  7225  7225 V GraphicsEnvironment: com.natis.hdmr.cam2 is not listed in per-application setting
+09-01 12:29:22.622  7225  7225 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-01 12:29:22.634  7225  7225 D GameActivity: GameActivity_register
+09-01 12:29:22.636  7225  7225 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+09-01 12:29:22.647  7225  7225 I VrosSpatialAudio: init with android.os.BinderProxy@e0f42ed
+09-01 12:29:22.653  7225  7225 D gti.InputConnection: InputConnection created
+09-01 12:29:22.654  7225  7225 D gti.InputConnection: setEditorInfo
+09-01 12:29:22.685  7225  7225 I IL2CPP  : JNI_OnLoad
+09-01 12:29:22.685  7225  7225 V Unity   : Context Type: GameActivity
+09-01 12:29:22.689  7225  7225 I GameActivity: Looking for library libgame.so
+09-01 12:29:22.689  7225  7225 I GameActivity: Found library libgame.so. Loading...
+09-01 12:29:22.690  7225  7225 D GameActivity: SDK version: 34
+09-01 12:29:22.690  7225  7247 I Unity   : UnityApplication::CreateInstance
+09-01 12:29:22.690  7225  7247 I Unity   : GameActivity Package Version '4.4.0'
+09-01 12:29:22.695  7225  7247 I Unity   : Starting Game Loop
+09-01 12:29:22.698  7225  7247 I Unity   : Handle cmd APP_CMD_START(11)
+09-01 12:29:22.702  7225  7247 I Unity   : Handle cmd APP_CMD_RESUME(12)
+09-01 12:29:22.721  7225  7225 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:29:22.722  7225  7247 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:29:22.728  7225  7247 I Unity   : Handle cmd APP_CMD_CONTENT_RECT_CHANGED(5)
+09-01 12:29:22.730  7225  7247 I Unity   : Handle cmd APP_CMD_INIT_WINDOW(1)
+09-01 12:29:22.740  7225  7247 I Unity   : MemoryManager: Using 'Dynamic Heap' Allocator.
+09-01 12:29:22.742  7225  7225 I AdrenoUtils: <ReadGpuID:1293>: Reading chip ID through GSL
+09-01 12:29:22.767  7225  7247 E Unity   : java.lang.ClassNotFoundException: Didn't find class "com.google.android.play.core.assetpacks.AssetPackManager" on path: DexPathList[[zip file "/data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/base.apk"],nativeLibraryDirectories=[/data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/lib/arm64, /data/app/~~1PqWMu2yEgF52N08jnMXbQ==/com.natis.hdmr.cam2-orrQ5_kKkzgpPAJwIROS8Q==/base.apk!/lib/arm64-v8a, /apex/com.meta.xr/priv-app/VrDriver/VrDriver.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+09-01 12:29:22.770  7225  7247 I Unity   : SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 6, Memory = 7756mb
+09-01 12:29:22.770  7225  7247 I Unity   : SystemInfo ARM big.LITTLE configuration: 4 big (mask: 0x3c), 2 little (mask: 0x3)
+09-01 12:29:22.770  7225  7247 I Unity   : ApplicationInfo 'com.natis.hdmr.cam2', Version '1.0', Min API Level '29', Target API Level '34'
+09-01 12:29:22.770  7225  7247 I Unity   : Built from '6000.5/staging' branch, Version '6000.5.10f1 (3bd4f66ad299)', Build type 'Release', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+09-01 12:29:22.770  7225  7247 I Unity   : Device Model 'Oculus Quest 3', OS 'Android OS 14 (API 34)'
+09-01 12:29:22.800  7225  7247 I Unity   : Company Name: natis
+09-01 12:29:22.801  7225  7247 I Unity   : Product Name: HDMR Cam2 Probe
+09-01 12:29:22.803  7225  7225 V GameActivity: onImeInsetsChanged from Text Listener
+09-01 12:29:22.803  7225  7247 W libc    : Access denied finding property "vendor.debug.egl.profiler"
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: QUALCOMM build                   : 3dbacedba8, I13e643cb5c
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Build Date                       : 01/12/26
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: OpenGL ES Shader Compiler Version: E031.50.14.00
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Local Branch                     : 
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Remote Branch                    : refs/tags/AU_LINUX_ANDROID_LA.VENDOR.12.3.11.00.00.934.442
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Remote Branch                    : NONE
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Reconstruct Branch               : NOTHING
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Build Config                     : S P 12.1.6 AArch64
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Driver Version                   : 0837.0.7
+09-01 12:29:22.804  7225  7247 I AdrenoGLES-0: Process Name                     : com.natis.hdmr.cam2
+09-01 12:29:22.801  7225  7225 W com.natis.hdmr.cam2: type=1400 audit(0.0:3112): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="u:object_r:gpuprofiler_prop:s0" dev="tmpfs" ino=257 scontext=u:r:untrusted_app:s0:c31,c257,c512,c768 tcontext=u:object_r:gpuprofiler_prop:s0 tclass=file permissive=0 app=com.natis.hdmr.cam2
+09-01 12:29:22.808  7225  7247 I AdrenoGLES-0: PFP: 0x01511181, ME: 0x00000000
+09-01 12:29:22.810  7225  7247 W Adreno-AppProfiles: Could not find QSPM HAL service. Skipping adreno profile processing.
+09-01 12:29:22.827  7225  7247 I SwappyWrapper: SwappyWrapperInit() succeeded. Build: Tue Sep  1 18:34:02 2026
+09-01 12:29:22.835  7225  7247 E SwappyDisplayManager: dalvik.system.InMemoryDexClassLoader[DexPathList[[dex file "InMemoryDexFile[cookie=[-5476376663324401152, -5476376663324926816]]"],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]] couldn't find "libgame.so"
+09-01 12:29:22.836  7225  7285 I SwappyDisplayManager: Starting looper thread
+09-01 12:29:22.847  7225  7247 I AAudio  : AAudioStreamBuilder_openStream() called ----------------------------------------
+09-01 12:29:22.847  7225  7247 I AudioStreamBuilder: rate   =  24000, channels  = 2, channelMask = 0x80000003, format   = 5, sharing = SH, dir = OUTPUT
+09-01 12:29:22.847  7225  7247 I AudioStreamBuilder: device =      0, sessionId = 0, perfMode = 12, callback: ON with frames = 512
+09-01 12:29:22.847  7225  7247 I AudioStreamBuilder: usage  =      0, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+09-01 12:29:22.847  7225  7247 I AudioStreamBuilder: privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+09-01 12:29:22.847  7225  7247 D AudioStreamBuilder: build() disable aaudio output mmap via gk
+09-01 12:29:22.847  7225  7247 D AudioStreamBuilder: build() MMAP not used because this is a 2D activity and spatialization is notdisabled on this stream.
+09-01 12:29:22.847  7225  7247 D AudioStreamBuilder: build() MMAP not used because sessionId specified.
+09-01 12:29:22.847  7225  7247 D natis.hdmr.cam2: PlayerBase::PlayerBase()
+09-01 12:29:22.848  7225  7247 D AudioStreamTrack: open(), request notificationFrames = 0, frameCount = 8192
+09-01 12:29:22.852  7225  7247 I AudioTrack: registerVolumetricWindowToken_l session=2785 token=0xb400007096464be0 force=true
+09-01 12:29:22.852  7225  7247 I AudioTrack: setPackageForSession_l session=2785 packageName=
+09-01 12:29:22.852  7225  7247 W AudioTrack: setPackageForSession_l: packageName is empty
+09-01 12:29:22.852  7225  7247 D AudioStreamTrack: open() flags changed from 0x00000004 to 0x00000000
+09-01 12:29:22.852  7225  7247 D AudioStreamTrack: open() perfMode changed from 12 to 10
+09-01 12:29:22.852  7225  7247 D AAudioStream: setState(s#1) from 0 to 2
+09-01 12:29:22.853  7225  7247 W libaudiotapper: connection to audiotapper service failed: not enabled
+09-01 12:29:22.853  7225  7247 I AAudio  : AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+09-01 12:29:22.853  7225  7247 D AAudio  : AAudioStream_requestStart(s#1) called --------------
+09-01 12:29:22.853  7225  7247 D AAudioStream: setState(s#1) from 2 to 3
+09-01 12:29:22.853  7225  7247 I AudioTrack: registerVolumetricWindowToken_l session=2785 token=0xb400007096464be0 force=false
+09-01 12:29:22.854  7225  7247 D AAudio  : AAudioStream_requestStart(s#1) returned 0 ---------
+09-01 12:29:22.857  7225  7250 D AudioStreamLegacy: onAudioDeviceUpdate(deviceId = 1)
+09-01 12:29:22.871  7225  7287 D AAudioStream: setState(s#1) from 3 to 4
+09-01 12:29:22.908  7225  7247 I Unity   :     HasWindow = 1, HasFocus = 0
+09-01 12:29:22.908  7225  7247 I Unity   : Handle cmd APP_CMD_WINDOW_RESIZED(3)
+09-01 12:29:22.908  7225  7247 I Unity   : Handle cmd APP_CMD_WINDOW_REDRAW_NEEDED(4)
+09-01 12:29:22.908  7225  7247 I Unity   : Handle cmd APP_CMD_GAINED_FOCUS(7)
+09-01 12:29:22.908  7225  7247 I Unity   : Handle cmd APP_CMD_WINDOW_INSETS_CHANGED(17)
+09-01 12:29:22.916  7225  7247 V MediaRouter: Selecting route: RouteInfo{ name=Téléphone, description=null, status=null, category=RouteCategory{ name=Système types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+09-01 12:29:22.917  7225  7247 I MediaRouter: Skip setBluetoothA2dpOn(): types=8388615, isPlaybackActive()=true, BT route=null
+09-01 12:29:24.997  7225  7225 D GameActivity: ************** mainWorkCallback *********
+09-01 12:29:24.997  7225  7225 D gti.InputConnection: setSoftKeyboardActive, active: false
+09-01 12:29:24.998  7225  7225 I ImeTracker: com.natis.hdmr.cam2:1efb3c3b: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+09-01 12:29:25.009  7225  7247 I IL2CPP  : Locale fr-FR
+09-01 12:29:25.237  7225  7225 W com.natis.hdmr.cam2: type=1400 audit(0.0:3113): avc:  denied  { read } for  comm=556E697479204D61696E2054687265 name="devices" dev="sysfs" ino=50582 scontext=u:r:untrusted_app:s0:c31,c257,c512,c768 tcontext=u:object_r:sysfs:s0 tclass=dir permissive=0 app=com.natis.hdmr.cam2
+09-01 12:29:25.255  7225  7247 I CameraManagerGlobal: Connecting to camera service
+09-01 12:29:27.855  7225  7225 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=com.unity3d.player.a.e@263c65
+09-01 12:29:27.869  7225  7247 I Unity   : Handle cmd APP_CMD_PAUSE(14)
+09-01 12:29:27.886  7225  7247 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 12:29:27.886  7225  7247 D AAudioStream: setState(s#1) from 4 to 9
+09-01 12:29:27.886  7225  7247 D AudioTrack: stop(389): called with 122400 frames delivered
+09-01 12:29:27.886  7225  7247 D AAudioStream: setState(s#1) from 9 to 10
+09-01 12:29:27.887  7225  7247 I Unity   : Handle cmd APP_CMD_TERM_WINDOW(2)
+09-01 12:29:27.912  7225  7247 I Unity   : Handle cmd APP_CMD_STOP(15)
+09-01 12:29:27.914  7225  7225 I IL2CPP  : JNI_OnUnload
+09-01 12:29:27.914  7225  7225 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=falsecallback=android.app.Activity$$ExternalSyntheticLambda0@1ccad3a
+09-01 12:29:27.915  7225  7225 I VrosSpatialAudio: clear token android.os.BinderProxy@e0f42ed
+09-01 12:29:27.915  7225  7225 I AudioTrack: clearDefaultVolumetricWindowToken: clearing token 0xb400007096464be0
+09-01 12:29:27.915  7225  7247 I Unity   : Handle cmd APP_CMD_DESTROY(16)
+09-01 12:29:27.915  7225  7247 I Unity   : UnityApplication::DestroyInstance
+09-01 12:29:27.925  7225  7247 E libEGL  : call to OpenGL ES API with no current context (logged once per thread)
+09-01 12:29:27.932  7225  7247 D AAudio  : AAudioStream_requestStop(s#1) called
+09-01 12:29
