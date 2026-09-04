@@ -17,3 +17,4 @@ _dev/nuvc/**/.cxx/
 _dev/nuvc/.gradle/
 _dev/nuvc/local.properties
 _dev/nuvc/**/third_party/libusb/
+.utmp/
