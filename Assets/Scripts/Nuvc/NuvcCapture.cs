@@ -61,7 +61,7 @@ namespace HdmrNuvc
                 using var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 _activity = up.GetStatic<AndroidJavaObject>("currentActivity");
                 _nuvc = new AndroidJavaObject("com.natis.nuvc.Nuvc");
-                _audio = new AndroidJavaObject("com.natis.nuvc.UsbAudio");
+                _audio = new AndroidJavaObject("com.natis.nuvc.Uac");
             }
             catch (Exception e) { Status = "bridge init failed: " + e.Message; Debug.LogError("[nuvc] " + e); }
 #else

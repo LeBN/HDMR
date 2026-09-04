@@ -3,9 +3,6 @@
 
     <uses-feature android:name="android.hardware.usb.host" android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- card audio: AudioRecord from the USB audio input device -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Horizon OS v76+ : real granted runtime permission for 3rd-party UVC access -->
     <uses-permission android:name="horizonos.permission.USB_CAMERA" />
 

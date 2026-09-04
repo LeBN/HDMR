@@ -30,6 +30,8 @@ target_link_libraries(usb1.0 PRIVATE ${log-lib})
 add_library(nuvc SHARED
     nuvc.cpp
     uvc.cpp
+    uac.cpp
+    uac_jni.cpp
 )
 set_target_properties(nuvc PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(nuvc PRIVATE ${LU}/libusb)
