@@ -134,6 +134,17 @@ public static class HDMRBuild
         PlayerSettings.Android.forceInternetPermission = false;
         PlayerSettings.Android.renderOutsideSafeArea = true;
 
+        // 16:9 panel so the video fills it edge-to-edge with no crop and no bars
+        try
+        {
+            PlayerSettings.Android.resizableWindow = true;
+            PlayerSettings.Android.defaultWindowWidth = 1600;
+            PlayerSettings.Android.defaultWindowHeight = 900;
+            PlayerSettings.Android.minimumWindowWidth = 480;
+            PlayerSettings.Android.minimumWindowHeight = 270;
+        }
+        catch (Exception e) { Debug.LogWarning("[HDMRBuild] window size: " + e.Message); }
+
         Debug.Log("[HDMRBuild] player settings configured");
     }
 

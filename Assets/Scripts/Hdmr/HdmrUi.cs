@@ -122,18 +122,24 @@ namespace Hdmr
         {
             float w = Screen.width, h = Screen.height;
 
-            // video fills the WHOLE panel, centred, cropped to fill on any aspect
+            GUI.color = Color.black; GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+
+            // whole video, centred, no crop — edges of the stream = edges of the
+            // panel (the panel is built 16:9, so a 16:9 stream fills it exactly)
             var tex = drawer != null ? drawer.CurrentTex : null;
             if (tex != null)
             {
-                var uv = FillUv(tex.width, (float)tex.height, w / h,
-                                HdmrSession.FlipX, HdmrSession.FlipY);
-                GUI.DrawTextureWithTexCoords(new Rect(0, 0, w, h), tex, uv);
+                float ta = (float)tex.width / tex.height, pa = w / h;
+                float rw = w, rh = h;
+                if (ta > pa) rh = w / ta; else rw = h * ta;
+                var rect = new Rect((w - rw) * 0.5f, (h - rh) * 0.5f, rw, rh);
+                var uv = new Rect(HdmrSession.FlipX ? 1f : 0f, HdmrSession.FlipY ? 1f : 0f,
+                                  HdmrSession.FlipX ? -1f : 1f, HdmrSession.FlipY ? -1f : 1f);
+                GUI.DrawTextureWithTexCoords(rect, tex, uv);
             }
             else
             {
-                GUI.color = Color.black; GUI.DrawTexture(new Rect(0, 0, w, h), Texture2D.whiteTexture);
-                GUI.color = Color.white;
                 GUILayout.BeginArea(new Rect(w * 0.2f, h * 0.45f, w * 0.6f, 80));
                 GUILayout.Label("signal perdu — vérifiez la console / la carte", _body);
                 GUILayout.EndArea();
@@ -159,17 +165,5 @@ namespace Hdmr
             GUILayout.EndArea();
         }
 
-        // texcoords that make `tex` cover a `panelAspect` rect fully (crop overflow, keep centre)
-        static Rect FillUv(float tw, float th, float panelAspect, bool flipX, bool flipY)
-        {
-            float texAspect = tw / th;
-            float uw = 1f, uh = 1f;
-            if (texAspect > panelAspect) uw = panelAspect / texAspect;   // crop sides
-            else                         uh = texAspect / panelAspect;   // crop top/bottom
-            float ux = (1f - uw) * 0.5f, uy = (1f - uh) * 0.5f;
-            if (flipX) { ux += uw; uw = -uw; }
-            if (flipY) { uy += uh; uh = -uh; }
-            return new Rect(ux, uy, uw, uh);
-        }
     }
 }
