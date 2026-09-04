@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <usb-device vendor-id="13458" product-id="8498" />  <!-- 345F:2132 MACROSILICON -->
+    <usb-device class="239" subclass="2" />              <!-- misc / interface assoc -->
+    <usb-device class="14" />                            <!-- video -->
+</resources>
