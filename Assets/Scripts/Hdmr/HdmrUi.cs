@@ -75,9 +75,9 @@ namespace Hdmr
             bool fx = GUILayout.Toggle(HdmrSession.FlipX, "  miroir horizontal", _body, GUILayout.Width(260));
             bool fy = GUILayout.Toggle(HdmrSession.FlipY, "  miroir vertical", _body, GUILayout.Width(240));
             if (fx != HdmrSession.FlipX || fy != HdmrSession.FlipY) ctrl.SetFlip(fx, fy);
-            bool snd = GUILayout.Toggle(HdmrSession.WantSound, "  son (UAC, expérimental)", _body, GUILayout.Width(320));
-            if (snd != HdmrSession.WantSound) ctrl.SetSound(snd);
             GUILayout.EndHorizontal();
+            // son retiré : le chemin UAC du plugin fait planter la boucle USB
+            // (SIGSEGV reap_bulk_transfer) ~1s après le start. → plugin natif.
 
             GUILayout.Space(8);
             GUILayout.Label($"Choisissez un format / résolution  ({ctrl.Sizes.Count} disponibles) :", _body);

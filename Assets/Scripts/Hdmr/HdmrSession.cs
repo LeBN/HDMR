@@ -53,7 +53,10 @@ namespace Hdmr
         public static bool ShowStream { get => GetI("show", 0) == 1; set => SetI("show", value ? 1 : 0); }
         public static bool FlipX { get => GetI("fx", 0) == 1; set => SetI("fx", value ? 1 : 0); }
         public static bool FlipY { get => GetI("fy", 0) == 1; set => SetI("fy", value ? 1 : 0); }
-        public static bool WantSound { get => GetI("snd", 1) == 1; set => SetI("snd", value ? 1 : 0); }  // on by default
+        // OFF: claiming the card's UAC audio interface while the video bulk stream
+        // runs corrupts the plugin's USB Context -> SIGSEGV in reap_bulk_transfer ->
+        // add_transfer, ~1s after start. Real audio needs the from-scratch plugin.
+        public static bool WantSound { get => GetI("snd", 0) == 1; set => SetI("snd", value ? 1 : 0); }
         public static int SelfTestIndex { get => GetI("st", -1); set => SetI("st", value); }
         public static int LastCmdSeq { get => GetI("cmdseq", 0); set => SetI("cmdseq", value); }
 
