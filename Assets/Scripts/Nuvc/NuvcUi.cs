@@ -62,11 +62,12 @@ namespace HdmrNuvc
                     $"video {cap.VideoFps:0.0} fps   ·   displayed {cap.DisplayedFps:0.0} fps   ·   seq {cap.Seq}", _small);
                 GUI.Label(new Rect(24, H - 92, W, 28),
                     $"capture→pull {cap.CapToPullMs:0.0} ms  (max {cap.CapToPullMaxMs:0} )   ·   USB span {cap.AsmMs:0.0} ms", _small);
-                GUI.Label(new Rect(24, H - 62, W, 28), cap.Status, _small);
+                GUI.Label(new Rect(24, H - 62, W, 28), $"{cap.Status}   ·   audio: {cap.AudioStatus}", _small);
 
-                if (GUI.Button(new Rect(W - 430, H - 100, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
-                if (GUI.Button(new Rect(W - 290, H - 100, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;
-                if (GUI.Button(new Rect(W - 150, H - 100, 130, 56), cap.FullRange ? "Full" : "Limited")) cap.FullRange = !cap.FullRange;
+                if (GUI.Button(new Rect(W - 570, H - 100, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
+                if (GUI.Button(new Rect(W - 430, H - 100, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;
+                if (GUI.Button(new Rect(W - 290, H - 100, 130, 56), cap.FullRange ? "Full" : "Limited")) cap.FullRange = !cap.FullRange;
+                if (GUI.Button(new Rect(W - 150, H - 100, 130, 56), cap.WantAudio ? "Audio ✓" : "Audio ✗")) cap.WantAudio = !cap.WantAudio;
             }
         }
     }

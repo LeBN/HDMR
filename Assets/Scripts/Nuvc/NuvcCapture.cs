@@ -27,11 +27,17 @@ namespace HdmrNuvc
         public float CapToPullMaxMs { get; private set; }
         public float AsmMs { get; private set; }        // USB receive span of a frame
 
+        [NonSerialized] public bool WantAudio = true;
+        public string AudioStatus { get; private set; } = "off";
+
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
         [NonSerialized] public bool FlipX = false, FlipY = true, FullRange = false;
 
         AndroidJavaObject _nuvc;
+        AndroidJavaObject _audio;
         AndroidJavaObject _activity;
+        bool _audioStarted;
+        float _audioT;
         Material _mat;
         Texture2D _texY, _texUV;
         byte[] _buf;
@@ -55,6 +61,7 @@ namespace HdmrNuvc
                 using var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 _activity = up.GetStatic<AndroidJavaObject>("currentActivity");
                 _nuvc = new AndroidJavaObject("com.natis.nuvc.Nuvc");
+                _audio = new AndroidJavaObject("com.natis.nuvc.UsbAudio");
             }
             catch (Exception e) { Status = "bridge init failed: " + e.Message; Debug.LogError("[nuvc] " + e); }
 #else
@@ -64,6 +71,7 @@ namespace HdmrNuvc
 
         void OnDestroy()
         {
+            try { _audio?.Call("stop"); } catch { }
             try { _nuvc?.Call("stop"); _nuvc?.Call("close"); } catch { }
             if (_pin.IsAllocated) _pin.Free();
             if (Output) Output.Release();
@@ -96,6 +104,27 @@ namespace HdmrNuvc
             }
 
             PullAndUpload();
+            ServiceAudio();
+        }
+
+        void ServiceAudio()
+        {
+            if (_audio == null) return;
+            try
+            {
+                if (WantAudio && !_audioStarted && Time.unscaledTime - _audioT > 2f)
+                {
+                    _audioT = Time.unscaledTime;
+                    _audioStarted = _audio.Call<bool>("start", _activity);
+                }
+                else if (!WantAudio && _audioStarted)
+                {
+                    _audio.Call("stop");
+                    _audioStarted = false;
+                }
+                AudioStatus = WantAudio ? _audio.Get<string>("status") : "off";
+            }
+            catch (Exception e) { AudioStatus = "err: " + e.Message; }
         }
 
         void PullAndUpload()
@@ -155,12 +184,19 @@ namespace HdmrNuvc
             Tick(true);
         }
 
+        float _logT;
         void Tick(bool got)
         {
             if (got) _newFrames++;
             float w = Time.unscaledTime - _fpsT0;
             if (w >= 1f) { DisplayedFps = _newFrames / w; _newFrames = 0; _fpsT0 = Time.unscaledTime; }
             Status = $"streaming {Width}x{Height} {(Fmt == 2 ? "MJPEG" : Fmt == 1 ? "YUY2" : "NV12")}";
+            if (Time.unscaledTime - _logT >= 2f)
+            {
+                _logT = Time.unscaledTime;
+                Debug.Log($"[nuvc] {Width}x{Height} video={VideoFps:0.0} disp={DisplayedFps:0.0} " +
+                          $"cap→pull={CapToPullMs:0.0}ms(max{CapToPullMaxMs:0}) usbSpan={AsmMs:0.0}ms seq={Seq}");
+            }
         }
 
         void EnsureTextures(int w, int h)
