@@ -1,1 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.usb.host" android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Horizon OS v76+ : real granted runtime permission for 3rd-party UVC access -->
+    <uses-permission android:name="horizonos.permission.USB_CAMERA" />
+
+</manifest>

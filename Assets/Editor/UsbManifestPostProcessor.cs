@@ -49,6 +49,37 @@ public class UsbManifestPostProcessor : IPostGenerateGradleAndroidProject
                 el.SetAttribute("name", A, perm);
                 root.AppendChild(el);
             }
+            // nuvc build: aandusb normally contributes the USB_DEVICE_ATTACHED
+            // intent-filter (auto-launch + auto-grant on plug-in). Add it to the
+            // MAIN activity here.
+            if (HDMRBuildNuvc.Active)
+            {
+                XmlElement main = null;
+                foreach (XmlElement a in doc.GetElementsByTagName("activity"))
+                    if (a.GetElementsByTagName("action").Cast<XmlElement>()
+                         .Any(e => e.GetAttribute("name", A) == "android.intent.action.MAIN"))
+                        { main = a; break; }
+
+                bool hasAttach = main != null && main.GetElementsByTagName("action").Cast<XmlElement>()
+                    .Any(e => e.GetAttribute("name", A) == "android.hardware.usb.action.USB_DEVICE_ATTACHED");
+
+                if (main != null && !hasAttach)
+                {
+                    var f = doc.CreateElement("intent-filter");
+                    var act = doc.CreateElement("action");
+                    act.SetAttribute("name", A, "android.hardware.usb.action.USB_DEVICE_ATTACHED");
+                    f.AppendChild(act);
+                    main.AppendChild(f);
+
+                    var md = doc.CreateElement("meta-data");
+                    md.SetAttribute("name", A, "android.hardware.usb.action.USB_DEVICE_ATTACHED");
+                    md.SetAttribute("resource", A, "@xml/device_filter_uvc");
+                    main.AppendChild(md);
+                    Debug.Log("[HDMR] injected USB_DEVICE_ATTACHED into MAIN activity");
+                }
+                else Debug.Log("[HDMR] USB_DEVICE_ATTACHED: main=" + (main != null) + " hasAttach=" + hasAttach);
+            }
+
             doc.Save(manifestPath);
             Debug.Log("[HDMR] patched manifest:\n" + File.ReadAllText(manifestPath));
         }

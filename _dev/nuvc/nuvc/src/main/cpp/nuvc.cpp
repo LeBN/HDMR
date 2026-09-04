@@ -39,6 +39,18 @@ Java_com_natis_nuvc_Nuvc_nativeLatestInto(JNIEnv* env, jclass, jlong h,
     return (jlong)u->latest_into(dst, (size_t)cap, (uint64_t)since, &w, &hh, &fmt);
 }
 
+// Same as nativeLatestInto but the destination is a raw address (Unity passes
+// a pinned NativeArray pointer) — no ByteBuffer round-trip on the hot path.
+JNIEXPORT jlong JNICALL
+Java_com_natis_nuvc_Nuvc_nativeLatestIntoAddr(JNIEnv*, jclass, jlong h,
+                                              jlong addr, jlong cap, jlong since) {
+    auto* u = reinterpret_cast<nuvc::Uvc*>(h);
+    if (!u || !addr || cap <= 0) return 0;
+    uint16_t w = 0, hh = 0; uint8_t fmt = 0;
+    return (jlong)u->latest_into(reinterpret_cast<uint8_t*>(addr),
+                                 (size_t)cap, (uint64_t)since, &w, &hh, &fmt);
+}
+
 JNIEXPORT void JNICALL
 Java_com_natis_nuvc_Nuvc_nativeStop(JNIEnv*, jclass, jlong h) {
     if (auto* u = reinterpret_cast<nuvc::Uvc*>(h)) u->stop();

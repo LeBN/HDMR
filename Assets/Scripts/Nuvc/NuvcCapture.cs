@@ -1,0 +1,161 @@
+using System;
+using System.Runtime.InteropServices;
+using UnityEngine;
+
+namespace HdmrNuvc
+{
+    /// <summary>
+    /// Drives the from-scratch nuvc plugin: open the capture card by fd, bulk-stream,
+    /// pull the newest frame each Unity frame, upload NV12 as two planes and convert
+    /// to RGB via the Hdmr/NV12 shader. No aandusb, no decode for raw modes.
+    /// </summary>
+    public sealed class NuvcCapture : MonoBehaviour
+    {
+        public RenderTexture Output { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int Fmt { get; private set; }          // 0 NV12, 1 YUY2, 2 MJPEG
+        public int LinkSpeed { get; private set; }
+        public float VideoFps { get; private set; }
+        public long Seq { get; private set; }
+        public float DisplayedFps { get; private set; }
+        public string Status { get; private set; } = "starting…";
+        public bool Streaming { get; private set; }
+
+        // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
+        [NonSerialized] public bool FlipX = false, FlipY = true, FullRange = false;
+
+        AndroidJavaObject _nuvc;
+        AndroidJavaObject _activity;
+        Material _mat;
+        Texture2D _texY, _texUV;
+        byte[] _buf;
+        GCHandle _pin;
+        IntPtr _base;
+        long _lastSeq;
+        int _newFrames;
+        float _fpsT0, _retryT;
+        bool _startCalled;
+
+        void Awake()
+        {
+            _mat = new Material(Shader.Find("Hdmr/NV12"));
+            _buf = new byte[3840 * 2160 * 2];
+            _pin = GCHandle.Alloc(_buf, GCHandleType.Pinned);
+            _base = _pin.AddrOfPinnedObject();
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                _activity = up.GetStatic<AndroidJavaObject>("currentActivity");
+                _nuvc = new AndroidJavaObject("com.natis.nuvc.Nuvc");
+            }
+            catch (Exception e) { Status = "bridge init failed: " + e.Message; Debug.LogError("[nuvc] " + e); }
+#else
+            Status = "editor — no device";
+#endif
+        }
+
+        void OnDestroy()
+        {
+            try { _nuvc?.Call("stop"); _nuvc?.Call("close"); } catch { }
+            if (_pin.IsAllocated) _pin.Free();
+            if (Output) Output.Release();
+        }
+
+        void Update()
+        {
+            if (_nuvc == null) return;
+
+            if (!Streaming)
+            {
+                if (Time.unscaledTime - _retryT < 0.5f) return;
+                _retryT = Time.unscaledTime;
+                try
+                {
+                    bool open = _nuvc.Call<bool>("ensureOpen", _activity);
+                    if (!open)
+                    {
+                        Status = _nuvc.Call<bool>("permissionDenied")
+                            ? "USB permission denied — replug the card"
+                            : "waiting for card / USB permission…";
+                        return;
+                    }
+                    if (!_startCalled) _startCalled = _nuvc.Call<bool>("start");
+                    if (!_startCalled) { Status = "start failed — see logcat"; return; }
+                    Streaming = true;
+                    _fpsT0 = Time.unscaledTime;
+                }
+                catch (Exception e) { Status = "open/start error: " + e.Message; Debug.LogError("[nuvc] " + e); return; }
+            }
+
+            PullAndUpload();
+        }
+
+        void PullAndUpload()
+        {
+            long seq;
+            try { seq = _nuvc.Call<long>("latestIntoAddr", (long)_base, (long)_buf.Length, _lastSeq); }
+            catch (Exception e) { Status = "pull error: " + e.Message; return; }
+
+            if ((Time.frameCount & 7) == 0)
+            {
+                try
+                {
+                    int[] s = _nuvc.Call<int[]>("stats");
+                    if (s != null && s.Length >= 9)
+                    {
+                        LinkSpeed = s[7]; Fmt = s[8]; VideoFps = s[3] / 100f;
+                        EnsureTextures(s[4], s[5]);
+                    }
+                }
+                catch { }
+            }
+
+            if (seq == 0 || seq == _lastSeq || _texY == null) { Tick(false); return; }
+            _lastSeq = seq; Seq = seq;
+
+            int yBytes = Width * Height;
+            int uvBytes = yBytes / 2;
+            if (Fmt == 0 && _buf.Length >= yBytes + uvBytes)
+            {
+                _texY.LoadRawTextureData(_base, yBytes);
+                _texY.Apply(false);
+                _texUV.LoadRawTextureData(IntPtr.Add(_base, yBytes), uvBytes);
+                _texUV.Apply(false);
+
+                _mat.SetFloat("_FullRange", FullRange ? 1f : 0f);
+                _mat.SetFloat("_FlipX", FlipX ? 1f : 0f);
+                _mat.SetFloat("_FlipY", FlipY ? 1f : 0f);
+                Graphics.Blit(_texY, Output, _mat);
+            }
+            Tick(true);
+        }
+
+        void Tick(bool got)
+        {
+            if (got) _newFrames++;
+            float w = Time.unscaledTime - _fpsT0;
+            if (w >= 1f) { DisplayedFps = _newFrames / w; _newFrames = 0; _fpsT0 = Time.unscaledTime; }
+            Status = $"streaming {Width}x{Height} {(Fmt == 2 ? "MJPEG" : Fmt == 1 ? "YUY2" : "NV12")}";
+        }
+
+        void EnsureTextures(int w, int h)
+        {
+            if (w <= 0 || h <= 0 || (w == Width && h == Height && _texY != null)) return;
+            Width = w; Height = h;
+
+            if (_texY) Destroy(_texY);
+            if (_texUV) Destroy(_texUV);
+            if (Output) Output.Release();
+
+            _texY = new Texture2D(w, h, TextureFormat.R8, false, true) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            _texUV = new Texture2D(w / 2, h / 2, TextureFormat.RG16, false, true) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+            Output = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32) { name = "NuvcRGB" };
+            Output.Create();
+            _mat.SetTexture("_YTex", _texY);
+            _mat.SetTexture("_UVTex", _texUV);
+            Debug.Log($"[nuvc] textures {w}x{h}");
+        }
+    }
+}
