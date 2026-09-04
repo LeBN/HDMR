@@ -77,9 +77,23 @@ namespace HdmrNuvc
             if (Output) Output.Release();
         }
 
+        // DIAG (temporary): hold video off for a few seconds on launch so audio
+        // gets a clean shot at the USB with zero video bulk traffic — tells us
+        // whether the PAL isochronous-read failures are caused by bus
+        // contention with our video ring, or happen regardless.
+        float _diagAudioOnlyUntil;
+
         void Update()
         {
             if (_nuvc == null) return;
+
+            if (_diagAudioOnlyUntil == 0f) _diagAudioOnlyUntil = Time.unscaledTime + 10f;
+            if (Time.unscaledTime < _diagAudioOnlyUntil)
+            {
+                ServiceAudio();
+                Status = $"DIAG audio-only window {(_diagAudioOnlyUntil - Time.unscaledTime):0}s…";
+                return;
+            }
 
             if (!Streaming)
             {
@@ -95,6 +109,7 @@ namespace HdmrNuvc
                             : "waiting for card / USB permission…";
                         return;
                     }
+                    try { _nuvc.Call("dumpAll"); } catch { }   // DIAG: descriptor dump for UAC audio planning
                     if (!_startCalled) _startCalled = _nuvc.Call<bool>("start");
                     if (!_startCalled) { Status = "start failed — see logcat"; return; }
                     Streaming = true;

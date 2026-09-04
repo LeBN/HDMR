@@ -66,6 +66,11 @@ Java_com_natis_nuvc_Nuvc_nativeLat(JNIEnv* env, jclass, jlong h) {
 }
 
 JNIEXPORT void JNICALL
+Java_com_natis_nuvc_Nuvc_nativeDumpAll(JNIEnv*, jclass, jlong h) {
+    if (auto* u = reinterpret_cast<nuvc::Uvc*>(h)) u->dump_all_interfaces();
+}
+
+JNIEXPORT void JNICALL
 Java_com_natis_nuvc_Nuvc_nativeStop(JNIEnv*, jclass, jlong h) {
     if (auto* u = reinterpret_cast<nuvc::Uvc*>(h)) u->stop();
 }

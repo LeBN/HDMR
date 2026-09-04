@@ -55,6 +55,11 @@ public:
     int64_t  latest_capture_ns();                           // CLOCK_MONOTONIC at EOF of the newest frame
     static int64_t clock_ns();
 
+    // one-shot diagnostic: log every interface/altsetting/endpoint/class-specific
+    // descriptor on the whole device (not just VideoStreaming) — used to plan
+    // the from-scratch UAC audio capture.
+    void dump_all_interfaces();
+
 private:
     bool negotiate(const Mode& m);
     void event_loop();

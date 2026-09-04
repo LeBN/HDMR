@@ -344,6 +344,62 @@ void Uvc::handle_xfer(libusb_transfer* x) {
     }
 }
 
+void Uvc::dump_all_interfaces() {
+    if (!h_) return;
+    libusb_device* dev = libusb_get_device(h_);
+    libusb_config_descriptor* cfg = nullptr;
+    if (libusb_get_active_config_descriptor(dev, &cfg) != 0 || !cfg) { LE("dump: no config desc"); return; }
+
+    LI("=== full descriptor dump: %d interfaces ===", cfg->bNumInterfaces);
+    for (int i = 0; i < cfg->bNumInterfaces; i++) {
+        const libusb_interface& itf = cfg->interface[i];
+        for (int a = 0; a < itf.num_altsetting; a++) {
+            const libusb_interface_descriptor& id = itf.altsetting[a];
+            LI("IF %d alt %d  class=0x%02x sub=0x%02x proto=0x%02x  ep=%d",
+               id.bInterfaceNumber, id.bAlternateSetting,
+               id.bInterfaceClass, id.bInterfaceSubClass, id.bInterfaceProtocol,
+               id.bNumEndpoints);
+
+            for (int e = 0; e < id.bNumEndpoints; e++) {
+                const auto& ed = id.endpoint[e];
+                uint8_t type = ed.bmAttributes & 0x03;
+                uint8_t sync = (ed.bmAttributes >> 2) & 0x03;
+                uint8_t usage = (ed.bmAttributes >> 4) & 0x03;
+                uint16_t mps_raw = ed.wMaxPacketSize;
+                uint16_t mps = mps_raw & 0x07FF;
+                uint16_t extra_tx = (mps_raw >> 11) & 0x03;
+                LI("  EP 0x%02x  type=%u(0=ctl1=iso2=blk3=int) sync=%u usage=%u  wMaxPacketSize=%u(+%u extra tx) bInterval=%u  extralen=%d",
+                   ed.bEndpointAddress, type, sync, usage, mps, extra_tx, ed.bInterval, ed.extra_length);
+                // SuperSpeed companion descriptor may be in the endpoint's own .extra
+                const uint8_t* ep = ed.extra; int el = ed.extra_length;
+                while (el >= 2) {
+                    uint8_t len = ep[0], t = ep[1];
+                    if (len < 2 || len > el) break;
+                    if (t == 0x30 && len >= 6) // SS_ENDPOINT_COMPANION
+                        LI("    SS companion: maxBurst=%u attr=0x%02x bytesPerInterval=%u",
+                           ep[2], ep[3], (uint16_t)(ep[4] | (ep[5] << 8)));
+                    ep += len; el -= len;
+                }
+            }
+
+            // class-specific (CS_INTERFACE) descriptors, raw hex — AC/AS for audio
+            const uint8_t* p = id.extra; int left = id.extra_length;
+            while (left >= 2) {
+                uint8_t len = p[0], type = p[1];
+                if (len < 2 || len > left) break;
+                if (type == 0x24) { // CS_INTERFACE
+                    char hex[256]; int hl = 0;
+                    for (int k = 0; k < len && hl < 250; k++) hl += snprintf(hex + hl, sizeof(hex) - hl, "%02x ", p[k]);
+                    LI("    CS_IF len=%u subtype=0x%02x: %s", len, len > 2 ? p[2] : 0, hex);
+                }
+                p += len; left -= len;
+            }
+        }
+    }
+    libusb_free_config_descriptor(cfg);
+    LI("=== end dump ===");
+}
+
 int64_t Uvc::clock_ns() { return now_ns(); }
 
 int64_t Uvc::latest_capture_ns() {
