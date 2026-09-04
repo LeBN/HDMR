@@ -3,6 +3,11 @@
 #include <android/log.h>
 #include <cstring>
 #include <ctime>
+#include <pthread.h>
+#include <sched.h>
+#include <sys/resource.h>
+#include <unistd.h>
+#include <sys/syscall.h>
 
 #define TAG "nuvc"
 #define LI(...) __android_log_print(ANDROID_LOG_INFO,  TAG, __VA_ARGS__)
@@ -145,6 +150,8 @@ bool Uvc::negotiate(const Mode& m) {
     sc.bFormatIndex = m.fmt_index;
     sc.bFrameIndex  = m.frame_index;
     sc.dwFrameInterval = m.interval ? m.interval : 333333;  // 30fps default
+    // ask for a large bulk payload — fewer URBs/frame if the card honours it
+    sc.dwMaxPayloadTransferSize = 262144;
 
     const uint16_t wIndex = vs_ifnum_;
     int r;
@@ -195,22 +202,42 @@ bool Uvc::start_preferred(FrameCb cb) {
     frames_ = bad_ = 0; last_bytes_ = 0; fps_ = 0;
     fps_t0_ = now_ns(); fps_n0_ = 0;
 
-    const int N = 5;
-    const int BUF = (int)max_payload_;
-    ring_buf_.resize(N);
+    // Deep ring: bulk transfers terminate on the card's short packet, so each
+    // transfer carries exactly one UVC payload (~max_payload_ bytes). 720p NV12
+    // is ~85 payloads/frame; at 60fps that's ~5000 transfers/s (~200us each).
+    // With only a handful queued, any scheduler hiccup on the event thread
+    // starves the endpoint and fps collapses. 32 deep = ~6ms of slack.
+    const int N = (max_payload_ >= 131072) ? 16 : 64;
+    const size_t BUF = max_payload_;
+    buf_sz_ = BUF;
     ring_.resize(N, nullptr);
+    ring_ptr_.resize(N, nullptr);
     running_ = true;
+
+    // Try zero-copy kernel buffers (usbfs mmap) — big CPU win at this rate.
+    dev_mem_ = true;
     for (int i = 0; i < N; i++) {
-        ring_buf_[i].resize(BUF);
+        ring_ptr_[i] = libusb_dev_mem_alloc(h_, BUF);
+        if (!ring_ptr_[i]) { dev_mem_ = false; break; }
+    }
+    if (!dev_mem_) {
+        for (int i = 0; i < N; i++)
+            if (ring_ptr_[i]) { libusb_dev_mem_free(h_, ring_ptr_[i], BUF); ring_ptr_[i] = nullptr; }
+        ring_buf_.resize(N);
+        for (int i = 0; i < N; i++) { ring_buf_[i].resize(BUF); ring_ptr_[i] = ring_buf_[i].data(); }
+    }
+
+    for (int i = 0; i < N; i++) {
         libusb_transfer* x = libusb_alloc_transfer(0);
-        libusb_fill_bulk_transfer(x, h_, ep_in_, ring_buf_[i].data(), BUF,
+        libusb_fill_bulk_transfer(x, h_, ep_in_, ring_ptr_[i], (int)BUF,
                                   &Uvc::on_xfer, this, 1000);
         ring_[i] = x;
         r = libusb_submit_transfer(x);
         if (r != 0) { LE("submit[%d]: %s", i, libusb_error_name(r)); }
     }
-    LI("streaming: %ux%u %s, %d transfers x %d bytes, ep 0x%02x",
-       mode_.w, mode_.h, mode_.mjpeg ? "MJPEG" : "raw", N, BUF, ep_in_);
+    LI("streaming: %ux%u %s, %d transfers x %zu bytes, ep 0x%02x, %s buffers",
+       mode_.w, mode_.h, mode_.mjpeg ? "MJPEG" : "raw", N, BUF, ep_in_,
+       dev_mem_ ? "zero-copy" : "host");
 
     evt_ = std::thread(&Uvc::event_loop, this);
     return true;
@@ -222,12 +249,26 @@ void Uvc::stop() {
     // let the event loop drain the cancellations
     if (evt_.joinable()) evt_.join();
     for (auto* x : ring_) if (x) libusb_free_transfer(x);
-    ring_.clear(); ring_buf_.clear();
+    if (dev_mem_ && h_)
+        for (auto* p : ring_ptr_) if (p) libusb_dev_mem_free(h_, p, buf_sz_);
+    ring_.clear(); ring_buf_.clear(); ring_ptr_.clear(); dev_mem_ = false;
     if (h_ && vs_ifnum_ >= 0) libusb_release_interface(h_, vs_ifnum_);
     LI("stopped: %llu frames, %llu bad", (unsigned long long)frames_, (unsigned long long)bad_);
 }
 
 void Uvc::event_loop() {
+    // This thread services ~5000 URB completions/s — it must not be starved.
+    // Android drops a normal app off the big cores a few seconds after launch
+    // (the launch cpu-boost expires) which halves our throughput; pin to the
+    // performance cluster and raise priority (best-effort — may lack perms).
+    setpriority(PRIO_PROCESS, (id_t)syscall(SYS_gettid), -19);
+    { sched_param sp{}; sp.sched_priority = 2;
+      pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp); }
+    { cpu_set_t set; CPU_ZERO(&set);
+      long n = sysconf(_SC_NPROCESSORS_CONF);
+      for (long c = (n > 4 ? n - 4 : 0); c < n; c++) CPU_SET(c, &set);   // top 4 cores
+      sched_setaffinity((pid_t)syscall(SYS_gettid), sizeof(set), &set); }
+
     timeval tv{0, 100000};
     while (running_) libusb_handle_events_timeout_completed(ctx_, &tv, nullptr);
     // drain

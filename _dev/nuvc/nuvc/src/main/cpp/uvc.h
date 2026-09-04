@@ -55,7 +55,10 @@ private:
     int                    speed_ = 0;
 
     std::vector<libusb_transfer*> ring_;
-    std::vector<std::vector<uint8_t>> ring_buf_;
+    std::vector<std::vector<uint8_t>> ring_buf_;   // fallback host buffers
+    std::vector<uint8_t*>  ring_ptr_;              // actual buffer per transfer
+    bool                   dev_mem_ = false;       // ring_ptr_ came from libusb_dev_mem_alloc
+    size_t                 buf_sz_ = 0;
     std::atomic<bool>      running_{false};
     std::thread            evt_;
 
