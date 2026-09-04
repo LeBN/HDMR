@@ -22,6 +22,11 @@ namespace HdmrNuvc
         public string Status { get; private set; } = "starting…";
         public bool Streaming { get; private set; }
 
+        // latency: EOF of the newest frame -> the moment Unity grabbed it (smoothed + 1s max)
+        public float CapToPullMs { get; private set; }
+        public float CapToPullMaxMs { get; private set; }
+        public float AsmMs { get; private set; }        // USB receive span of a frame
+
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
         [NonSerialized] public bool FlipX = false, FlipY = true, FullRange = false;
 
@@ -36,6 +41,7 @@ namespace HdmrNuvc
         int _newFrames;
         float _fpsT0, _retryT;
         bool _startCalled;
+        float _latMaxAccum, _latMaxT;
 
         void Awake()
         {
@@ -128,6 +134,23 @@ namespace HdmrNuvc
                 _mat.SetFloat("_FlipX", FlipX ? 1f : 0f);
                 _mat.SetFloat("_FlipY", FlipY ? 1f : 0f);
                 Graphics.Blit(_texY, Output, _mat);
+
+                try
+                {
+                    long[] l = _nuvc.Call<long[]>("lat");
+                    if (l != null && l.Length == 3 && l[1] != 0)
+                    {
+                        float pullMs = (l[0] - l[1]) / 1e6f;
+                        if (pullMs >= 0f && pullMs < 500f)
+                        {
+                            CapToPullMs = Mathf.Lerp(CapToPullMs <= 0 ? pullMs : CapToPullMs, pullMs, 0.1f);
+                            _latMaxAccum = Mathf.Max(_latMaxAccum, pullMs);
+                        }
+                        AsmMs = l[2] / 1000f;
+                    }
+                }
+                catch { }
+                if (Time.unscaledTime - _latMaxT >= 1f) { CapToPullMaxMs = _latMaxAccum; _latMaxAccum = 0f; _latMaxT = Time.unscaledTime; }
             }
             Tick(true);
         }

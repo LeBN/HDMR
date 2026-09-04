@@ -50,6 +50,11 @@ public:
     int      link_speed()  const { return speed_; }   // libusb_speed enum
     uint8_t  fmt()         const { return fmt_; }      // 0 NV12, 1 YUY2, 2 MJPEG
 
+    // latency instrumentation
+    int64_t  assembly_us()      const { return asm_us_; }   // USB receive span of the last frame
+    int64_t  latest_capture_ns();                           // CLOCK_MONOTONIC at EOF of the newest frame
+    static int64_t clock_ns();
+
 private:
     bool negotiate(const Mode& m);
     void event_loop();
@@ -81,7 +86,10 @@ private:
     std::mutex             latest_mu_;
     std::vector<uint8_t>   latest_;
     uint64_t               latest_seq_ = 0;
+    int64_t                latest_cap_ns_ = 0;
     uint8_t                fmt_ = 0;   // 0 NV12, 1 YUY2, 2 MJPEG
+    int64_t                first_pl_ns_ = 0;
+    std::atomic<int64_t>   asm_us_{0};
 
     std::atomic<uint64_t>  frames_{0}, bad_{0};
     std::atomic<uint32_t>  last_bytes_{0};

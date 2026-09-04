@@ -294,14 +294,20 @@ void Uvc::handle_xfer(libusb_transfer* x) {
                 // lost EOF — flush what we have as a (possibly short) frame
                 bad_++;
                 frame_.clear();
+                first_pl_ns_ = 0;
             }
             fid_ = fid;
             const uint8_t* payload = buf + hlen;
             int plen = total - hlen;
-            if (plen > 0) frame_.insert(frame_.end(), payload, payload + plen);
+            if (plen > 0) {
+                if (first_pl_ns_ == 0) first_pl_ns_ = now_ns();
+                frame_.insert(frame_.end(), payload, payload + plen);
+            }
 
             if (eof) {
                 if (!frame_.empty()) {
+                    int64_t eof_ns = now_ns();
+                    asm_us_ = (eof_ns - (first_pl_ns_ ? first_pl_ns_ : eof_ns)) / 1000;
                     last_bytes_ = (uint32_t)frame_.size();
                     frames_++;
                     if (mode_.mjpeg) fmt_ = 2;
@@ -310,6 +316,7 @@ void Uvc::handle_xfer(libusb_transfer* x) {
                         std::lock_guard<std::mutex> lk(latest_mu_);
                         latest_.assign(frame_.begin(), frame_.end());
                         latest_seq_++;
+                        latest_cap_ns_ = eof_ns;
                     }
                     if (cb_) cb_(frame_.data(), frame_.size(), mode_.w, mode_.h, mode_.mjpeg);
                     // fps every ~1s
@@ -322,6 +329,7 @@ void Uvc::handle_xfer(libusb_transfer* x) {
                     }
                 }
                 frame_.clear();
+                first_pl_ns_ = 0;
             }
         }
     } else if (x->status == LIBUSB_TRANSFER_CANCELLED) {
@@ -334,6 +342,13 @@ void Uvc::handle_xfer(libusb_transfer* x) {
         int r = libusb_submit_transfer(x);
         if (r != 0) LW("resubmit: %s", libusb_error_name(r));
     }
+}
+
+int64_t Uvc::clock_ns() { return now_ns(); }
+
+int64_t Uvc::latest_capture_ns() {
+    std::lock_guard<std::mutex> lk(latest_mu_);
+    return latest_cap_ns_;
 }
 
 uint64_t Uvc::latest_into(uint8_t* dst, size_t cap, uint64_t since,

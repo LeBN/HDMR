@@ -51,6 +51,20 @@ Java_com_natis_nuvc_Nuvc_nativeLatestIntoAddr(JNIEnv*, jclass, jlong h,
                                  (size_t)cap, (uint64_t)since, &w, &hh, &fmt);
 }
 
+// [0]=now_ns  [1]=newest frame EOF ns  [2]=last frame USB receive span (us)
+JNIEXPORT jlongArray JNICALL
+Java_com_natis_nuvc_Nuvc_nativeLat(JNIEnv* env, jclass, jlong h) {
+    jlong v[3] = {0, 0, 0};
+    v[0] = (jlong)nuvc::Uvc::clock_ns();
+    if (auto* u = reinterpret_cast<nuvc::Uvc*>(h)) {
+        v[1] = (jlong)u->latest_capture_ns();
+        v[2] = (jlong)u->assembly_us();
+    }
+    jlongArray a = env->NewLongArray(3);
+    env->SetLongArrayRegion(a, 0, 3, v);
+    return a;
+}
+
 JNIEXPORT void JNICALL
 Java_com_natis_nuvc_Nuvc_nativeStop(JNIEnv*, jclass, jlong h) {
     if (auto* u = reinterpret_cast<nuvc::Uvc*>(h)) u->stop();

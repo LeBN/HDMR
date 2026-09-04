@@ -138,6 +138,9 @@ public final class Nuvc {
         return handle != 0 ? nativeLatestIntoAddr(handle, addr, cap, since) : 0;
     }
 
+    /** [now_ns, newest-frame EOF ns, last frame USB receive span us]. */
+    public long[] lat() { return handle != 0 ? nativeLat(handle) : new long[3]; }
+
     private static boolean isUvc(UsbDevice d) {
         if (d.getDeviceClass() == 0x0E /*video*/) return true;
         for (int i = 0; i < d.getInterfaceCount(); i++)
@@ -152,4 +155,5 @@ public final class Nuvc {
     private static native int[] nativeStats(long h);
     private static native long nativeLatestInto(long h, ByteBuffer dst, long since);
     private static native long nativeLatestIntoAddr(long h, long addr, long cap, long since);
+    private static native long[] nativeLat(long h);
 }

@@ -53,18 +53,20 @@ namespace HdmrNuvc
             if (_stats && cap != null)
             {
                 string link = cap.LinkSpeed == 4 ? "USB3 SuperSpeed" : cap.LinkSpeed == 3 ? "USB2 High" : "link " + cap.LinkSpeed;
-                GUI.color = new Color(0, 0, 0, 0.55f);
-                GUI.DrawTexture(new Rect(0, H - 132, W, 132), Texture2D.whiteTexture);
+                GUI.color = new Color(0, 0, 0, 0.6f);
+                GUI.DrawTexture(new Rect(0, H - 164, W, 164), Texture2D.whiteTexture);
                 GUI.color = Color.white;
-                GUI.Label(new Rect(24, H - 126, W, 32),
+                GUI.Label(new Rect(24, H - 158, W, 32),
                     $"nuvc · {link} · {cap.Width}x{cap.Height} {(cap.Fmt == 2 ? "MJPEG" : cap.Fmt == 1 ? "YUY2" : "NV12")}", _label);
-                GUI.Label(new Rect(24, H - 90, W, 28),
+                GUI.Label(new Rect(24, H - 122, W, 28),
                     $"video {cap.VideoFps:0.0} fps   ·   displayed {cap.DisplayedFps:0.0} fps   ·   seq {cap.Seq}", _small);
-                GUI.Label(new Rect(24, H - 58, W, 28), cap.Status, _small);
+                GUI.Label(new Rect(24, H - 92, W, 28),
+                    $"capture→pull {cap.CapToPullMs:0.0} ms  (max {cap.CapToPullMaxMs:0} )   ·   USB span {cap.AsmMs:0.0} ms", _small);
+                GUI.Label(new Rect(24, H - 62, W, 28), cap.Status, _small);
 
-                if (GUI.Button(new Rect(W - 430, H - 96, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
-                if (GUI.Button(new Rect(W - 290, H - 96, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;
-                if (GUI.Button(new Rect(W - 150, H - 96, 130, 56), cap.FullRange ? "Full" : "Limited")) cap.FullRange = !cap.FullRange;
+                if (GUI.Button(new Rect(W - 430, H - 100, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
+                if (GUI.Button(new Rect(W - 290, H - 100, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;
+                if (GUI.Button(new Rect(W - 150, H - 100, 130, 56), cap.FullRange ? "Full" : "Limited")) cap.FullRange = !cap.FullRange;
             }
         }
     }
