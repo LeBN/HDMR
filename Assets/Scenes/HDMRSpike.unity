@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &313472676
+--- !u!1 &255226119
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,15 +127,15 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 313472685}
-  - component: {fileID: 313472684}
-  - component: {fileID: 313472683}
-  - component: {fileID: 313472682}
-  - component: {fileID: 313472681}
-  - component: {fileID: 313472680}
-  - component: {fileID: 313472679}
-  - component: {fileID: 313472678}
-  - component: {fileID: 313472677}
+  - component: {fileID: 255226128}
+  - component: {fileID: 255226127}
+  - component: {fileID: 255226126}
+  - component: {fileID: 255226125}
+  - component: {fileID: 255226124}
+  - component: {fileID: 255226123}
+  - component: {fileID: 255226122}
+  - component: {fileID: 255226121}
+  - component: {fileID: 255226120}
   m_Layer: 0
   m_Name: UVC
   m_TagString: Untagged
@@ -143,84 +143,84 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &313472677
+--- !u!114 &255226120
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7ecf4bbe196327409822053dc685eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hdmr.HdmrRemote
-  ctrl: {fileID: 313472680}
-  selfTest: {fileID: 313472679}
---- !u!114 &313472678
+  ctrl: {fileID: 255226123}
+  selfTest: {fileID: 255226122}
+--- !u!114 &255226121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87a5067a48e4c524fbae7227ca20ee14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hdmr.HdmrUi
-  ctrl: {fileID: 313472680}
-  drawer: {fileID: 313472681}
-  selfTest: {fileID: 313472679}
---- !u!114 &313472679
+  ctrl: {fileID: 255226123}
+  drawer: {fileID: 255226124}
+  selfTest: {fileID: 255226122}
+--- !u!114 &255226122
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 407486acd81344d45a1cee7cb55e4843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hdmr.HdmrSelfTest
-  ctrl: {fileID: 313472680}
-  drawer: {fileID: 313472681}
---- !u!114 &313472680
+  ctrl: {fileID: 255226123}
+  drawer: {fileID: 255226124}
+--- !u!114 &255226123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb5dfe9a530179c46889725b85731d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hdmr.HdmrController
-  manager: {fileID: 313472682}
-  drawer: {fileID: 313472681}
---- !u!114 &313472681
+  manager: {fileID: 255226125}
+  drawer: {fileID: 255226124}
+--- !u!114 &255226124
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94247b6ee4fce634081f47b8321b79b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hdmr.HdmrQuadDrawer
   quad: {fileID: 0}
-  audioSource: {fileID: 313472684}
---- !u!114 &313472682
+  audioSource: {fileID: 255226127}
+--- !u!114 &255226125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7e3fa0f7bdc68444abad301469f7cf7, type: 3}
@@ -232,26 +232,26 @@ MonoBehaviour:
   UACEnabled: 0
   RenderBeforeSceneRendering: 0
   UVCDrawers:
-  - {fileID: 313472681}
---- !u!114 &313472683
+  - {fileID: 255226124}
+--- !u!114 &255226126
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6eca0239a3e830b45b761684e2a8c8ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Serenegiant.AndroidUtils
---- !u!82 &313472684
+--- !u!82 &255226127
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -342,13 +342,13 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!4 &313472685
+--- !u!4 &255226128
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313472676}
+  m_GameObject: {fileID: 255226119}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -357,7 +357,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1051098650
+--- !u!1 &1477863968
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -365,9 +365,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1051098653}
-  - component: {fileID: 1051098652}
-  - component: {fileID: 1051098651}
+  - component: {fileID: 1477863971}
+  - component: {fileID: 1477863970}
+  - component: {fileID: 1477863969}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -375,21 +375,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1051098651
+--- !u!81 &1477863969
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1051098650}
+  m_GameObject: {fileID: 1477863968}
   m_Enabled: 1
---- !u!20 &1051098652
+--- !u!20 &1477863970
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1051098650}
+  m_GameObject: {fileID: 1477863968}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -434,13 +434,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1051098653
+--- !u!4 &1477863971
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1051098650}
+  m_GameObject: {fileID: 1477863968}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -2}
@@ -453,5 +453,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1051098653}
-  - {fileID: 313472685}
+  - {fileID: 1477863971}
+  - {fileID: 255226128}
