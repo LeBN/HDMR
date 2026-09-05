@@ -36,6 +36,7 @@ public:
 
 private:
     bool scan();   // find AS interface/altsetting/endpoint/format
+    void dump();   // one-shot full descriptor + link-speed + kernel-driver dump
     void event_loop();
     static void LIBUSB_CALL on_xfer(libusb_transfer* x);
     void handle_xfer(libusb_transfer* x);

@@ -39,9 +39,74 @@ void Uac::close() {
     if (ctx_) { libusb_exit(ctx_); ctx_ = nullptr; }
 }
 
+// One-shot, verbose. Everything the next hands-on session needs to see in the
+// FIRST logcat: link speed (SuperSpeed vs High-Speed — the wrapped-fd usbfs
+// isochronous path behaves differently), every interface/altsetting/endpoint,
+// every class-specific descriptor as raw hex, and which interfaces the kernel
+// audio driver (snd-usb-audio) is currently bound to.
+void Uac::dump() {
+    libusb_device* dev = libusb_get_device(h_);
+    int speed = libusb_get_device_speed(dev);
+    const char* sname =
+        speed == LIBUSB_SPEED_SUPER_PLUS ? "SUPER+ (10Gb)" :
+        speed == LIBUSB_SPEED_SUPER      ? "SUPER (5Gb)" :
+        speed == LIBUSB_SPEED_HIGH       ? "HIGH (480Mb)" :
+        speed == LIBUSB_SPEED_FULL       ? "FULL (12Mb)" : "unknown";
+    LI("=== UAC descriptor dump ===  link speed: %s (%d)", sname, speed);
+
+    libusb_config_descriptor* cfg = nullptr;
+    if (libusb_get_active_config_descriptor(dev, &cfg) != 0 || !cfg) { LE("dump: no config desc"); return; }
+    LI("config: %d interfaces, bmAttributes=0x%02x maxPower=%dmA",
+       cfg->bNumInterfaces, cfg->bmAttributes, cfg->MaxPower * 2);
+
+    for (int i = 0; i < cfg->bNumInterfaces; i++) {
+        const libusb_interface& itf = cfg->interface[i];
+        for (int a = 0; a < itf.num_altsetting; a++) {
+            const libusb_interface_descriptor& id = itf.altsetting[a];
+            int kd = libusb_kernel_driver_active(h_, id.bInterfaceNumber);
+            LI("IF %d alt %d  class=0x%02x sub=0x%02x proto=0x%02x  %d endpoints  kernel_driver_active=%d",
+               id.bInterfaceNumber, id.bAlternateSetting, id.bInterfaceClass,
+               id.bInterfaceSubClass, id.bInterfaceProtocol, id.bNumEndpoints, kd);
+
+            // class-specific interface descriptors (raw)
+            const uint8_t* p = id.extra; int left = id.extra_length;
+            while (left >= 2) {
+                int len = p[0]; if (len < 2 || len > left) break;
+                char hex[3 * 64 + 1]; int o = 0;
+                for (int k = 0; k < len && k < 64; k++) o += snprintf(hex + o, sizeof(hex) - o, "%02x ", p[k]);
+                LI("  CS-iface desc: %s", hex);
+                p += len; left -= len;
+            }
+
+            for (int e = 0; e < id.bNumEndpoints; e++) {
+                const libusb_endpoint_descriptor& ed = id.endpoint[e];
+                int xfer = ed.bmAttributes & 0x03;
+                int sync = (ed.bmAttributes >> 2) & 0x03;   // 0 none 1 async 2 adaptive 3 sync
+                int usg  = (ed.bmAttributes >> 4) & 0x03;   // 0 data 1 feedback 2 implicit-fb
+                int mps  = ed.wMaxPacketSize & 0x07FF;
+                int mult = ((ed.wMaxPacketSize >> 11) & 0x03) + 1;   // high-bandwidth
+                LI("  EP 0x%02x  xfer=%d sync=%d usage=%d  mps=%d x%d  bInterval=%d",
+                   ed.bEndpointAddress, xfer, sync, usg, mps, mult, ed.bInterval);
+                const uint8_t* q = ed.extra; int qleft = ed.extra_length;
+                while (qleft >= 2) {
+                    int len = q[0]; if (len < 2 || len > qleft) break;
+                    char hex[3 * 32 + 1]; int o = 0;
+                    for (int k = 0; k < len && k < 32; k++) o += snprintf(hex + o, sizeof(hex) - o, "%02x ", q[k]);
+                    LI("    CS-EP desc: %s", hex);
+                    q += len; qleft -= len;
+                }
+            }
+        }
+    }
+    libusb_free_config_descriptor(cfg);
+    LI("=== end dump ===");
+}
+
 // find the first AudioStreaming interface that has a non-zero-bandwidth
 // altsetting with an isochronous IN endpoint, and a FORMAT_TYPE_I PCM descriptor.
 bool Uac::scan() {
+    static bool dumped = false;
+    if (!dumped) { dumped = true; dump(); }
     libusb_device* dev = libusb_get_device(h_);
     libusb_config_descriptor* cfg = nullptr;
     if (libusb_get_active_config_descriptor(dev, &cfg) != 0 || !cfg) { LE("no config desc"); return false; }
@@ -109,10 +174,28 @@ bool Uac::start() {
     if (!scan()) return false;
 
     libusb_set_auto_detach_kernel_driver(h_, 1);
+    LI("before claim: kernel_driver_active(IF %d)=%d  kernel_driver_active(AC IF %d)=%d",
+       ifnum_, libusb_kernel_driver_active(h_, ifnum_),
+       ac_ifnum_, ac_ifnum_ >= 0 ? libusb_kernel_driver_active(h_, ac_ifnum_) : -1);
+    // snd-usb-audio binds the AC + AS interfaces as one function; detaching only
+    // the AS interface can leave the driver holding the streaming state. Detach
+    // the AC interface too, up front.
+    if (ac_ifnum_ >= 0 && libusb_kernel_driver_active(h_, ac_ifnum_) == 1) {
+        int dr = libusb_detach_kernel_driver(h_, ac_ifnum_);
+        LI("detach kernel driver AC IF %d -> %s", ac_ifnum_, dr == 0 ? "ok" : libusb_error_name(dr));
+    }
     int r = libusb_claim_interface(h_, ifnum_);
     if (r != 0) { LE("claim IF %d: %s", ifnum_, libusb_error_name(r)); return false; }
     r = libusb_set_interface_alt_setting(h_, ifnum_, alt_);
     if (r != 0) { LE("set alt %d: %s", alt_, libusb_error_name(r)); libusb_release_interface(h_, ifnum_); return false; }
+    // Confirm the device actually switched. GET_INTERFACE (standard request,
+    // recipient=interface): bmRequestType 0x81, bRequest 0x0A, wIndex=ifnum.
+    {
+        uint8_t curAlt = 0xFF;
+        int gr = libusb_control_transfer(h_, 0x81, 0x0A, 0, ifnum_, &curAlt, 1, 1000);
+        LI("GET_INTERFACE(IF %d) -> %d, device reports current alt = %d (wanted %d)",
+           ifnum_, gr, gr == 1 ? curAlt : -1, alt_);
+    }
 
     // UAC1 endpoints with a Class-Specific AS Isochronous Data Endpoint
     // descriptor (bmAttributes bit0 = sampling-freq-control present) need an
