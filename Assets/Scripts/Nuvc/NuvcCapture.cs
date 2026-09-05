@@ -77,23 +77,18 @@ namespace HdmrNuvc
             if (Output) Output.Release();
         }
 
-        // DIAG (temporary): hold video off for a few seconds on launch so audio
-        // gets a clean shot at the USB with zero video bulk traffic — tells us
-        // whether the PAL isochronous-read failures are caused by bus
-        // contention with our video ring, or happen regardless.
-        float _diagAudioOnlyUntil;
+        // Audio-only-on-launch was a diagnostic (rule out bus contention — it
+        // did: the isochronous reads fail with zero video traffic too). It's
+        // removed because it had a side effect that now looks like the actual
+        // cause: this card only puts audio on the wire once its HDMI capture
+        // pipeline is live, i.e. once the UVC video stream is COMMIT-ed and
+        // pulling frames. So: start video first, wait for real frames, only
+        // then start audio (see ServiceAudio's gate).
+        int _framesSeen;
 
         void Update()
         {
             if (_nuvc == null) return;
-
-            if (_diagAudioOnlyUntil == 0f) _diagAudioOnlyUntil = Time.unscaledTime + 10f;
-            if (Time.unscaledTime < _diagAudioOnlyUntil)
-            {
-                ServiceAudio();
-                Status = $"DIAG audio-only window {(_diagAudioOnlyUntil - Time.unscaledTime):0}s…";
-                return;
-            }
 
             if (!Streaming)
             {
@@ -127,7 +122,10 @@ namespace HdmrNuvc
             if (_audio == null) return;
             try
             {
-                if (WantAudio && !_audioStarted && Time.unscaledTime - _audioT > 2f)
+                // Only start audio once video is genuinely flowing — this card
+                // gates the UAC payload on an active HDMI-capture pipeline.
+                bool videoLive = Streaming && Seq > 0 && _framesSeen > 30;
+                if (WantAudio && videoLive && !_audioStarted && Time.unscaledTime - _audioT > 2f)
                 {
                     _audioT = Time.unscaledTime;
                     _audioStarted = _audio.Call<bool>("start", _activity);
@@ -202,7 +200,7 @@ namespace HdmrNuvc
         float _logT;
         void Tick(bool got)
         {
-            if (got) _newFrames++;
+            if (got) { _newFrames++; if (_framesSeen < 1000) _framesSeen++; }
             float w = Time.unscaledTime - _fpsT0;
             if (w >= 1f) { DisplayedFps = _newFrames / w; _newFrames = 0; _fpsT0 = Time.unscaledTime; }
             Status = $"streaming {Width}x{Height} {(Fmt == 2 ? "MJPEG" : Fmt == 1 ? "YUY2" : "NV12")}";

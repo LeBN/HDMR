@@ -1,5 +1,10 @@
 # HDMR dev tooling
 
+**Current focus: `nuvc/` — the from-scratch native plugin (Node D). See
+`nuvc/README.md`.** It solves the latency blocker (aandusb's hidden ~350 ms
+buffer). The r0.6.0 aandusb build below is the **b21 fallback** — still
+shipping, untouched by the nuvc work.
+
 ## Rebuild the r0.6.0 native .aar (patched: instrumentation + ImageReader-recreate)
     cd _dev/uvcbuild
     export JAVA_HOME="C:/Program Files/Unity/Hub/Editor/6000.5.10f1/Editor/Data/PlaybackEngines/AndroidPlayer/OpenJDK"
