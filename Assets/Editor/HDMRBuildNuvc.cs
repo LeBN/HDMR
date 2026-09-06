@@ -94,28 +94,31 @@ public static class HDMRBuildNuvc
         }
         catch (Exception e) { Debug.LogWarning("[HDMRBuildNuvc] window size: " + e.Message); }
 
-        // keep the YUV shader — nothing in a scene references it by asset
+        // keep our blit shaders — nothing in a scene references them by asset
         var g = GraphicsSettings.GetGraphicsSettings();
         var so = new SerializedObject(g);
         var arr = so.FindProperty("m_AlwaysIncludedShaders");
-        bool has = false;
-        for (int i = 0; i < arr.arraySize; i++)
+        bool anyAdded = false;
+        foreach (var name in new[] { "Hdmr/NV12", "Hdmr/NuvcStereo" })
         {
-            var sh = arr.GetArrayElementAtIndex(i).objectReferenceValue as Shader;
-            if (sh != null && sh.name == "Hdmr/NV12") { has = true; break; }
-        }
-        if (!has)
-        {
-            var shader = Shader.Find("Hdmr/NV12");
+            bool has = false;
+            for (int i = 0; i < arr.arraySize; i++)
+            {
+                var sh = arr.GetArrayElementAtIndex(i).objectReferenceValue as Shader;
+                if (sh != null && sh.name == name) { has = true; break; }
+            }
+            if (has) continue;
+            var shader = Shader.Find(name);
             if (shader != null)
             {
                 arr.InsertArrayElementAtIndex(arr.arraySize);
                 arr.GetArrayElementAtIndex(arr.arraySize - 1).objectReferenceValue = shader;
-                so.ApplyModifiedProperties();
-                Debug.Log("[HDMRBuildNuvc] added Hdmr/NV12 to always-included shaders");
+                anyAdded = true;
+                Debug.Log("[HDMRBuildNuvc] added " + name + " to always-included shaders");
             }
-            else Debug.LogWarning("[HDMRBuildNuvc] Shader.Find(Hdmr/NV12) == null");
+            else Debug.LogWarning("[HDMRBuildNuvc] Shader.Find(" + name + ") == null");
         }
+        if (anyAdded) so.ApplyModifiedProperties();
 
         Debug.Log("[HDMRBuildNuvc] player settings configured");
     }

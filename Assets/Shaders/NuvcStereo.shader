@@ -83,25 +83,53 @@ Shader "Hdmr/NuvcStereo"
                 return tex2D(_MainTex, p);
             }
 
+            // thin bright line near coordinate `at` along X (vert) or Y (horiz)
+            bool nearLine(float v, float at, float px) { return abs(v - at) < px; }
+
+            // guide overlay for a per-eye view: centre crosshair + edge frame
+            fixed4 guides(fixed4 c, float2 uv)
+            {
+                if (_BgGrid < 0.5) return c;
+                float px = 0.0016;
+                // centre cross
+                if (nearLine(uv.x, 0.5, px) || nearLine(uv.y, 0.5, px))
+                    c.rgb = lerp(c.rgb, float3(0, 1, 0), 0.7);
+                // 20-cell grid
+                float2 g = abs(frac(uv * 20.0) - 0.5);
+                if (min(g.x, g.y) < 0.015) c.rgb = lerp(c.rgb, float3(0, 0.7, 0), 0.3);
+                return c;
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv;
                 int m = (int)round(_Mode);
 
-                if (m == 0)   // full, still scale/pan/warp with the L params
+                if (m == 0)   // full source: raw SBS, with the split line + eye centres marked
                 {
                     float2 p = (uv - 0.5) / max(_Scale, 0.01) + 0.5 + float2(_OffXL, _OffYL);
                     p = warp(p, float2(0.5, 0.5));
-                    if (any(p < 0.0) || any(p > 1.0)) return fixed4(0,0,0,1);
-                    return tex2D(_MainTex, p);
+                    fixed4 c = (any(p < 0.0) || any(p > 1.0)) ? fixed4(0,0,0,1) : tex2D(_MainTex, p);
+                    if (_BgGrid > 0.5)
+                    {
+                        // the source split (magenta) and each half's centre (green)
+                        if (nearLine(uv.x, _SplitX, 0.0015)) c.rgb = float3(1, 0, 1);
+                        if (nearLine(uv.x, _SplitX * 0.5, 0.0012) ||
+                            nearLine(uv.x, _SplitX + (1.0 - _SplitX) * 0.5, 0.0012) ||
+                            nearLine(uv.y, 0.5, 0.0012)) c.rgb = lerp(c.rgb, float3(0,1,0), 0.7);
+                    }
+                    return c;
                 }
-                if (m == 1) return sampleEye(uv, -1);
-                if (m == 2) return sampleEye(uv, +1);
+                if (m == 1) return guides(sampleEye(uv, -1), uv);
+                if (m == 2) return guides(sampleEye(uv, +1), uv);
 
                 if (m == 3)  // SBS fit: left half in left 50%, right half in right 50%
                 {
-                    if (uv.x < 0.5) return sampleEye(float2(uv.x * 2.0, uv.y), -1);
-                    return sampleEye(float2((uv.x - 0.5) * 2.0, uv.y), +1);
+                    fixed4 c; float2 e;
+                    if (uv.x < 0.5) { c = sampleEye(float2(uv.x * 2.0, uv.y), -1); e = float2(uv.x * 2.0, uv.y); }
+                    else            { c = sampleEye(float2((uv.x - 0.5) * 2.0, uv.y), +1); e = float2((uv.x - 0.5) * 2.0, uv.y); }
+                    if (_BgGrid > 0.5 && nearLine(uv.x, 0.5, 0.001)) c.rgb = float3(1, 1, 0);
+                    return guides(c, e);
                 }
                 if (m == 4)  // anaglyph
                 {

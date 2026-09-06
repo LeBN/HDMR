@@ -1,0 +1,111 @@
+# nuvc — dark source + stereo calibration (night session, 2026-09-07)
+
+## What was on the card tonight
+
+Switch 2 → USB HDMI capture card → Quest 3, streamed by the from-scratch
+`nuvc` plugin (`com.natis.hdmr.nuvc`). Video path healthy the whole session:
+
+```
+nuvc : fps=60.0  last=1382400 bytes  bad=0          (1280x720 NV12)
+Unity: cap→pull 8.3ms (max 15) · usbSpan 16.1ms · seq climbing
+nuvc-uac: okPkt climbing, zeroPkt=3, errPkt=0, 48000Hz 2ch     (audio OK)
+```
+
+So: capture, transport, NV12→RGB, audio — all working. The problem the
+user reported ("je viens de la voir s'afficher, par contre il est très
+sombre") is purely a **levels / layout** problem, not a capture problem.
+
+## The darkness — measured, not guessed
+
+Added a Y-plane luma probe (`SampleLuma`, ~4k samples/frame):
+
+```
+[nuvc] ... luma 0/18/79
+```
+
+min 0, **mean 18, max 79** (out of 255). The source is a *real image* (it
+has structure — not `SourceLikelyBlack`, which needs max-min < 8) but it
+genuinely never gets brighter than ~31 %. Causes, in likely order:
+
+1. **Switch-2 VR/stereo render mode** puts two barrel-distorted circular
+   views on a large black field → most of the frame is black, dragging the
+   mean right down.
+2. Limited-range (16–235) NV12 decode of what may be a full-range signal
+   costs a little more headroom.
+3. Dark game content / a menu at the moment of capture.
+
+Even a hard 2/98 per-channel histogram stretch of the metacam screenshot
+barely lifts the content — consistent with "small bright region on black",
+i.e. cause 1 dominates.
+
+## Fix 1 — picture grade (shipped this session)
+
+`Hdmr/NV12` shader gained `_Gain` / `_Gamma` / `_Lift`, applied after the
+BT.709 matrix:
+
+```
+rgb = rgb*(1-_Lift) + _Lift;      // raise the floor off 0
+rgb = saturate(rgb * _Gain);      // exposure
+rgb = pow(rgb, 1/_Gamma);         // midtone lift
+```
+
+- `NuvcCapture.Gain/Gamma/Lift`, persisted in PlayerPrefs `nuvc.grade.*`.
+- `AutoGrade()` picks values from the live luma stats
+  (`Gain ≈ 0.95/max`, small `Lift`, `Gamma 1.4`).
+- **One-shot auto-grade**: on first run, after 4 luma samples, if the user
+  has never saved a grade and the source never reaches luma 150,
+  `AutoGrade()` fires once automatically (logged). A manual Save sets
+  `nuvc.grade.userset=1` and suppresses it thereafter.
+- UI: "Picture ▼" panel — Exposure / Gamma / Black-lift sliders + Auto /
+  Reset / Save. Also a live "source luma a/b/c — live image / LIKELY BLACK"
+  status line so the Switch-asleep case is unambiguous on the panel.
+
+Screenshot-side tools live in the scratchpad: `enhance.js` (histogram
+stretch / bright / gamma presets) and `cropstretch.js` (crop to the panel
++ hard stretch + 2×).
+
+## Fix 2 — stereo re-layout stage (shipped, untested on device)
+
+New shader `Hdmr/NuvcStereo`, run as a second `Graphics.Blit` after the
+NV12 conversion (`NuvcCapture.StereoOutput`, gated by `StereoOn`). All
+params persisted in `nuvc.st.*`, all exposed as sliders in the "Stereo ▼"
+panel:
+
+| param | slider range | meaning |
+|---|---|---|
+| `SMode` | button cycle | Full / Left eye / Right eye / SBS fit / Anaglyph / Ghost overlay |
+| `SSplitX` | 0.30–0.70 | where L and R halves meet in the source (magenta guide line in Full mode) |
+| `SScale` | 0.4–2.5 | zoom per eye |
+| `SOffXL/YL`, `SOffXR/YR` | ±0.5 | pan each eye-half so it lands in front of the eye |
+| `SConverge` | ±0.3 | symmetric horizontal toe-in |
+| `SK1`, `SK2` | ±0.6 / ±0.4 | radial distortion applied to the *sampling* coord — k<0 barrel, k>0 pincushion; inverts (or adds to) the source's baked lens warp |
+| `SGrid` | toggle | green 20-cell grid + centre crosshair; split/edge guides |
+
+**On a 2D panel this can only *preview*** (one eye, SBS-fit, anaglyph,
+ghost-overlay for convergence tuning). True per-eye display needs an XR
+build — but every slider value found here transfers straight over, so the
+calibration work is not wasted.
+
+## Next (needs the headset + battery)
+
+1. Charge the Quest. Battery went 46 %→1 % in ~55 min streaming
+   video+audio+fake-worn — that drain rate is expected, not a bug, but it
+   means device testing needs the charger connected (the card can share the
+   port via a powered hub, or test in short bursts).
+2. Launch nuvc, open "Stereo ▼", turn Stereo ON, Grid ON, View = "Full".
+   Read off where the magenta split line sits vs. the actual seam in the
+   Switch's SBS output — set `SSplitX` to match.
+3. View = "Ghost overlay": adjust `SConverge` / per-eye offsets until a
+   near-field feature and a far-field feature both line up sanely.
+4. View = "Left eye" / "Right eye": dial `SK1`/`SK2` until straight lines
+   in the game render straight (cancelling the baked barrel distortion),
+   or deliberately leave some in to match the Quest's own lens profile.
+5. Then decide: is the 2D-panel result good enough head-locked, or do we
+   commit to the XR per-eye build (Meta XR SDK, `6da85d8` has the infra).
+
+## XR build status
+
+XR infra (`Assets/XR`, `HDMRBuildXR.cs`, OVR settings) is **removed from
+the working tree** — it referenced `HdmrXrRig` which broke compilation.
+Everything is retrievable from commit `6da85d8`. `Packages/manifest.json`
+was never modified (still no Meta XR packages installed).

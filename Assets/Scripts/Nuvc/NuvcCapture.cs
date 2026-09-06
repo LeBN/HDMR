@@ -38,6 +38,66 @@ namespace HdmrNuvc
         [NonSerialized] public bool WantAudio = true;
         public string AudioStatus { get; private set; } = "off";
 
+        // ---- stereo re-layout stage (Hdmr/NuvcStereo) --------------------
+        // The Switch-2 in its VR/stereo render mode sends a side-by-side frame
+        // with the lens distortion already baked in. This stage splits it,
+        // pans/scales each eye-half so it lands in front of the eye, converges
+        // them, and radial-warps to cancel (or add) barrel distortion. On a 2D
+        // panel it can only preview one eye / SBS / anaglyph / ghost-overlay;
+        // the slider values carry straight over to a true per-eye XR build.
+        public RenderTexture StereoOutput { get; private set; }
+        [NonSerialized] public bool StereoOn = false;
+        [NonSerialized] public int SMode = 0;        // 0 full 1 L 2 R 3 SBS-fit 4 anaglyph 5 overlay
+        [NonSerialized] public float SSplitX = 0.5f; // where the two halves meet in the source
+        [NonSerialized] public float SScale = 1f;
+        [NonSerialized] public float SOffXL = 0f, SOffYL = 0f, SOffXR = 0f, SOffYR = 0f;
+        [NonSerialized] public float SConverge = 0f;
+        [NonSerialized] public float SK1 = 0f, SK2 = 0f;
+        [NonSerialized] public bool SGrid = false;
+
+        public RenderTexture Display => (StereoOn && StereoOutput != null) ? StereoOutput : Output;
+
+        static readonly string[] SModeNames = { "Full", "Left eye", "Right eye", "SBS fit", "Anaglyph", "Ghost overlay" };
+        public string SModeName => SModeNames[Mathf.Clamp(SMode, 0, 5)];
+
+        const string SK_ = "nuvc.st.";
+        void LoadStereo()
+        {
+            StereoOn  = PlayerPrefs.GetInt(SK_ + "on", 0) == 1;
+            SMode     = PlayerPrefs.GetInt(SK_ + "mode", 0);
+            SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1f);
+            SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
+            SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
+            SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
+            SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
+            SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", 0f);
+            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0f);
+            SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
+        }
+        public void SaveStereo()
+        {
+            PlayerPrefs.SetInt(SK_ + "on", StereoOn ? 1 : 0);
+            PlayerPrefs.SetInt(SK_ + "mode", SMode);
+            PlayerPrefs.SetFloat(SK_ + "split", SSplitX);
+            PlayerPrefs.SetFloat(SK_ + "scale", SScale);
+            PlayerPrefs.SetFloat(SK_ + "oxl", SOffXL);
+            PlayerPrefs.SetFloat(SK_ + "oyl", SOffYL);
+            PlayerPrefs.SetFloat(SK_ + "oxr", SOffXR);
+            PlayerPrefs.SetFloat(SK_ + "oyr", SOffYR);
+            PlayerPrefs.SetFloat(SK_ + "conv", SConverge);
+            PlayerPrefs.SetFloat(SK_ + "k1", SK1);
+            PlayerPrefs.SetFloat(SK_ + "k2", SK2);
+            PlayerPrefs.SetInt(SK_ + "grid", SGrid ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+        public void ResetStereo()
+        {
+            SSplitX = 0.5f; SScale = 1f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
+            SConverge = 0f; SK1 = 0f; SK2 = 0f;
+        }
+
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
         [NonSerialized] public bool FlipX = false, FlipY = true, FullRange = false;
 
@@ -91,6 +151,7 @@ namespace HdmrNuvc
         bool _audioStarted;
         float _audioT;
         Material _mat;
+        Material _sMat;
         Texture2D _texY, _texUV;
         byte[] _buf;
         GCHandle _pin;
@@ -104,7 +165,10 @@ namespace HdmrNuvc
         void Awake()
         {
             _mat = new Material(Shader.Find("Hdmr/NV12"));
+            var sShader = Shader.Find("Hdmr/NuvcStereo");
+            if (sShader != null) _sMat = new Material(sShader);
             LoadGrade();
+            LoadStereo();
             _buf = new byte[3840 * 2160 * 2];
             _pin = GCHandle.Alloc(_buf, GCHandleType.Pinned);
             _base = _pin.AddrOfPinnedObject();
@@ -234,6 +298,26 @@ namespace HdmrNuvc
                 _mat.SetFloat("_Lift", Lift);
                 Graphics.Blit(_texY, Output, _mat);
 
+                if (StereoOn && _sMat != null && StereoOutput != null)
+                {
+                    // per-eye modes only look at half the source -> half-width aspect
+                    bool perEye = SMode >= 1 && SMode <= 5;
+                    float asp = Height > 0 ? (Width * (perEye ? 0.5f : 1f)) / Height : 1.777f;
+                    _sMat.SetFloat("_Mode", SMode);
+                    _sMat.SetFloat("_SplitX", SSplitX);
+                    _sMat.SetFloat("_Scale", SScale);
+                    _sMat.SetFloat("_OffXL", SOffXL);
+                    _sMat.SetFloat("_OffYL", SOffYL);
+                    _sMat.SetFloat("_OffXR", SOffXR);
+                    _sMat.SetFloat("_OffYR", SOffYR);
+                    _sMat.SetFloat("_Converge", SConverge);
+                    _sMat.SetFloat("_K1", SK1);
+                    _sMat.SetFloat("_K2", SK2);
+                    _sMat.SetFloat("_Aspect", asp);
+                    _sMat.SetFloat("_BgGrid", SGrid ? 1f : 0f);
+                    Graphics.Blit(Output, StereoOutput, _sMat);
+                }
+
                 try
                 {
                     long[] l = _nuvc.Call<long[]>("lat");
@@ -314,11 +398,14 @@ namespace HdmrNuvc
             if (_texY) Destroy(_texY);
             if (_texUV) Destroy(_texUV);
             if (Output) Output.Release();
+            if (StereoOutput) StereoOutput.Release();
 
             _texY = new Texture2D(w, h, TextureFormat.R8, false, true) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
             _texUV = new Texture2D(w / 2, h / 2, TextureFormat.RG16, false, true) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
             Output = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32) { name = "NuvcRGB" };
             Output.Create();
+            StereoOutput = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32) { name = "NuvcStereo" };
+            StereoOutput.Create();
             _mat.SetTexture("_YTex", _texY);
             _mat.SetTexture("_UVTex", _texUV);
             Debug.Log($"[nuvc] textures {w}x{h}");

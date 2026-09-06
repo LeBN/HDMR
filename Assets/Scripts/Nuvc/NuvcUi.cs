@@ -3,8 +3,9 @@ using UnityEngine;
 namespace HdmrNuvc
 {
     /// <summary>
-    /// Minimal on-panel UI: the RGB output drawn edge-to-edge (letterboxed to
-    /// aspect), a tap-toggled stats strip, and flip / range toggles.
+    /// On-panel UI: the RGB (or stereo-processed) output drawn edge-to-edge,
+    /// a tap-toggled stats strip, and collapsible PICTURE and STEREO panels
+    /// full of sliders.
     /// </summary>
     public sealed class NuvcUi : MonoBehaviour
     {
@@ -12,24 +13,25 @@ namespace HdmrNuvc
 
         bool _stats = true;
         bool _grade = false;
+        bool _stereo = false;
         GUIStyle _label, _small;
 
-        static float Slider(Rect r, string name, float v, float lo, float hi, GUIStyle st)
-        {
-            GUI.Label(new Rect(r.x, r.y - 22, r.width, 20), $"{name}  {v:0.00}", st);
-            return GUI.HorizontalSlider(r, v, lo, hi);
-        }
-
-        void Awake()
-        {
-            _label = null;
-        }
+        void Awake() { _label = null; }
 
         void EnsureStyles()
         {
             if (_label != null) return;
             _label = new GUIStyle(GUI.skin.label) { fontSize = 26, normal = { textColor = Color.white } };
             _small = new GUIStyle(GUI.skin.label) { fontSize = 20, normal = { textColor = new Color(1, 1, 1, 0.85f) } };
+        }
+
+        // labelled horizontal slider; returns the (possibly) new value
+        static float Row(float x, float y, float w, string name, float v, float lo, float hi, GUIStyle st, ref bool dirty)
+        {
+            GUI.Label(new Rect(x, y - 24, w, 22), $"{name}   {v:0.000}", st);
+            float nv = GUI.HorizontalSlider(new Rect(x, y, w, 28), v, lo, hi);
+            if (!Mathf.Approximately(nv, v)) dirty = true;
+            return nv;
         }
 
         void OnGUI()
@@ -41,7 +43,7 @@ namespace HdmrNuvc
             GUI.DrawTexture(new Rect(0, 0, W, H), Texture2D.whiteTexture);
             GUI.color = Color.white;
 
-            var tex = cap != null ? cap.Output : null;
+            var tex = cap != null ? cap.Display : null;
             if (tex != null && cap.Width > 0)
             {
                 float ta = (float)cap.Width / cap.Height, pa = W / H;
@@ -54,57 +56,85 @@ namespace HdmrNuvc
                 GUI.Label(new Rect(0, H * 0.45f, W, 40), cap != null ? cap.Status : "no capture", _label);
             }
 
-            // top-left toggle
             if (GUI.Button(new Rect(0, 0, 90, 60), "i")) _stats = !_stats;
 
             if (_stats && cap != null)
             {
                 string link = cap.LinkSpeed == 4 ? "USB3 SuperSpeed" : cap.LinkSpeed == 3 ? "USB2 High" : "link " + cap.LinkSpeed;
                 GUI.color = new Color(0, 0, 0, 0.6f);
-                GUI.DrawTexture(new Rect(0, H - 164, W, 164), Texture2D.whiteTexture);
+                GUI.DrawTexture(new Rect(0, H - 200, W, 200), Texture2D.whiteTexture);
                 GUI.color = Color.white;
-                GUI.Label(new Rect(24, H - 158, W, 32),
+                GUI.Label(new Rect(24, H - 194, W, 32),
                     $"nuvc · {link} · {cap.Width}x{cap.Height} {(cap.Fmt == 2 ? "MJPEG" : cap.Fmt == 1 ? "YUY2" : "NV12")}", _label);
-                GUI.Label(new Rect(24, H - 122, W, 28),
+                GUI.Label(new Rect(24, H - 158, W, 28),
                     $"video {cap.VideoFps:0.0} fps   ·   displayed {cap.DisplayedFps:0.0} fps   ·   seq {cap.Seq}", _small);
-                GUI.Label(new Rect(24, H - 92, W, 28),
-                    $"capture→pull {cap.CapToPullMs:0.0} ms  (max {cap.CapToPullMaxMs:0} )   ·   USB span {cap.AsmMs:0.0} ms", _small);
-                GUI.Label(new Rect(24, H - 62, W, 28), $"{cap.Status}   ·   audio: {cap.AudioStatus}", _small);
+                GUI.Label(new Rect(24, H - 128, W, 28),
+                    $"capture→pull {cap.CapToPullMs:0.0} ms  (max {cap.CapToPullMaxMs:0})   ·   USB span {cap.AsmMs:0.0} ms", _small);
+                GUI.Label(new Rect(24, H - 98, W, 28), $"{cap.Status}   ·   audio: {cap.AudioStatus}", _small);
                 GUI.color = cap.SourceLikelyBlack ? new Color(1f, 0.5f, 0.4f) : new Color(0.5f, 1f, 0.6f);
-                GUI.Label(new Rect(24, H - 190, W, 26),
-                    $"source luma {cap.LumaMin}/{cap.LumaMean:0}/{cap.LumaMax}   {(cap.SourceLikelyBlack ? "— LIKELY BLACK (Switch asleep / no HDMI signal?)" : "— live image")}", _small);
+                GUI.Label(new Rect(24, H - 68, W, 26),
+                    $"source luma {cap.LumaMin}/{cap.LumaMean:0}/{cap.LumaMax}   " +
+                    $"{(cap.SourceLikelyBlack ? "— LIKELY BLACK (Switch asleep / no HDMI signal?)" : "— live image")}", _small);
                 GUI.color = Color.white;
 
                 bool dirty = false;
-                if (GUI.Button(new Rect(W - 700, H - 100, 120, 56), "Flip X")) { cap.FlipX = !cap.FlipX; dirty = true; }
-                if (GUI.Button(new Rect(W - 574, H - 100, 120, 56), "Flip Y")) { cap.FlipY = !cap.FlipY; dirty = true; }
-                if (GUI.Button(new Rect(W - 448, H - 100, 130, 56), cap.FullRange ? "Full range" : "Limited")) { cap.FullRange = !cap.FullRange; dirty = true; }
-                if (GUI.Button(new Rect(W - 312, H - 100, 150, 56), _grade ? "Picture ▲" : "Picture ▼")) _grade = !_grade;
-                if (GUI.Button(new Rect(W - 156, H - 100, 148, 56), cap.WantAudio ? "Audio ✓" : "Audio ✗")) cap.WantAudio = !cap.WantAudio;
+                float bx = W - 900, bw = 140;
+                if (GUI.Button(new Rect(bx + 0 * bw, H - 62, bw - 8, 54), "Flip X")) { cap.FlipX = !cap.FlipX; dirty = true; }
+                if (GUI.Button(new Rect(bx + 1 * bw, H - 62, bw - 8, 54), "Flip Y")) { cap.FlipY = !cap.FlipY; dirty = true; }
+                if (GUI.Button(new Rect(bx + 2 * bw, H - 62, bw - 8, 54), cap.FullRange ? "Full rng" : "Limited")) { cap.FullRange = !cap.FullRange; dirty = true; }
+                if (GUI.Button(new Rect(bx + 3 * bw, H - 62, bw - 8, 54), _grade ? "Picture ▲" : "Picture ▼")) { _grade = !_grade; _stereo = false; }
+                if (GUI.Button(new Rect(bx + 4 * bw, H - 62, bw - 8, 54), _stereo ? "Stereo ▲" : "Stereo ▼")) { _stereo = !_stereo; _grade = false; }
+                if (GUI.Button(new Rect(bx + 5 * bw, H - 62, bw - 8, 54), cap.WantAudio ? "Audio ✓" : "Audio ✗")) cap.WantAudio = !cap.WantAudio;
                 if (dirty) cap.SaveGrade();
             }
 
             if (_grade && cap != null)
             {
-                float pw = 560, px = W - pw - 30, py = H - 470;
-                GUI.color = new Color(0, 0, 0, 0.82f);
-                GUI.DrawTexture(new Rect(px, py, pw, 300), Texture2D.whiteTexture);
+                float pw = 640, px = W - pw - 30, py = 90;
+                GUI.color = new Color(0, 0, 0, 0.85f);
+                GUI.DrawTexture(new Rect(px, py, pw, 330), Texture2D.whiteTexture);
                 GUI.color = Color.white;
-                GUI.Label(new Rect(px + 20, py + 8, pw, 26), "PICTURE  —  source is dark; lift these", _label);
+                GUI.Label(new Rect(px + 20, py + 8, pw, 26), "PICTURE  —  the HDMI feed is dark; lift it", _label);
 
                 bool d = false;
-                float g;
-                g = Slider(new Rect(px + 20, py + 70, pw - 40, 30), "Exposure / gain", cap.Gain, 0.5f, 6f, _small);
-                if (!Mathf.Approximately(g, cap.Gain)) { cap.Gain = g; d = true; }
-                g = Slider(new Rect(px + 20, py + 135, pw - 40, 30), "Gamma (mid lift)", cap.Gamma, 0.3f, 3f, _small);
-                if (!Mathf.Approximately(g, cap.Gamma)) { cap.Gamma = g; d = true; }
-                g = Slider(new Rect(px + 20, py + 200, pw - 40, 30), "Black lift", cap.Lift, 0f, 0.4f, _small);
-                if (!Mathf.Approximately(g, cap.Lift)) { cap.Lift = g; d = true; }
+                cap.Gain = Row(px + 24, py + 78, pw - 48, "Exposure / gain", cap.Gain, 0.5f, 8f, _small, ref d);
+                cap.Gamma = Row(px + 24, py + 148, pw - 48, "Gamma (mid lift)", cap.Gamma, 0.3f, 3f, _small, ref d);
+                cap.Lift = Row(px + 24, py + 218, pw - 48, "Black lift", cap.Lift, 0f, 0.4f, _small, ref d);
 
-                if (GUI.Button(new Rect(px + 20, py + 240, 160, 48), "Auto")) { cap.AutoGrade(); d = true; }
-                if (GUI.Button(new Rect(px + 190, py + 240, 160, 48), "Reset")) { cap.Gain = 1; cap.Gamma = 1; cap.Lift = 0; d = true; }
-                if (GUI.Button(new Rect(px + 360, py + 240, 180, 48), "Save")) cap.SaveGrade();
+                if (GUI.Button(new Rect(px + 24, py + 258, 170, 50), "Auto")) { cap.AutoGrade(); d = true; }
+                if (GUI.Button(new Rect(px + 208, py + 258, 170, 50), "Reset")) { cap.Gain = 1; cap.Gamma = 1; cap.Lift = 0; d = true; }
+                if (GUI.Button(new Rect(px + 392, py + 258, 200, 50), "Save")) cap.SaveGrade();
                 if (d) cap.SaveGrade();
+            }
+
+            if (_stereo && cap != null)
+            {
+                float pw = 700, px = W - pw - 30, py = 90, cx = px + 24, cw = pw - 48;
+                GUI.color = new Color(0, 0, 0, 0.85f);
+                GUI.DrawTexture(new Rect(px, py, pw, 740), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+                GUI.Label(new Rect(cx, py + 8, pw, 26), "STEREO  —  split & align the SBS source", _label);
+
+                bool d = false;
+                if (GUI.Button(new Rect(cx, py + 44, 260, 50), cap.StereoOn ? "Stereo: ON" : "Stereo: off")) { cap.StereoOn = !cap.StereoOn; d = true; }
+                if (GUI.Button(new Rect(cx + 276, py + 44, cw - 276, 50), $"View: {cap.SModeName}")) { cap.SMode = (cap.SMode + 1) % 6; d = true; }
+
+                float r = py + 132; const float P = 56;
+                cap.SSplitX   = Row(cx, r + 0 * P, cw, "Source split X (where L|R meet)", cap.SSplitX, 0.3f, 0.7f, _small, ref d);
+                cap.SScale    = Row(cx, r + 1 * P, cw, "Scale (zoom each eye)", cap.SScale, 0.4f, 2.5f, _small, ref d);
+                cap.SOffXL    = Row(cx, r + 2 * P, cw, "Left  eye  offset X", cap.SOffXL, -0.5f, 0.5f, _small, ref d);
+                cap.SOffYL    = Row(cx, r + 3 * P, cw, "Left  eye  offset Y", cap.SOffYL, -0.5f, 0.5f, _small, ref d);
+                cap.SOffXR    = Row(cx, r + 4 * P, cw, "Right eye  offset X", cap.SOffXR, -0.5f, 0.5f, _small, ref d);
+                cap.SOffYR    = Row(cx, r + 5 * P, cw, "Right eye  offset Y", cap.SOffYR, -0.5f, 0.5f, _small, ref d);
+                cap.SConverge = Row(cx, r + 6 * P, cw, "Convergence (toe-in)", cap.SConverge, -0.3f, 0.3f, _small, ref d);
+                cap.SK1       = Row(cx, r + 7 * P, cw, "Distortion k1 (-barrel / +pincushion)", cap.SK1, -0.6f, 0.6f, _small, ref d);
+                cap.SK2       = Row(cx, r + 8 * P, cw, "Distortion k2", cap.SK2, -0.4f, 0.4f, _small, ref d);
+
+                float by = r + 9 * P + 6;
+                if (GUI.Button(new Rect(cx, by, 150, 50), cap.SGrid ? "Grid ✓" : "Grid")) { cap.SGrid = !cap.SGrid; d = true; }
+                if (GUI.Button(new Rect(cx + 166, by, 170, 50), "Reset")) { cap.ResetStereo(); d = true; }
+                if (GUI.Button(new Rect(cx + 352, by, cw - 352, 50), "Save")) cap.SaveStereo();
+                if (d) cap.SaveStereo();
             }
         }
     }
