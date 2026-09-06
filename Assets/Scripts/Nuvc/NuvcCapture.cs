@@ -41,6 +41,42 @@ namespace HdmrNuvc
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
         [NonSerialized] public bool FlipX = false, FlipY = true, FullRange = false;
 
+        // Picture grade — the HDMI source can come in dark (limited-range decode
+        // of a full-range signal, or just dark game content). Persisted.
+        [NonSerialized] public float Gain = 1f, Gamma = 1f, Lift = 0f;
+
+        const string PK = "nuvc.grade.";
+        void LoadGrade()
+        {
+            FullRange = PlayerPrefs.GetInt(PK + "full", 0) == 1;
+            FlipX = PlayerPrefs.GetInt(PK + "flipx", 0) == 1;
+            FlipY = PlayerPrefs.GetInt(PK + "flipy", 1) == 1;
+            Gain = PlayerPrefs.GetFloat(PK + "gain", 1f);
+            Gamma = PlayerPrefs.GetFloat(PK + "gamma", 1f);
+            Lift = PlayerPrefs.GetFloat(PK + "lift", 0f);
+        }
+        /// Pick a grade from the latest luma stats: stretch the observed range
+        /// toward 0..1 and add a little gamma.
+        public void AutoGrade()
+        {
+            float mn = LumaMin / 255f, mx = LumaMax / 255f;
+            if (mx - mn < 0.02f) { Gain = 3f; Gamma = 1.6f; Lift = 0.02f; return; }
+            Gain = Mathf.Clamp(0.95f / Mathf.Max(mx, 0.05f), 1f, 6f);
+            Lift = Mathf.Clamp(mn * -0.5f + 0.02f, 0f, 0.1f);
+            Gamma = 1.4f;
+        }
+
+        public void SaveGrade()
+        {
+            PlayerPrefs.SetInt(PK + "full", FullRange ? 1 : 0);
+            PlayerPrefs.SetInt(PK + "flipx", FlipX ? 1 : 0);
+            PlayerPrefs.SetInt(PK + "flipy", FlipY ? 1 : 0);
+            PlayerPrefs.SetFloat(PK + "gain", Gain);
+            PlayerPrefs.SetFloat(PK + "gamma", Gamma);
+            PlayerPrefs.SetFloat(PK + "lift", Lift);
+            PlayerPrefs.Save();
+        }
+
         AndroidJavaObject _nuvc;
         AndroidJavaObject _audio;
         AndroidJavaObject _activity;
@@ -60,6 +96,7 @@ namespace HdmrNuvc
         void Awake()
         {
             _mat = new Material(Shader.Find("Hdmr/NV12"));
+            LoadGrade();
             _buf = new byte[3840 * 2160 * 2];
             _pin = GCHandle.Alloc(_buf, GCHandleType.Pinned);
             _base = _pin.AddrOfPinnedObject();
@@ -184,6 +221,9 @@ namespace HdmrNuvc
                 _mat.SetFloat("_FullRange", FullRange ? 1f : 0f);
                 _mat.SetFloat("_FlipX", FlipX ? 1f : 0f);
                 _mat.SetFloat("_FlipY", FlipY ? 1f : 0f);
+                _mat.SetFloat("_Gain", Gain);
+                _mat.SetFloat("_Gamma", Gamma);
+                _mat.SetFloat("_Lift", Lift);
                 Graphics.Blit(_texY, Output, _mat);
 
                 try

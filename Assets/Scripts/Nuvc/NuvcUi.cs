@@ -11,7 +11,14 @@ namespace HdmrNuvc
         public NuvcCapture cap;
 
         bool _stats = true;
+        bool _grade = false;
         GUIStyle _label, _small;
+
+        static float Slider(Rect r, string name, float v, float lo, float hi, GUIStyle st)
+        {
+            GUI.Label(new Rect(r.x, r.y - 22, r.width, 20), $"{name}  {v:0.00}", st);
+            return GUI.HorizontalSlider(r, v, lo, hi);
+        }
 
         void Awake()
         {
@@ -68,10 +75,36 @@ namespace HdmrNuvc
                     $"source luma {cap.LumaMin}/{cap.LumaMean:0}/{cap.LumaMax}   {(cap.SourceLikelyBlack ? "— LIKELY BLACK (Switch asleep / no HDMI signal?)" : "— live image")}", _small);
                 GUI.color = Color.white;
 
-                if (GUI.Button(new Rect(W - 570, H - 100, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
-                if (GUI.Button(new Rect(W - 430, H - 100, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;
-                if (GUI.Button(new Rect(W - 290, H - 100, 130, 56), cap.FullRange ? "Full" : "Limited")) cap.FullRange = !cap.FullRange;
-                if (GUI.Button(new Rect(W - 150, H - 100, 130, 56), cap.WantAudio ? "Audio ✓" : "Audio ✗")) cap.WantAudio = !cap.WantAudio;
+                bool dirty = false;
+                if (GUI.Button(new Rect(W - 700, H - 100, 120, 56), "Flip X")) { cap.FlipX = !cap.FlipX; dirty = true; }
+                if (GUI.Button(new Rect(W - 574, H - 100, 120, 56), "Flip Y")) { cap.FlipY = !cap.FlipY; dirty = true; }
+                if (GUI.Button(new Rect(W - 448, H - 100, 130, 56), cap.FullRange ? "Full range" : "Limited")) { cap.FullRange = !cap.FullRange; dirty = true; }
+                if (GUI.Button(new Rect(W - 312, H - 100, 150, 56), _grade ? "Picture ▲" : "Picture ▼")) _grade = !_grade;
+                if (GUI.Button(new Rect(W - 156, H - 100, 148, 56), cap.WantAudio ? "Audio ✓" : "Audio ✗")) cap.WantAudio = !cap.WantAudio;
+                if (dirty) cap.SaveGrade();
+            }
+
+            if (_grade && cap != null)
+            {
+                float pw = 560, px = W - pw - 30, py = H - 470;
+                GUI.color = new Color(0, 0, 0, 0.82f);
+                GUI.DrawTexture(new Rect(px, py, pw, 300), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+                GUI.Label(new Rect(px + 20, py + 8, pw, 26), "PICTURE  —  source is dark; lift these", _label);
+
+                bool d = false;
+                float g;
+                g = Slider(new Rect(px + 20, py + 70, pw - 40, 30), "Exposure / gain", cap.Gain, 0.5f, 6f, _small);
+                if (!Mathf.Approximately(g, cap.Gain)) { cap.Gain = g; d = true; }
+                g = Slider(new Rect(px + 20, py + 135, pw - 40, 30), "Gamma (mid lift)", cap.Gamma, 0.3f, 3f, _small);
+                if (!Mathf.Approximately(g, cap.Gamma)) { cap.Gamma = g; d = true; }
+                g = Slider(new Rect(px + 20, py + 200, pw - 40, 30), "Black lift", cap.Lift, 0f, 0.4f, _small);
+                if (!Mathf.Approximately(g, cap.Lift)) { cap.Lift = g; d = true; }
+
+                if (GUI.Button(new Rect(px + 20, py + 240, 160, 48), "Auto")) { cap.AutoGrade(); d = true; }
+                if (GUI.Button(new Rect(px + 190, py + 240, 160, 48), "Reset")) { cap.Gain = 1; cap.Gamma = 1; cap.Lift = 0; d = true; }
+                if (GUI.Button(new Rect(px + 360, py + 240, 180, 48), "Save")) cap.SaveGrade();
+                if (d) cap.SaveGrade();
             }
         }
     }
