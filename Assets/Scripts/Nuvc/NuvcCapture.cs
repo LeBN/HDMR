@@ -428,6 +428,12 @@ namespace HdmrNuvc
         public float DetCenXR { get; private set; }
         public float DetCenY { get; private set; }
         public bool HasDetection { get; private set; }
+        // how different the two halves are (0 = identical, ~1 = unrelated).
+        // A real SBS stereo frame differs only by parallax -> small. A mono
+        // frame split down the middle -> large. Warn the user before they
+        // turn Stereo on over a mono source.
+        public float HalvesDiff { get; private set; }
+        public bool SourceLooksStereo => HasDetection && HalvesDiff < 0.18f;
 
         public void AnalyzeSource()
         {
@@ -484,8 +490,24 @@ namespace HdmrNuvc
             DetCenXR = Mathf.Clamp01(((rL + rR) * 0.5f - seam) / Mathf.Max(halfR, 1f));
             DetCenY = Mathf.Clamp01(((tT + tB) * 0.5f) / Mathf.Max((float)rows, 1f));
 
+            // (c) stereo vs mono: compare a grid of points in each half.
+            // left-half point (fx,fy) vs the same (fx,fy) in the right half.
+            int gx = 24, gy = 16; double dsum = 0, lsum = 0;
+            for (int a = 0; a < gx; a++)
+                for (int b = 0; b < gy; b++)
+                {
+                    float fx = (a + 0.5f) / gx, fy = (b + 0.5f) / gy;
+                    int y = Mathf.Clamp((int)(fy * h), 0, h - 1);
+                    int xl = Mathf.Clamp((int)(fx * seam / (float)cols * w), 0, w - 1);
+                    int xr = Mathf.Clamp((int)((DetSplitX + fx * (1f - DetSplitX)) * w), 0, w - 1);
+                    int vl = _buf[y * w + xl], vr = _buf[y * w + xr];
+                    dsum += Mathf.Abs(vl - vr); lsum += (vl + vr) * 0.5;
+                }
+            HalvesDiff = lsum > 1 ? (float)(dsum / lsum) : 1f;
+
             HasDetection = true;
-            DetectStatus = $"split {DetSplitX:0.000}  box {DetContentW:0.00}x{DetContentH:0.00}  " +
+            DetectStatus = $"{(SourceLooksStereo ? "SBS stereo" : "NOT stereo?")} (Δ{HalvesDiff:0.00})  " +
+                           $"split {DetSplitX:0.000}  box {DetContentW:0.00}x{DetContentH:0.00}  " +
                            $"cenL {DetCenXL:0.00}/{DetCenY:0.00} cenR {DetCenXR:0.00}";
             Debug.Log("[nuvc] analyze: " + DetectStatus);
         }

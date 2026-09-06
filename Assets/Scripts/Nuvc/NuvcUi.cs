@@ -126,9 +126,14 @@ namespace HdmrNuvc
                 if (GUI.Button(new Rect(cx, py + 90, 300, 42), "Detect geometry")) cap.AnalyzeSource();
                 if (GUI.Button(new Rect(cx + 314, py + 90, 180, 42), "Apply ▸ sliders")) cap.ApplyDetection();
                 if (GUI.Button(new Rect(cx + 502, py + 90, cw - 502, 42), cap.TestPattern ? "Test patt ✓" : "Test patt")) { cap.TestPattern = !cap.TestPattern; d = true; }
+                GUI.color = !cap.HasDetection ? Color.white
+                          : cap.SourceLooksStereo ? new Color(0.5f, 1f, 0.6f) : new Color(1f, 0.55f, 0.4f);
                 GUI.Label(new Rect(cx, py + 134, cw, 20), "detect: " + cap.DetectStatus, _small);
+                if (cap.StereoOn && cap.HasDetection && !cap.SourceLooksStereo && !cap.TestPattern)
+                    GUI.Label(new Rect(cx, py + 154, cw, 20), "⚠ the two halves differ a lot — is the Switch in VR/stereo mode?", _small);
+                GUI.color = Color.white;
 
-                float r = py + 184; const float P = 46;
+                float r = py + 196; const float P = 45;
                 cap.SSplitX   = Row(cx, r + 0 * P, cw, "Source split X (L|R meet)", cap.SSplitX, 0.3f, 0.7f, _small, ref d);
                 cap.SScale    = Row(cx, r + 1 * P, cw, "Scale (zoom each eye)", cap.SScale, 0.4f, 2.5f, _small, ref d);
                 cap.SOffXL    = Row(cx, r + 2 * P, cw, "Left eye offset X", cap.SOffXL, -0.5f, 0.5f, _small, ref d);
