@@ -46,11 +46,17 @@ namespace HdmrNuvc
         [NonSerialized] public float Gain = 1f, Gamma = 1f, Lift = 0f;
 
         const string PK = "nuvc.grade.";
+        // true once the user has explicitly saved a grade — suppresses the
+        // one-shot auto-grade that otherwise fires when the source comes in dark.
+        bool _gradeIsUserSet;
+        bool _autoGradeDone;
+        int _lumaSamples;
         void LoadGrade()
         {
             FullRange = PlayerPrefs.GetInt(PK + "full", 0) == 1;
             FlipX = PlayerPrefs.GetInt(PK + "flipx", 0) == 1;
             FlipY = PlayerPrefs.GetInt(PK + "flipy", 1) == 1;
+            _gradeIsUserSet = PlayerPrefs.GetInt(PK + "userset", 0) == 1;
             Gain = PlayerPrefs.GetFloat(PK + "gain", 1f);
             Gamma = PlayerPrefs.GetFloat(PK + "gamma", 1f);
             Lift = PlayerPrefs.GetFloat(PK + "lift", 0f);
@@ -74,6 +80,8 @@ namespace HdmrNuvc
             PlayerPrefs.SetFloat(PK + "gain", Gain);
             PlayerPrefs.SetFloat(PK + "gamma", Gamma);
             PlayerPrefs.SetFloat(PK + "lift", Lift);
+            _gradeIsUserSet = true;
+            PlayerPrefs.SetInt(PK + "userset", 1);
             PlayerPrefs.Save();
         }
 
@@ -262,6 +270,24 @@ namespace HdmrNuvc
                 sum += v; n++;
             }
             LumaMin = mn; LumaMax = mx; LumaMean = n > 0 ? (float)sum / n : 0f;
+
+            // One-shot: if the user has never set a grade and, after a few
+            // readings, the source is clearly dark (never reaches near-white and
+            // isn't a flat black frame), lift it automatically so the panel
+            // shows something instead of near-black on first run.
+            if (!_gradeIsUserSet && !_autoGradeDone)
+            {
+                if (mx >= 8 && ++_lumaSamples >= 4)
+                {
+                    _autoGradeDone = true;
+                    if (mx < 150)
+                    {
+                        AutoGrade();
+                        Debug.Log($"[nuvc] auto-grade on dark source (luma {mn}/{LumaMean:0}/{mx}) -> " +
+                                  $"gain {Gain:0.00} gamma {Gamma:0.00} lift {Lift:0.00}");
+                    }
+                }
+            }
         }
 
         float _logT;
