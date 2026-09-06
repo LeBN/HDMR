@@ -374,6 +374,101 @@ namespace HdmrNuvc
             }
         }
 
+        // ---- source geometry auto-detect --------------------------------
+        // Scan the Y plane for (a) the central dark seam of an SBS frame and
+        // (b) the content bounding box inside each half (the Switch's VR mode
+        // frames each eye view in a black field). Turn that into starting
+        // slider values so the user isn't dialling from zero.
+        public string DetectStatus { get; private set; } = "not run";
+        public float DetSplitX { get; private set; } = 0.5f;
+        public float DetContentW { get; private set; }   // content width as fraction of a half
+        public float DetContentH { get; private set; }
+        public float DetCenXL { get; private set; }       // content centre in the left half, 0..1
+        public float DetCenXR { get; private set; }
+        public float DetCenY { get; private set; }
+        public bool HasDetection { get; private set; }
+
+        public void AnalyzeSource()
+        {
+            int w = Width, h = Height;
+            if (Fmt != 0 || w < 16 || h < 16 || _buf == null || _buf.Length < w * h)
+            {
+                DetectStatus = "need a live NV12 frame"; return;
+            }
+
+            int cols = Mathf.Min(w, 512), rows = Mathf.Min(h, 288);
+            var cmean = new float[cols];
+            var rmean = new float[rows];
+            for (int cxi = 0; cxi < cols; cxi++)
+            {
+                int x = (int)((cxi + 0.5f) * w / cols);
+                long s = 0; int nn = 0;
+                for (int ryi = 0; ryi < rows; ryi++)
+                {
+                    int y = (int)((ryi + 0.5f) * h / rows);
+                    s += _buf[y * w + x]; nn++;
+                }
+                cmean[cxi] = (float)s / nn;
+            }
+            for (int ryi = 0; ryi < rows; ryi++)
+            {
+                int y = (int)((ryi + 0.5f) * h / rows);
+                long s = 0; int nn = 0;
+                for (int cxi = 0; cxi < cols; cxi++)
+                {
+                    int x = (int)((cxi + 0.5f) * w / cols);
+                    s += _buf[y * w + x]; nn++;
+                }
+                rmean[ryi] = (float)s / nn;
+            }
+
+            float cMax = 1f; foreach (var v in cmean) if (v > cMax) cMax = v;
+            float rMax = 1f; foreach (var v in rmean) if (v > rMax) rMax = v;
+
+            // (a) seam: darkest column in the central 40 %
+            int lo = cols * 3 / 10, hi = cols * 7 / 10, seam = cols / 2; float seamV = 1e9f;
+            for (int i = lo; i < hi; i++) if (cmean[i] < seamV) { seamV = cmean[i]; seam = i; }
+            DetSplitX = (seam + 0.5f) / cols;
+
+            // (b) content box per half — first/last column above 12 % of that half's max
+            float thr = 0.12f;
+            EdgeBox(cmean, 0, seam, cMax * thr, out int lL, out int lR);
+            EdgeBox(cmean, seam, cols, cMax * thr, out int rL, out int rR);
+            EdgeBox(rmean, 0, rows, rMax * thr, out int tT, out int tB);
+
+            float halfL = seam, halfR = cols - seam;
+            DetContentW = Mathf.Clamp01(((lR - lL) / Mathf.Max(halfL, 1f) + (rR - rL) / Mathf.Max(halfR, 1f)) * 0.5f);
+            DetContentH = Mathf.Clamp01((tB - tT) / Mathf.Max((float)rows, 1f));
+            DetCenXL = Mathf.Clamp01(((lL + lR) * 0.5f) / Mathf.Max(halfL, 1f));
+            DetCenXR = Mathf.Clamp01(((rL + rR) * 0.5f - seam) / Mathf.Max(halfR, 1f));
+            DetCenY = Mathf.Clamp01(((tT + tB) * 0.5f) / Mathf.Max((float)rows, 1f));
+
+            HasDetection = true;
+            DetectStatus = $"split {DetSplitX:0.000}  box {DetContentW:0.00}x{DetContentH:0.00}  " +
+                           $"cenL {DetCenXL:0.00}/{DetCenY:0.00} cenR {DetCenXR:0.00}";
+            Debug.Log("[nuvc] analyze: " + DetectStatus);
+        }
+
+        static void EdgeBox(float[] a, int lo, int hi, float thr, out int first, out int last)
+        {
+            first = lo; last = hi - 1;
+            for (int i = lo; i < hi; i++) { if (a[i] >= thr) { first = i; break; } }
+            for (int i = hi - 1; i >= lo; i--) { if (a[i] >= thr) { last = i; break; } }
+            if (last < first) { first = lo; last = hi - 1; }
+        }
+
+        /// Push the detected geometry into the live sliders.
+        public void ApplyDetection()
+        {
+            if (!HasDetection) { AnalyzeSource(); if (!HasDetection) return; }
+            SSplitX = Mathf.Clamp(DetSplitX, 0.3f, 0.7f);
+            SScale = Mathf.Clamp(1f / Mathf.Max(DetContentW, 0.2f), 0.4f, 2.5f);
+            SOffXL = Mathf.Clamp((DetCenXL - 0.5f), -0.5f, 0.5f);
+            SOffXR = Mathf.Clamp((DetCenXR - 0.5f), -0.5f, 0.5f);
+            SOffYL = SOffYR = Mathf.Clamp((DetCenY - 0.5f), -0.5f, 0.5f);
+            SaveStereo();
+        }
+
         float _logT;
         void Tick(bool got)
         {
