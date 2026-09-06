@@ -55,7 +55,57 @@ namespace HdmrNuvc
         [NonSerialized] public float SK1 = 0f, SK2 = 0f;
         [NonSerialized] public bool SGrid = false;
 
+        [NonSerialized] public bool TestPattern = false;
+        Material _tpMat;
+
         public RenderTexture Display => (StereoOn && StereoOutput != null) ? StereoOutput : Output;
+
+        /// Second Blit: split the SBS source (or test pattern) and lay it out
+        /// per the S* params. No-op when StereoOn is false.
+        void ApplyStereoStage()
+        {
+            if (!StereoOn || _sMat == null || Output == null || StereoOutput == null) return;
+            bool perEye = SMode >= 1 && SMode <= 5;
+            float asp = Height > 0 ? (Width * (perEye ? 0.5f : 1f)) / Height : 1.777f;
+            _sMat.SetFloat("_Mode", SMode);
+            _sMat.SetFloat("_SplitX", SSplitX);
+            _sMat.SetFloat("_Scale", SScale);
+            _sMat.SetFloat("_OffXL", SOffXL);
+            _sMat.SetFloat("_OffYL", SOffYL);
+            _sMat.SetFloat("_OffXR", SOffXR);
+            _sMat.SetFloat("_OffYR", SOffYR);
+            _sMat.SetFloat("_Converge", SConverge);
+            _sMat.SetFloat("_K1", SK1);
+            _sMat.SetFloat("_K2", SK2);
+            _sMat.SetFloat("_Aspect", asp);
+            _sMat.SetFloat("_BgGrid", SGrid ? 1f : 0f);
+            Graphics.Blit(Output, StereoOutput, _sMat);
+        }
+
+        void EnsureOutput(int w, int h)
+        {
+            if (Output != null && Width == w && Height == h) return;
+            if (Output) Output.Release();
+            if (StereoOutput) StereoOutput.Release();
+            Width = w; Height = h;
+            Output = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32) { name = "NuvcRGB" };
+            Output.Create();
+            StereoOutput = new RenderTexture(w, h, 0, RenderTextureFormat.ARGB32) { name = "NuvcStereo" };
+            StereoOutput.Create();
+        }
+
+        void RenderTestPattern()
+        {
+            EnsureOutput(1280, 720);
+            if (_tpMat == null) _tpMat = new Material(Shader.Find("Hdmr/NuvcTestSBS"));
+            if (_tpMat != null)
+            {
+                _tpMat.SetFloat("_Split", SSplitX);
+                Graphics.Blit(null, Output, _tpMat);
+            }
+            Status = "test pattern (no live feed)";
+            ApplyStereoStage();
+        }
 
         static readonly string[] SModeNames = { "Full", "Left eye", "Right eye", "SBS fit", "Anaglyph", "Ghost overlay" };
         public string SModeName => SModeNames[Mathf.Clamp(SMode, 0, 5)];
@@ -75,6 +125,7 @@ namespace HdmrNuvc
             SK1       = PlayerPrefs.GetFloat(SK_ + "k1", 0f);
             SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
+            TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
         public void SaveStereo()
         {
@@ -90,6 +141,7 @@ namespace HdmrNuvc
             PlayerPrefs.SetFloat(SK_ + "k1", SK1);
             PlayerPrefs.SetFloat(SK_ + "k2", SK2);
             PlayerPrefs.SetInt(SK_ + "grid", SGrid ? 1 : 0);
+            PlayerPrefs.SetInt(SK_ + "testpat", TestPattern ? 1 : 0);
             PlayerPrefs.Save();
         }
         public void ResetStereo()
@@ -205,6 +257,13 @@ namespace HdmrNuvc
 
         void Update()
         {
+            if (TestPattern)
+            {
+                RenderTestPattern();
+                Tick(true);
+                return;
+            }
+
             if (_nuvc == null) return;
 
             if (!Streaming)
@@ -298,25 +357,7 @@ namespace HdmrNuvc
                 _mat.SetFloat("_Lift", Lift);
                 Graphics.Blit(_texY, Output, _mat);
 
-                if (StereoOn && _sMat != null && StereoOutput != null)
-                {
-                    // per-eye modes only look at half the source -> half-width aspect
-                    bool perEye = SMode >= 1 && SMode <= 5;
-                    float asp = Height > 0 ? (Width * (perEye ? 0.5f : 1f)) / Height : 1.777f;
-                    _sMat.SetFloat("_Mode", SMode);
-                    _sMat.SetFloat("_SplitX", SSplitX);
-                    _sMat.SetFloat("_Scale", SScale);
-                    _sMat.SetFloat("_OffXL", SOffXL);
-                    _sMat.SetFloat("_OffYL", SOffYL);
-                    _sMat.SetFloat("_OffXR", SOffXR);
-                    _sMat.SetFloat("_OffYR", SOffYR);
-                    _sMat.SetFloat("_Converge", SConverge);
-                    _sMat.SetFloat("_K1", SK1);
-                    _sMat.SetFloat("_K2", SK2);
-                    _sMat.SetFloat("_Aspect", asp);
-                    _sMat.SetFloat("_BgGrid", SGrid ? 1f : 0f);
-                    Graphics.Blit(Output, StereoOutput, _sMat);
-                }
+                ApplyStereoStage();
 
                 try
                 {

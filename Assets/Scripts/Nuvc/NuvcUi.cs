@@ -124,7 +124,8 @@ namespace HdmrNuvc
                 if (GUI.Button(new Rect(cx + 254, py + 38, cw - 254, 44), $"View: {cap.SModeName}")) { cap.SMode = (cap.SMode + 1) % 6; d = true; }
 
                 if (GUI.Button(new Rect(cx, py + 90, 300, 42), "Detect geometry")) cap.AnalyzeSource();
-                if (GUI.Button(new Rect(cx + 314, py + 90, cw - 314, 42), "Apply ▸ sliders")) cap.ApplyDetection();
+                if (GUI.Button(new Rect(cx + 314, py + 90, 180, 42), "Apply ▸ sliders")) cap.ApplyDetection();
+                if (GUI.Button(new Rect(cx + 502, py + 90, cw - 502, 42), cap.TestPattern ? "Test patt ✓" : "Test patt")) { cap.TestPattern = !cap.TestPattern; d = true; }
                 GUI.Label(new Rect(cx, py + 134, cw, 20), "detect: " + cap.DetectStatus, _small);
 
                 float r = py + 184; const float P = 46;

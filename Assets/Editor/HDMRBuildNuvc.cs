@@ -99,7 +99,7 @@ public static class HDMRBuildNuvc
         var so = new SerializedObject(g);
         var arr = so.FindProperty("m_AlwaysIncludedShaders");
         bool anyAdded = false;
-        foreach (var name in new[] { "Hdmr/NV12", "Hdmr/NuvcStereo" })
+        foreach (var name in new[] { "Hdmr/NV12", "Hdmr/NuvcStereo", "Hdmr/NuvcTestSBS" })
         {
             bool has = false;
             for (int i = 0; i < arr.arraySize; i++)
