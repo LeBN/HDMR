@@ -231,10 +231,40 @@ namespace HdmrNuvc
                 _activity = up.GetStatic<AndroidJavaObject>("currentActivity");
                 _nuvc = new AndroidJavaObject("com.natis.nuvc.Nuvc");
                 _audio = new AndroidJavaObject("com.natis.nuvc.Uac");
+                ApplyLaunchExtras();
             }
             catch (Exception e) { Status = "bridge init failed: " + e.Message; Debug.LogError("[nuvc] " + e); }
 #else
             Status = "editor — no device";
+#endif
+        }
+
+        // Debug / remote-test hook: launch with `am start ... -e nuvc.<k> <v>`.
+        //   nuvc.stereo 1   nuvc.testpat 1   nuvc.smode 5   nuvc.grid 1
+        //   nuvc.split / scale / oxl / oyl / oxr / oyr / conv / k1 / k2  (floats)
+        // Values are applied over whatever LoadStereo() restored, and saved.
+        void ApplyLaunchExtras()
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                var intent = _activity.Call<AndroidJavaObject>("getIntent");
+                string S(string k) { try { return intent.Call<string>("getStringExtra", "nuvc." + k); } catch { return null; } }
+                bool any = false;
+                string v;
+                if ((v = S("stereo")) != null)  { StereoOn = v == "1" || v == "true"; any = true; }
+                if ((v = S("testpat")) != null) { TestPattern = v == "1" || v == "true"; any = true; }
+                if ((v = S("grid")) != null)    { SGrid = v == "1" || v == "true"; any = true; }
+                if ((v = S("smode")) != null && int.TryParse(v, out int m)) { SMode = Mathf.Clamp(m, 0, 5); any = true; }
+                void F(string k, ref float f) { var s = S(k); if (s != null && float.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float r)) { f = r; any = true; } }
+                F("split", ref SSplitX); F("scale", ref SScale);
+                F("oxl", ref SOffXL); F("oyl", ref SOffYL); F("oxr", ref SOffXR); F("oyr", ref SOffYR);
+                F("conv", ref SConverge); F("k1", ref SK1); F("k2", ref SK2);
+                if ((v = S("detect")) != null && (v == "1" || v == "true")) { _detectOnFrame = true; any = true; }
+                if ((v = S("autograde")) != null && (v == "1" || v == "true")) { _autoGradeDone = false; _lumaSamples = 0; _gradeIsUserSet = false; any = true; }
+                if (any) { SaveStereo(); Debug.Log($"[nuvc] launch extras applied: stereo={StereoOn} testpat={TestPattern} smode={SMode} grid={SGrid} detect={_detectOnFrame}"); }
+            }
+            catch (Exception e) { Debug.LogWarning("[nuvc] launch extras: " + e.Message); }
 #endif
         }
 
@@ -532,10 +562,20 @@ namespace HdmrNuvc
             SaveStereo();
         }
 
+        bool _detectOnFrame;
         float _logT;
         void Tick(bool got)
         {
             if (got) { _newFrames++; if (_framesSeen < 1000) _framesSeen++; }
+
+            if (_detectOnFrame && _framesSeen > 40 && Fmt == 0)
+            {
+                _detectOnFrame = false;
+                AnalyzeSource();
+                ApplyDetection();
+                Debug.Log($"[nuvc] detect+apply: {DetectStatus}  =>  split {SSplitX:0.000} scale {SScale:0.00} " +
+                          $"L {SOffXL:0.00}/{SOffYL:0.00} R {SOffXR:0.00}/{SOffYR:0.00} conv {SConverge:0.00}");
+            }
             float w = Time.unscaledTime - _fpsT0;
             if (w >= 1f) { DisplayedFps = _newFrames / w; _newFrames = 0; _fpsT0 = Time.unscaledTime; }
             Status = $"streaming {Width}x{Height} {(Fmt == 2 ? "MJPEG" : Fmt == 1 ? "YUY2" : "NV12")}";
