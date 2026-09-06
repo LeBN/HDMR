@@ -115,7 +115,7 @@ namespace HdmrNuvc
                 // top-right Picture panel
                 float pw = 660, px = 24, py = 76, cx = px + 20, cw = pw - 40;
                 GUI.color = new Color(0, 0, 0, 0.86f);
-                GUI.DrawTexture(new Rect(px, py, pw, 700), Texture2D.whiteTexture);
+                GUI.DrawTexture(new Rect(px, py, pw, 726), Texture2D.whiteTexture);
                 GUI.color = Color.white;
                 GUI.Label(new Rect(cx, py + 6, pw, 26), "STEREO  —  split & align the SBS source", _label);
 
@@ -149,6 +149,13 @@ namespace HdmrNuvc
                 if (GUI.Button(new Rect(cx + 154, by, 150, 44), "Reset")) { cap.ResetStereo(); d = true; }
                 if (GUI.Button(new Rect(cx + 318, by, cw - 318, 44), "Save")) cap.SaveStereo();
                 if (d) cap.SaveStereo();
+
+                // compact values line — same nuvc.st.* form as the WebGL bench,
+                // so numbers copy straight across
+                GUI.Label(new Rect(cx, by + 50, cw, 20),
+                    $"split {cap.SSplitX:0.000}  scale {cap.SScale:0.00}  " +
+                    $"L {cap.SOffXL:0.00;-0.00;0.00}/{cap.SOffYL:0.00;-0.00;0.00}  R {cap.SOffXR:0.00;-0.00;0.00}/{cap.SOffYR:0.00;-0.00;0.00}  " +
+                    $"conv {cap.SConverge:0.00;-0.00;0.00}  k1 {cap.SK1:0.00;-0.00;0.00}  k2 {cap.SK2:0.00;-0.00;0.00}", _small);
             }
         }
     }
