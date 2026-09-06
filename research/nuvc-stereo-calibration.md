@@ -80,6 +80,15 @@ panel:
 | `SConverge` | ±0.3 | symmetric horizontal toe-in |
 | `SK1`, `SK2` | ±0.6 / ±0.4 | radial distortion applied to the *sampling* coord — k<0 barrel, k>0 pincushion; inverts (or adds to) the source's baked lens warp |
 | `SGrid` | toggle | green 20-cell grid + centre crosshair; split/edge guides |
+| `TestPattern` | toggle | synthetic SBS calibration frame (`Hdmr/NuvcTestSBS`) — rings + crosshair + grid per half, right half biased 3 % inward. Calibrate split/converge/offsets with no live feed. |
+
+**Detect / Apply buttons**: `AnalyzeSource()` scans the Y plane —
+- central dark seam → `SSplitX`
+- per-half content bounding box → `SScale` + per-eye `SOffX`
+- a 24×16 point grid, left-half vs right-half → `HalvesDiff`; `< 0.18` ⇒
+  "SBS stereo", higher ⇒ "NOT stereo?" and an inline warning if Stereo is
+  on (the Switch probably isn't in VR/stereo mode).
+`ApplyDetection()` pushes the geometry into the sliders.
 
 **On a 2D panel this can only *preview*** (one eye, SBS-fit, anaglyph,
 ghost-overlay for convergence tuning). True per-eye display needs an XR
