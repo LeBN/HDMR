@@ -63,6 +63,10 @@ namespace HdmrNuvc
                 GUI.Label(new Rect(24, H - 92, W, 28),
                     $"capture→pull {cap.CapToPullMs:0.0} ms  (max {cap.CapToPullMaxMs:0} )   ·   USB span {cap.AsmMs:0.0} ms", _small);
                 GUI.Label(new Rect(24, H - 62, W, 28), $"{cap.Status}   ·   audio: {cap.AudioStatus}", _small);
+                GUI.color = cap.SourceLikelyBlack ? new Color(1f, 0.5f, 0.4f) : new Color(0.5f, 1f, 0.6f);
+                GUI.Label(new Rect(24, H - 190, W, 26),
+                    $"source luma {cap.LumaMin}/{cap.LumaMean:0}/{cap.LumaMax}   {(cap.SourceLikelyBlack ? "— LIKELY BLACK (Switch asleep / no HDMI signal?)" : "— live image")}", _small);
+                GUI.color = Color.white;
 
                 if (GUI.Button(new Rect(W - 570, H - 100, 130, 56), "Flip X")) cap.FlipX = !cap.FlipX;
                 if (GUI.Button(new Rect(W - 430, H - 100, 130, 56), "Flip Y")) cap.FlipY = !cap.FlipY;

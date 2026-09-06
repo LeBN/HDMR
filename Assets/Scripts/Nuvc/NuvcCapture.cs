@@ -27,6 +27,14 @@ namespace HdmrNuvc
         public float CapToPullMaxMs { get; private set; }
         public float AsmMs { get; private set; }        // USB receive span of a frame
 
+        // Y-plane luminance of the newest frame — tells us if the HDMI source
+        // is actually showing something (Switch on) or sending black (asleep /
+        // no signal). NV12 black level is ~16; a live image is well above.
+        public int LumaMin { get; private set; }
+        public int LumaMax { get; private set; }
+        public float LumaMean { get; private set; }
+        public bool SourceLikelyBlack => LumaMax - LumaMin < 8 && LumaMean < 24f;
+
         [NonSerialized] public bool WantAudio = true;
         public string AudioStatus { get; private set; } = "off";
 
@@ -167,6 +175,7 @@ namespace HdmrNuvc
             int uvBytes = yBytes / 2;
             if (Fmt == 0 && _buf.Length >= yBytes + uvBytes)
             {
+                SampleLuma(yBytes);
                 _texY.LoadRawTextureData(_base, yBytes);
                 _texY.Apply(false);
                 _texUV.LoadRawTextureData(IntPtr.Add(_base, yBytes), uvBytes);
@@ -197,6 +206,24 @@ namespace HdmrNuvc
             Tick(true);
         }
 
+        float _lumaT;
+        void SampleLuma(int yBytes)
+        {
+            // ~4k samples on a stride — cheap, enough for a black/live verdict
+            if (Time.unscaledTime - _lumaT < 0.5f) return;
+            _lumaT = Time.unscaledTime;
+            int step = Mathf.Max(1, yBytes / 4096);
+            int mn = 255, mx = 0; long sum = 0; int n = 0;
+            for (int i = 0; i < yBytes; i += step)
+            {
+                int v = _buf[i];
+                if (v < mn) mn = v;
+                if (v > mx) mx = v;
+                sum += v; n++;
+            }
+            LumaMin = mn; LumaMax = mx; LumaMean = n > 0 ? (float)sum / n : 0f;
+        }
+
         float _logT;
         void Tick(bool got)
         {
@@ -208,7 +235,8 @@ namespace HdmrNuvc
             {
                 _logT = Time.unscaledTime;
                 Debug.Log($"[nuvc] {Width}x{Height} video={VideoFps:0.0} disp={DisplayedFps:0.0} " +
-                          $"cap→pull={CapToPullMs:0.0}ms(max{CapToPullMaxMs:0}) usbSpan={AsmMs:0.0}ms seq={Seq}");
+                          $"cap→pull={CapToPullMs:0.0}ms(max{CapToPullMaxMs:0}) usbSpan={AsmMs:0.0}ms seq={Seq} " +
+                          $"luma {LumaMin}/{LumaMean:0}/{LumaMax}{(SourceLikelyBlack ? " *BLACK*" : "")}");
             }
         }
 
