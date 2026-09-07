@@ -81,10 +81,16 @@ void Uvc::close() {
 // ~750 MB/s and won't fit; 1440p raw @60 ~330 MB/s is fine.
 static const double BW_BUDGET = 380e6;
 
-// cap on the raw width we auto-select (override with -DNUVC_MAXW=2560 etc).
-// 1920 -> up to 1080p NV12; the Switch's actual HDMI output is the real limit.
+// don't auto-select a mode slower than this (fps). Keeps us off the card's
+// 4K@30 / 1440p@30 entries, which are unusable for live VR.
+static const double MIN_FPS = 50.0;
+
+// cap on the raw width we auto-select (override with -DNUVC_MAXW=3840 etc).
+// 2560 -> up to 1440p NV12 @60; the Switch's actual HDMI output is the real
+// limit (it upscales to whatever mode we negotiate, so past its native res
+// there's no more detail — compare in-headset).
 #ifndef NUVC_MAXW
-#define NUVC_MAXW 1920
+#define NUVC_MAXW 2560
 #endif
 
 static double mode_bw(const Mode& m) {
@@ -153,7 +159,8 @@ static bool scan_720p(libusb_device_handle* h, int& vs_ifnum, uint8_t& ep_in, Mo
                         // bulk budget. Never MJPEG (no decoder) and never YUY2
                         // (no shader). Falls back to smallest raw, then 720p.
                         bool is_nv12 = !cur_mjpeg && maxfs < (uint32_t)w * hgt * 2u;
-                        bool within = w <= (uint32_t)NUVC_MAXW && bw <= BW_BUDGET;
+                        double m_fps = def_iv ? 1.0e7 / (double)def_iv : 30.0;
+                        bool within = w <= (uint32_t)NUVC_MAXW && bw <= BW_BUDGET && m_fps >= MIN_FPS;
                         bool bigger = (uint32_t)w * hgt > (uint32_t)out.w * out.h;
                         if (is_nv12 && ep && within && (!found || bigger)) {
                             out = m; vs_ifnum = id.bInterfaceNumber; ep_in = ep; found = true;
