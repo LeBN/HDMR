@@ -141,8 +141,8 @@ namespace HdmrNuvc
                 cap.SOffXR    = Row(cx, r + 4 * P, cw, "Right eye offset X", cap.SOffXR, -0.5f, 0.5f, _small, ref d);
                 cap.SOffYR    = Row(cx, r + 5 * P, cw, "Right eye offset Y", cap.SOffYR, -0.5f, 0.5f, _small, ref d);
                 cap.SConverge = Row(cx, r + 6 * P, cw, "Convergence (toe-in)", cap.SConverge, -0.3f, 0.3f, _small, ref d);
-                cap.SK1       = Row(cx, r + 7 * P, cw, "Distortion k1 (- barrel / + pincushion)", cap.SK1, -0.6f, 0.6f, _small, ref d);
-                cap.SK2       = Row(cx, r + 8 * P, cw, "Distortion k2", cap.SK2, -0.4f, 0.4f, _small, ref d);
+                cap.SK1       = Row(cx, r + 7 * P, cw, "Distortion k1 (- barrel / + pincushion)", cap.SK1, -1.6f, 0.4f, _small, ref d);
+                cap.SK2       = Row(cx, r + 8 * P, cw, "Distortion k2", cap.SK2, -0.6f, 0.6f, _small, ref d);
 
                 float by = r + 9 * P + 4;
                 if (GUI.Button(new Rect(cx, by, 140, 44), cap.SGrid ? "Grid ✓" : "Grid")) { cap.SGrid = !cap.SGrid; d = true; }

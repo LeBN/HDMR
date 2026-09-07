@@ -19,15 +19,15 @@ Shader "Hdmr/NuvcStereo"
         _OffXR ("Off X R", Float) = 0
         _OffYR ("Off Y R", Float) = 0
         _Converge  ("Converge", Float) = 0
-        _K1 ("Distortion k1", Float) = -0.23
-        _K2 ("Distortion k2", Float) = 0.05
+        _K1 ("Distortion k1", Float) = -1.0
+        _K2 ("Distortion k2", Float) = 0
         _Aspect ("Aspect (half w/h)", Float) = 0.889
         _CenXL ("Distortion centre X L", Float) = 0.5
         _CenYL ("Distortion centre Y L", Float) = 0.5
         _CenXR ("Distortion centre X R", Float) = 0.5
         _CenYR ("Distortion centre Y R", Float) = 0.5
         _FillX ("Fill X (zoom to fill the eye)", Float) = 1.0
-        _FillY ("Fill Y", Float) = 1.75
+        _FillY ("Fill Y", Float) = 1.8
         _BgGrid ("Bg grid", Float) = 0
     }
     SubShader
@@ -60,7 +60,8 @@ Shader "Hdmr/NuvcStereo"
             //   eye = -1 (L) / +1 (R). `uv` = eye-local output in [0,1].
             // Work in a metric where the source half is `_Aspect` wide, 1 tall.
             // Output pixel o -> sample the source at  c + (o-c)/scale * (1 + k1 r^2 + k2 r^4)
-            // (matches the offline fit; measured k1 ~ -0.23 for the Switch-2 VR SBS).
+            // For the Switch-2 VR SBS the barrel is strong: k1 ~ -1.0 (with
+            // _FillY ~ 1.8) flattens the visible edges; k2 not needed.
             float4 sampleEye(float2 uv, float eye)
             {
                 float offx = eye < 0 ? _OffXL : _OffXR;
@@ -75,7 +76,7 @@ Shader "Hdmr/NuvcStereo"
                 float2 c = float2((cen.x  - 0.5) * _Aspect, cen.y  - 0.5);
                 float2 d = (o - c) / max(_Scale, 0.01);
                 float  rr = dot(d, d);
-                d *= (1.0 + _K1 * rr + _K2 * rr * rr);
+                d *= max(1.0 + _K1 * rr + _K2 * rr * rr, 0.03);   // clamp: keep the map from folding at strong k
                 float2 s = c + d;
 
                 float2 ph = float2(s.x / _Aspect + 0.5, s.y + 0.5);

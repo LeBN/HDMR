@@ -18,15 +18,15 @@ Shader "Hdmr/NuvcStereoXR"
         _OffXR ("Off X R", Float) = 0
         _OffYR ("Off Y R", Float) = 0
         _Converge ("Converge", Float) = 0
-        _K1 ("Distortion k1", Float) = -0.23
-        _K2 ("Distortion k2", Float) = 0.05
+        _K1 ("Distortion k1", Float) = -1.0
+        _K2 ("Distortion k2", Float) = 0
         _Aspect ("Aspect (half w/h)", Float) = 0.889
         _CenXL ("Distortion centre X L", Float) = 0.5
         _CenYL ("Distortion centre Y L", Float) = 0.5
         _CenXR ("Distortion centre X R", Float) = 0.5
         _CenYR ("Distortion centre Y R", Float) = 0.5
         _FillX ("Fill X", Float) = 1.0
-        _FillY ("Fill Y", Float) = 1.75
+        _FillY ("Fill Y", Float) = 1.8
         _BgGrid ("Bg grid", Float) = 0
         _Opacity ("Opacity", Float) = 1
     }
@@ -83,7 +83,7 @@ Shader "Hdmr/NuvcStereoXR"
                 float2 cc = float2((cen.x - 0.5) * _Aspect, cen.y - 0.5);
                 float2 d = (o - cc) / max(_Scale, 0.01);
                 float  rr = dot(d, d);
-                d *= (1.0 + _K1 * rr + _K2 * rr * rr);
+                d *= max(1.0 + _K1 * rr + _K2 * rr * rr, 0.03);
                 float2 s = cc + d;
 
                 float2 p = float2(s.x / _Aspect + 0.5, s.y + 0.5);

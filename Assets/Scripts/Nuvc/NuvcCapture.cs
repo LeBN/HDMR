@@ -53,11 +53,11 @@ namespace HdmrNuvc
         [NonSerialized] public float SScale = 1f;
         [NonSerialized] public float SOffXL = 0f, SOffYL = 0f, SOffXR = 0f, SOffYR = 0f;
         [NonSerialized] public float SConverge = 0f;
-        [NonSerialized] public float SK1 = 0f, SK2 = 0f;
+        [NonSerialized] public float SK1 = -1.0f, SK2 = 0f;
         // per-eye distortion centre, half-uv (0.5,0.5 = middle of the half)
         [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
         // zoom the corrected image so the 16:9 game frame fills the eye
-        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.75f;
+        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.8f;
         [NonSerialized] public bool SGrid = false;
 
         [NonSerialized] public bool TestPattern = false;
@@ -137,14 +137,14 @@ namespace HdmrNuvc
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
             SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
-            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.23f);
-            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.05f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -1.0f);
+            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0f);
             SCenXL    = PlayerPrefs.GetFloat(SK_ + "cxl", 0.5f);
             SCenYL    = PlayerPrefs.GetFloat(SK_ + "cyl", 0.5f);
             SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
-            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.75f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.8f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -174,9 +174,9 @@ namespace HdmrNuvc
         public void ResetStereo()
         {
             SSplitX = 0.5f; SScale = 1.0f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = 0f; SK1 = -0.23f; SK2 = 0.05f;
+            SConverge = 0f; SK1 = -1.0f; SK2 = 0f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.75f;
+            SFillX = 1.0f; SFillY = 1.8f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
