@@ -27,6 +27,8 @@ Shader "Hdmr/NuvcStereoXR"
         _CenYR ("Distortion centre Y R", Float) = 0.5
         _FillX ("Fill X", Float) = 1.0
         _FillY ("Fill Y", Float) = 1.78
+        _FlipX ("Flip X", Float) = 0
+        _FlipY ("Flip Y", Float) = 0
         _BgGrid ("Bg grid", Float) = 0
         _Opacity ("Opacity", Float) = 1
     }
@@ -45,7 +47,7 @@ Shader "Hdmr/NuvcStereoXR"
 
             sampler2D _MainTex;
             float _SplitX, _Scale, _OffXL, _OffYL, _OffXR, _OffYR, _Converge, _K1, _K2, _Aspect, _BgGrid, _Opacity;
-            float _CenXL, _CenYL, _CenXR, _CenYR, _FillX, _FillY;
+            float _CenXL, _CenYL, _CenXR, _CenYR, _FillX, _FillY, _FlipX, _FlipY;
 
             struct appdata
             {
@@ -101,14 +103,17 @@ Shader "Hdmr/NuvcStereoXR"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
                 float eye = unity_StereoEyeIndex < 0.5 ? -1.0 : 1.0;
-                float4 c = sampleEye(i.uv, eye);
+                float2 uv = i.uv;
+                if (_FlipX > 0.5) uv.x = 1.0 - uv.x;
+                if (_FlipY > 0.5) uv.y = 1.0 - uv.y;
+                float4 c = sampleEye(uv, eye);
 
                 if (_BgGrid > 0.5)
                 {
                     float px = 0.0016;
-                    if (abs(i.uv.x - 0.5) < px || abs(i.uv.y - 0.5) < px)
+                    if (abs(uv.x - 0.5) < px || abs(uv.y - 0.5) < px)
                         c = float4(lerp(c.rgb, float3(0, 1, 0), 0.7), max(c.a, 0.7));
-                    float2 g = abs(frac(i.uv * 20.0) - 0.5);
+                    float2 g = abs(frac(uv * 20.0) - 0.5);
                     if (min(g.x, g.y) < 0.015)
                         c = float4(lerp(c.rgb, float3(0, 0.7, 0), 0.3), max(c.a, 0.3));
                 }

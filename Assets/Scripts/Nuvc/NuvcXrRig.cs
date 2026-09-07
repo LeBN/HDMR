@@ -98,6 +98,10 @@ namespace HdmrNuvc
             _mat.SetFloat("_CenYR", _cap.SCenYR);
             _mat.SetFloat("_FillX", _cap.SFillX);
             _mat.SetFloat("_FillY", _cap.SFillY);
+            // the quad faces the camera via a 180° Y rotation (Layout), which
+            // mirrors the texture in X — _FlipX (default on) cancels it.
+            _mat.SetFloat("_FlipX", _cap.SXrFlipX ? 1f : 0f);
+            _mat.SetFloat("_FlipY", _cap.SXrFlipY ? 1f : 0f);
             _mat.SetFloat("_BgGrid", _cap.SGrid ? 1f : 0f);
 
             Beat();

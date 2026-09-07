@@ -58,9 +58,11 @@ namespace HdmrNuvc
         [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
         // zoom the corrected image so the 16:9 game frame fills the eye
         [NonSerialized] public float SFillX = 1.0f, SFillY = 1.78f;
-        // XR-only: virtual screen distance (m) and its horizontal angular size
-        // (deg), plus a brightness knob. Tune with --es nuvc.xrdist / nuvc.xrfov.
+        // XR-only: virtual screen distance (m), horizontal angular size (deg),
+        // brightness, and X/Y image flips (the world quad faces the camera via a
+        // 180° Y rotation, which mirrors X — SXrFlipX defaults on to undo it).
         [NonSerialized] public float SXrDist = 2.2f, SXrFov = 55f, SBright = 1.0f;
+        [NonSerialized] public bool SXrFlipX = true, SXrFlipY = false;
         // (kept, unused by the current world-quad shader)
         [NonSerialized] public float SFovFrac = 0.68f, SEyeShiftX = 0f;
         [NonSerialized] public bool SGrid = false;
@@ -132,15 +134,16 @@ namespace HdmrNuvc
         {
             StereoOn  = PlayerPrefs.GetInt(SK_ + "on", 0) == 1;
             SMode     = PlayerPrefs.GetInt(SK_ + "mode", 0);
-            // defaults: user-tuned against the Switch-2 VR SBS (Zelda, 2026-09-07)
-            // k1 -0.82 k2 0.6 scale 0.8 fillY 1.75 — all still tunable in-app.
+            // defaults: user-tuned against the Switch-2 VR SBS, dumped 2026-09-08
+            // (dump-vals.txt) — the XR build has no saved prefs so it renders on
+            // these out of the box; all still tunable in-app / via --es.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
-            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.89f);
-            SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
-            SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.8796f);
+            SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0.0037f);
+            SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", -0.0006f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
-            SConverge = PlayerPrefs.GetFloat(SK_ + "conv", -0.06f);
+            SConverge = PlayerPrefs.GetFloat(SK_ + "conv", -0.0617f);
             SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.78f);
             SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.43f);
             SCenXL    = PlayerPrefs.GetFloat(SK_ + "cxl", 0.5f);
@@ -148,12 +151,14 @@ namespace HdmrNuvc
             SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
-            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.78f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.7767f);
             SFovFrac  = PlayerPrefs.GetFloat(SK_ + "fovfrac", 0.68f);
             SEyeShiftX= PlayerPrefs.GetFloat(SK_ + "eyeshiftx", 0f);
             SBright   = PlayerPrefs.GetFloat(SK_ + "bright", 1.0f);
             SXrDist   = PlayerPrefs.GetFloat(SK_ + "xrdist", 2.2f);
             SXrFov    = PlayerPrefs.GetFloat(SK_ + "xrfov", 55f);
+            SXrFlipX  = PlayerPrefs.GetInt(SK_ + "xrflipx", 1) == 1;
+            SXrFlipY  = PlayerPrefs.GetInt(SK_ + "xrflipy", 0) == 1;
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -181,16 +186,19 @@ namespace HdmrNuvc
             PlayerPrefs.SetFloat(SK_ + "bright", SBright);
             PlayerPrefs.SetFloat(SK_ + "xrdist", SXrDist);
             PlayerPrefs.SetFloat(SK_ + "xrfov", SXrFov);
+            PlayerPrefs.SetInt(SK_ + "xrflipx", SXrFlipX ? 1 : 0);
+            PlayerPrefs.SetInt(SK_ + "xrflipy", SXrFlipY ? 1 : 0);
             PlayerPrefs.SetInt(SK_ + "grid", SGrid ? 1 : 0);
             PlayerPrefs.SetInt(SK_ + "testpat", TestPattern ? 1 : 0);
             PlayerPrefs.Save();
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 0.89f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = -0.06f; SK1 = -0.78f; SK2 = 0.43f;
+            SSplitX = 0.5f; SScale = 0.8796f; SOffXL = 0.0037f; SOffYL = -0.0006f; SOffXR = SOffYR = 0f;
+            SConverge = -0.0617f; SK1 = -0.78f; SK2 = 0.43f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.78f; SBright = 1.0f; SXrDist = 2.2f; SXrFov = 55f; SFovFrac = 0.68f; SEyeShiftX = 0f;
+            SFillX = 1.0f; SFillY = 1.7767f; SBright = 1.0f; SXrDist = 2.2f; SXrFov = 55f; SFovFrac = 0.68f; SEyeShiftX = 0f;
+            SXrFlipX = true; SXrFlipY = false;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
@@ -301,6 +309,8 @@ namespace HdmrNuvc
                 if ((v = S("stereo")) != null)  { StereoOn = v == "1" || v == "true"; any = true; }
                 if ((v = S("testpat")) != null) { TestPattern = v == "1" || v == "true"; any = true; }
                 if ((v = S("grid")) != null)    { SGrid = v == "1" || v == "true"; any = true; }
+                if ((v = S("xrflipx")) != null) { SXrFlipX = v == "1" || v == "true"; any = true; }
+                if ((v = S("xrflipy")) != null) { SXrFlipY = v == "1" || v == "true"; any = true; }
                 if ((v = S("smode")) != null && int.TryParse(v, out int m)) { SMode = Mathf.Clamp(m, 0, 5); any = true; }
                 void F(string k, ref float f) { var s = S(k); if (s != null && float.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float r)) { f = r; any = true; } }
                 F("split", ref SSplitX); F("scale", ref SScale);
