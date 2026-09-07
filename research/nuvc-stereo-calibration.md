@@ -95,6 +95,48 @@ ghost-overlay for convergence tuning). True per-eye display needs an XR
 build — but every slider value found here transfers straight over, so the
 calibration work is not wasted.
 
+## Device session 2026-09-07 (45W bank on the card — power solved)
+
+- **Power**: a 45W USB-PD power bank on the capture card's power-in → the
+  Quest reads `sink_power=true` **even while hosting the card and streaming**,
+  and holds 100% under full load. The earlier adapter was too weak
+  (`source_power=true`, drained ~1.5%/min). The battery race is over — with
+  a ≥45W bank on the card, testing is continuous.
+- **Switch-2 VR-glasses mode confirmed**: clean SBS stereo. Each eye's view
+  is **barrel pre-distorted** (for the Switch's own lens) and sits on a
+  **black field** — there's a black gutter between the two halves at the
+  seam and black around the outer edges. Split ≈ 0.50 (detector wobbles
+  0.43–0.50 depending on on-screen content; 0.50 is right for the Zelda
+  frames).
+- **Measured starting point** (Zelda title screen, via metacam):
+  `split 0.50 · scale 1.22 · k1 0.20 · k2 0.05 · conv 0 · offsets 0`
+  → fills the eye, flattens most of the baked barrel. Now the
+  `LoadStereo`/`ResetStereo` defaults.
+- **Auto-grade** fires on the real feed: `luma ~10/28/72` → `gain ~3.3`.
+- Screenshots: `scratchpad/c2-*.jpg` (full SBS, per-eye raw vs corrected,
+  ghost).
+
+### Still needs the user, worn
+
+A metacam photo is *through the Quest lens at an angle* — it can't show
+true per-eye perception. The user must, wearing the headset:
+- **Convergence** (`SConverge`): on a **static** screen (menu / paused) —
+  ghost-overlay mode, dial until the doubled text merges. Zelda's animated
+  title screen is useless for this.
+- **Fine `k1`/`k2`**: per-eye view — the Quest lens *adds* some barrel back,
+  so the worn-correct k1 is likely a bit *less* than the 0.20 that looks
+  flat on the 2D panel.
+- **Per-eye offset / IPD**: nudge `SOffXL/XR` so each eye's centre sits on
+  the pupil.
+
+### Launch hook — must be a COLD start
+
+`am start -S -W -n com.natis.hdmr.nuvc/com.unity3d.player.UnityPlayerGameActivity --es nuvc.<k> <v>`
+A warm `am start` delivers `onNewIntent`, which Unity's `Awake` never reads,
+so the `--es` extras are silently ignored — always pass `-S`.
+Keys: `stereo testpat grid detect autograde` (0/1), `smode` (0-5),
+`split scale oxl oyl oxr oyr conv k1 k2` (floats).
+
 ## Next (needs the headset + battery)
 
 1. Charge the Quest. Battery went 46 %→1 % in ~55 min streaming
