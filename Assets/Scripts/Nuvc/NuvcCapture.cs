@@ -115,15 +115,18 @@ namespace HdmrNuvc
         {
             StereoOn  = PlayerPrefs.GetInt(SK_ + "on", 0) == 1;
             SMode     = PlayerPrefs.GetInt(SK_ + "mode", 0);
+            // defaults measured against the Switch-2 VR-glasses SBS output
+            // (Zelda, 2026-09-07): split ~mid, each eye's baked-barrel view
+            // needs a bit of pincushion + upscale to fill the eye.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
-            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1.22f);
             SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
             SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
             SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
-            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", 0f);
-            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", 0.20f);
+            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.05f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -146,8 +149,8 @@ namespace HdmrNuvc
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 1f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = 0f; SK1 = 0f; SK2 = 0f;
+            SSplitX = 0.5f; SScale = 1.22f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
+            SConverge = 0f; SK1 = 0.20f; SK2 = 0.05f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
@@ -239,10 +242,13 @@ namespace HdmrNuvc
 #endif
         }
 
-        // Debug / remote-test hook: launch with `am start ... -e nuvc.<k> <v>`.
-        //   nuvc.stereo 1   nuvc.testpat 1   nuvc.smode 5   nuvc.grid 1
-        //   nuvc.split / scale / oxl / oyl / oxr / oyr / conv / k1 / k2  (floats)
-        // Values are applied over whatever LoadStereo() restored, and saved.
+        // Debug / remote-test hook. Read only in Awake(), so launch COLD:
+        //   adb shell am start -S -W -n com.natis.hdmr.nuvc/com.unity3d.player.UnityPlayerGameActivity \
+        //     --es nuvc.stereo 1 --es nuvc.smode 5 --es nuvc.grid 1 --es nuvc.detect 1 --es nuvc.autograde 1
+        //   floats: nuvc.split / scale / oxl / oyl / oxr / oyr / conv / k1 / k2
+        // (`-S` force-stops first; a warm `am start` delivers onNewIntent, which
+        //  Unity's Awake never sees, so the extras are silently ignored.)
+        // Values are applied over whatever LoadStereo() restored, then saved.
         void ApplyLaunchExtras()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
