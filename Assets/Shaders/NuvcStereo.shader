@@ -19,9 +19,15 @@ Shader "Hdmr/NuvcStereo"
         _OffXR ("Off X R", Float) = 0
         _OffYR ("Off Y R", Float) = 0
         _Converge  ("Converge", Float) = 0
-        _K1 ("Distortion k1", Float) = 0
-        _K2 ("Distortion k2", Float) = 0
-        _Aspect ("Aspect (w/h)", Float) = 1.777777
+        _K1 ("Distortion k1", Float) = -0.23
+        _K2 ("Distortion k2", Float) = 0.05
+        _Aspect ("Aspect (half w/h)", Float) = 0.889
+        _CenXL ("Distortion centre X L", Float) = 0.5
+        _CenYL ("Distortion centre Y L", Float) = 0.5
+        _CenXR ("Distortion centre X R", Float) = 0.5
+        _CenYR ("Distortion centre Y R", Float) = 0.5
+        _FillX ("Fill X (zoom to fill the eye)", Float) = 1.0
+        _FillY ("Fill Y", Float) = 1.75
         _BgGrid ("Bg grid", Float) = 0
     }
     SubShader
@@ -37,6 +43,7 @@ Shader "Hdmr/NuvcStereo"
 
             sampler2D _MainTex;
             float _Mode, _SplitX, _Scale, _OffXL, _OffYL, _OffXR, _OffYR, _Converge, _K1, _K2, _Aspect, _BgGrid;
+            float _CenXL, _CenYL, _CenXR, _CenYR, _FillX, _FillY;
 
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
 
@@ -48,39 +55,37 @@ Shader "Hdmr/NuvcStereo"
                 return o;
             }
 
-            // radial distortion around centre c; k>0 pincushion, k<0 barrel.
-            // Applied to the SAMPLING coord so it inverts a baked distortion.
-            float2 warp(float2 uv, float2 c)
-            {
-                float2 d = uv - c;
-                d.x *= _Aspect;                 // work in a square metric
-                float r2 = dot(d, d);
-                float f = 1.0 + _K1 * r2 + _K2 * r2 * r2;
-                d *= f;
-                d.x /= _Aspect;
-                return c + d;
-            }
-
-            // sample one eye's half of the source. eye = -1 (L) or +1 (R)
+            // Sample one eye's half of the SBS source, un-distorting the baked
+            // radial warp so the eye view comes out as a flat rectangle.
+            //   eye = -1 (L) / +1 (R). `uv` = eye-local output in [0,1].
+            // Work in a metric where the source half is `_Aspect` wide, 1 tall.
+            // Output pixel o -> sample the source at  c + (o-c)/scale * (1 + k1 r^2 + k2 r^4)
+            // (matches the offline fit; measured k1 ~ -0.23 for the Switch-2 VR SBS).
             float4 sampleEye(float2 uv, float eye)
             {
                 float offx = eye < 0 ? _OffXL : _OffXR;
                 float offy = eye < 0 ? _OffYL : _OffYR;
+                float2 cen = eye < 0 ? float2(_CenXL, _CenYL) : float2(_CenXR, _CenYR);
 
-                // centre, scale, pan
-                float2 p = (uv - 0.5) / max(_Scale, 0.01) + 0.5;
-                p += float2(offx + eye * _Converge * 0.5, offy);
+                // _FillX/_FillY zoom the output into the source so the 16:9
+                // game frame (a letterboxed band inside the portrait half) fills
+                // the eye view.
+                float2 o = float2((uv.x - 0.5) * _Aspect / max(_FillX, 0.05),
+                                  (uv.y - 0.5)           / max(_FillY, 0.05));
+                float2 c = float2((cen.x  - 0.5) * _Aspect, cen.y  - 0.5);
+                float2 d = (o - c) / max(_Scale, 0.01);
+                float  rr = dot(d, d);
+                d *= (1.0 + _K1 * rr + _K2 * rr * rr);
+                float2 s = c + d;
 
-                // distortion inverse-warp about the eye centre
-                p = warp(p, float2(0.5, 0.5));
+                float2 ph = float2(s.x / _Aspect + 0.5, s.y + 0.5);
+                ph += float2(offx + eye * _Converge * 0.5, offy);
 
-                // map into the correct half of the SBS source
-                float sx = _SplitX;
-                if (eye < 0) p.x = p.x * sx;              // left  -> [0, sx]
-                else         p.x = sx + p.x * (1.0 - sx); // right -> [sx, 1]
+                if (eye < 0) ph.x = ph.x * _SplitX;                 // left  -> [0, split]
+                else         ph.x = _SplitX + ph.x * (1.0 - _SplitX);
 
-                if (any(p < 0.0) || any(p > 1.0)) return float4(0,0,0,1);
-                return tex2D(_MainTex, p);
+                if (any(ph < 0.0) || any(ph > 1.0)) return float4(0, 0, 0, 1);
+                return tex2D(_MainTex, ph);
             }
 
             // thin bright line near coordinate `at` along X (vert) or Y (horiz)
@@ -105,18 +110,17 @@ Shader "Hdmr/NuvcStereo"
                 float2 uv = i.uv;
                 int m = (int)round(_Mode);
 
-                if (m == 0)   // full source: raw SBS, with the split line + eye centres marked
+                if (m == 0)   // corrected full view: each half un-distorted, kept in the _SplitX layout
                 {
-                    float2 p = (uv - 0.5) / max(_Scale, 0.01) + 0.5 + float2(_OffXL, _OffYL);
-                    p = warp(p, float2(0.5, 0.5));
-                    fixed4 c = (any(p < 0.0) || any(p > 1.0)) ? fixed4(0,0,0,1) : tex2D(_MainTex, p);
+                    fixed4 c; float2 e;
+                    if (uv.x < _SplitX) { e = float2(uv.x / _SplitX, uv.y);                         c = sampleEye(e, -1); }
+                    else                { e = float2((uv.x - _SplitX) / (1.0 - _SplitX), uv.y);     c = sampleEye(e, +1); }
                     if (_BgGrid > 0.5)
                     {
-                        // the source split (magenta) and each half's centre (green)
-                        if (nearLine(uv.x, _SplitX, 0.0015)) c.rgb = float3(1, 0, 1);
-                        if (nearLine(uv.x, _SplitX * 0.5, 0.0012) ||
-                            nearLine(uv.x, _SplitX + (1.0 - _SplitX) * 0.5, 0.0012) ||
-                            nearLine(uv.y, 0.5, 0.0012)) c.rgb = lerp(c.rgb, float3(0,1,0), 0.7);
+                        if (nearLine(uv.x, _SplitX, 0.0015)) c.rgb = float3(1, 0, 1);   // seam
+                        float2 g = abs(frac(e * 12.0) - 0.5);
+                        if (min(g.x, g.y) < 0.02) c.rgb = lerp(c.rgb, float3(0, 0.8, 0), 0.35);
+                        if (nearLine(e.x, 0.5, 0.003) || nearLine(e.y, 0.5, 0.003)) c.rgb = lerp(c.rgb, float3(0,1,0), 0.7);
                     }
                     return c;
                 }

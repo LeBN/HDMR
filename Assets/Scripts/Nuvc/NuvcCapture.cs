@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -53,6 +54,10 @@ namespace HdmrNuvc
         [NonSerialized] public float SOffXL = 0f, SOffYL = 0f, SOffXR = 0f, SOffYR = 0f;
         [NonSerialized] public float SConverge = 0f;
         [NonSerialized] public float SK1 = 0f, SK2 = 0f;
+        // per-eye distortion centre, half-uv (0.5,0.5 = middle of the half)
+        [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
+        // zoom the corrected image so the 16:9 game frame fills the eye
+        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.75f;
         [NonSerialized] public bool SGrid = false;
 
         [NonSerialized] public bool TestPattern = false;
@@ -65,8 +70,9 @@ namespace HdmrNuvc
         void ApplyStereoStage()
         {
             if (!StereoOn || _sMat == null || Output == null || StereoOutput == null) return;
-            bool perEye = SMode >= 1 && SMode <= 5;
-            float asp = Height > 0 ? (Width * (perEye ? 0.5f : 1f)) / Height : 1.777f;
+            // sampleEye always reads a HALF of the source, so _Aspect is the
+            // half's aspect regardless of view mode.
+            float asp = Height > 0 ? (Width * SSplitX) / Height : 0.889f;
             _sMat.SetFloat("_Mode", SMode);
             _sMat.SetFloat("_SplitX", SSplitX);
             _sMat.SetFloat("_Scale", SScale);
@@ -77,6 +83,12 @@ namespace HdmrNuvc
             _sMat.SetFloat("_Converge", SConverge);
             _sMat.SetFloat("_K1", SK1);
             _sMat.SetFloat("_K2", SK2);
+            _sMat.SetFloat("_CenXL", SCenXL);
+            _sMat.SetFloat("_CenYL", SCenYL);
+            _sMat.SetFloat("_CenXR", SCenXR);
+            _sMat.SetFloat("_CenYR", SCenYR);
+            _sMat.SetFloat("_FillX", SFillX);
+            _sMat.SetFloat("_FillY", SFillY);
             _sMat.SetFloat("_Aspect", asp);
             _sMat.SetFloat("_BgGrid", SGrid ? 1f : 0f);
             Graphics.Blit(Output, StereoOutput, _sMat);
@@ -115,18 +127,24 @@ namespace HdmrNuvc
         {
             StereoOn  = PlayerPrefs.GetInt(SK_ + "on", 0) == 1;
             SMode     = PlayerPrefs.GetInt(SK_ + "mode", 0);
-            // defaults measured against the Switch-2 VR-glasses SBS output
-            // (Zelda, 2026-09-07): split ~mid, each eye's baked-barrel view
-            // needs a bit of pincushion + upscale to fill the eye.
+            // defaults from the offline distortion fit against the Switch-2
+            // VR-glasses SBS output (Zelda, 2026-09-07): the source is barrel
+            // pre-distorted; k1 ~ -0.23 around the half centre flattens it.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
-            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1.22f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1.0f);
             SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
             SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
             SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
-            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", 0.20f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.23f);
             SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.05f);
+            SCenXL    = PlayerPrefs.GetFloat(SK_ + "cxl", 0.5f);
+            SCenYL    = PlayerPrefs.GetFloat(SK_ + "cyl", 0.5f);
+            SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
+            SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
+            SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.75f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -143,14 +161,22 @@ namespace HdmrNuvc
             PlayerPrefs.SetFloat(SK_ + "conv", SConverge);
             PlayerPrefs.SetFloat(SK_ + "k1", SK1);
             PlayerPrefs.SetFloat(SK_ + "k2", SK2);
+            PlayerPrefs.SetFloat(SK_ + "cxl", SCenXL);
+            PlayerPrefs.SetFloat(SK_ + "cyl", SCenYL);
+            PlayerPrefs.SetFloat(SK_ + "cxr", SCenXR);
+            PlayerPrefs.SetFloat(SK_ + "cyr", SCenYR);
+            PlayerPrefs.SetFloat(SK_ + "fillx", SFillX);
+            PlayerPrefs.SetFloat(SK_ + "filly", SFillY);
             PlayerPrefs.SetInt(SK_ + "grid", SGrid ? 1 : 0);
             PlayerPrefs.SetInt(SK_ + "testpat", TestPattern ? 1 : 0);
             PlayerPrefs.Save();
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 1.22f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = 0f; SK1 = 0.20f; SK2 = 0.05f;
+            SSplitX = 0.5f; SScale = 1.0f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
+            SConverge = 0f; SK1 = -0.23f; SK2 = 0.05f;
+            SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
+            SFillX = 1.0f; SFillY = 1.75f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
@@ -266,7 +292,10 @@ namespace HdmrNuvc
                 F("split", ref SSplitX); F("scale", ref SScale);
                 F("oxl", ref SOffXL); F("oyl", ref SOffYL); F("oxr", ref SOffXR); F("oyr", ref SOffYR);
                 F("conv", ref SConverge); F("k1", ref SK1); F("k2", ref SK2);
+                F("cxl", ref SCenXL); F("cyl", ref SCenYL); F("cxr", ref SCenXR); F("cyr", ref SCenYR);
+                F("fillx", ref SFillX); F("filly", ref SFillY);
                 if ((v = S("detect")) != null && (v == "1" || v == "true")) { _detectOnFrame = true; any = true; }
+                if ((v = S("dump")) != null && (v == "1" || v == "true")) { _dumpOnFrame = 3; any = true; }
                 if ((v = S("autograde")) != null && (v == "1" || v == "true")) { _autoGradeDone = false; _lumaSamples = 0; _gradeIsUserSet = false; any = true; }
                 if (any) { SaveStereo(); Debug.Log($"[nuvc] launch extras applied: stereo={StereoOn} testpat={TestPattern} smode={SMode} grid={SGrid} detect={_detectOnFrame}"); }
             }
@@ -569,7 +598,49 @@ namespace HdmrNuvc
         }
 
         bool _detectOnFrame;
+        int _dumpOnFrame;
         float _logT;
+
+        // Save the current frames to PNGs in persistentDataPath for offline
+        // geometry analysis: the raw NV12->RGB SBS (before grade/stereo) and,
+        // if stereo is on, the processed StereoOutput.
+        void DumpFrames()
+        {
+            try
+            {
+                string dir = Application.persistentDataPath;
+                if (Output != null && _texY != null)
+                {
+                    // re-blit the NV12 with a neutral grade so the dump is the
+                    // clean source, not a graded one
+                    var tmp = RenderTexture.GetTemporary(Output.width, Output.height, 0, RenderTextureFormat.ARGB32);
+                    _mat.SetFloat("_Gain", 1f); _mat.SetFloat("_Gamma", 1f); _mat.SetFloat("_Lift", 0f);
+                    Graphics.Blit(_texY, tmp, _mat);
+                    _mat.SetFloat("_Gain", Gain); _mat.SetFloat("_Gamma", Gamma); _mat.SetFloat("_Lift", Lift);
+                    File.WriteAllBytes(Path.Combine(dir, "dump-raw-sbs.png"), Grab(tmp));
+                    RenderTexture.ReleaseTemporary(tmp);
+                    File.WriteAllBytes(Path.Combine(dir, "dump-graded-sbs.png"), Grab(Output));
+                }
+                if (StereoOn && StereoOutput != null)
+                    File.WriteAllBytes(Path.Combine(dir, "dump-stereo.png"), Grab(StereoOutput));
+                Debug.Log($"[nuvc] dumped frames to {dir} ({Width}x{Height}) split={SSplitX:0.000}");
+            }
+            catch (Exception e) { Debug.LogWarning("[nuvc] dump: " + e); }
+        }
+
+        static byte[] Grab(RenderTexture rt)
+        {
+            var prev = RenderTexture.active;
+            RenderTexture.active = rt;
+            var t = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+            t.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            t.Apply();
+            RenderTexture.active = prev;
+            var png = t.EncodeToPNG();
+            Destroy(t);
+            return png;
+        }
+
         void Tick(bool got)
         {
             if (got) { _newFrames++; if (_framesSeen < 1000) _framesSeen++; }
@@ -581,6 +652,11 @@ namespace HdmrNuvc
                 ApplyDetection();
                 Debug.Log($"[nuvc] detect+apply: {DetectStatus}  =>  split {SSplitX:0.000} scale {SScale:0.00} " +
                           $"L {SOffXL:0.00}/{SOffYL:0.00} R {SOffXR:0.00}/{SOffYR:0.00} conv {SConverge:0.00}");
+            }
+
+            if (_dumpOnFrame > 0 && _framesSeen > 30 && Fmt == 0)
+            {
+                if (--_dumpOnFrame == 0) DumpFrames();
             }
             float w = Time.unscaledTime - _fpsT0;
             if (w >= 1f) { DisplayedFps = _newFrames / w; _newFrames = 0; _fpsT0 = Time.unscaledTime; }
