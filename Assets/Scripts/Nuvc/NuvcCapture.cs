@@ -320,6 +320,12 @@ namespace HdmrNuvc
                 F("fillx", ref SFillX); F("filly", ref SFillY);
                 F("fovfrac", ref SFovFrac); F("eyeshiftx", ref SEyeShiftX); F("bright", ref SBright);
                 F("xrdist", ref SXrDist); F("xrfov", ref SXrFov);
+                // picture grade — lets the XR build inherit the look tuned in 2D
+                // (PlayerPrefs don't cross packages). Any grade extra pins it as
+                // user-set so the dark-source auto-grade won't override it.
+                bool gradeExtra = S("gain") != null || S("gamma") != null || S("lift") != null;
+                F("gain", ref Gain); F("gamma", ref Gamma); F("lift", ref Lift);
+                if (gradeExtra) { _gradeIsUserSet = true; _autoGradeDone = true; SaveGrade(); any = true; }
                 if ((v = S("detect")) != null && (v == "1" || v == "true")) { _detectOnFrame = true; any = true; }
                 if ((v = S("dump")) != null && (v == "1" || v == "true")) { _dumpOnFrame = 3; any = true; }
                 if ((v = S("autograde")) != null && (v == "1" || v == "true")) { _autoGradeDone = false; _lumaSamples = 0; _gradeIsUserSet = false; any = true; }
@@ -342,7 +348,8 @@ namespace HdmrNuvc
                     P("split", SSplitX) + P("scale", SScale) + P("conv", SConverge) +
                     P("k1", SK1) + P("k2", SK2) + P("fillx", SFillX) + P("filly", SFillY) +
                     P("oxl", SOffXL) + P("oyl", SOffYL) + P("oxr", SOffXR) + P("oyr", SOffYR) +
-                    P("cxl", SCenXL) + P("cyl", SCenYL) + P("cxr", SCenXR) + P("cyr", SCenYR);
+                    P("cxl", SCenXL) + P("cyl", SCenYL) + P("cxr", SCenXR) + P("cyr", SCenYR) +
+                    P("gain", Gain) + P("gamma", Gamma) + P("lift", Lift);
                 string txt =
                     $"# nuvc stereo params  {DateTime.Now:yyyy-MM-dd HH:mm}\n" +
                     $"stereo={StereoOn} mode={SMode} grid={SGrid}\n{ex.TrimEnd()}\n\n" +
