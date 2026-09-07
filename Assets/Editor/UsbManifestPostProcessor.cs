@@ -49,10 +49,27 @@ public class UsbManifestPostProcessor : IPostGenerateGradleAndroidProject
                 el.SetAttribute("name", A, perm);
                 root.AppendChild(el);
             }
+            // XR build: declare hand-tracking support (required=false) so Horizon
+            // OS doesn't block launch with the "controller required" dialog — the
+            // app takes no input, it's a passive viewer.
+            if (HDMRBuildNuvcXR.Active)
+            {
+                bool hasHt = root.GetElementsByTagName("uses-feature").Cast<XmlElement>()
+                    .Any(e => e.GetAttribute("name", A) == "oculus.software.handtracking");
+                if (!hasHt)
+                {
+                    var ht = doc.CreateElement("uses-feature");
+                    ht.SetAttribute("name", A, "oculus.software.handtracking");
+                    ht.SetAttribute("required", A, "false");
+                    root.AppendChild(ht);
+                    Debug.Log("[HDMR] injected oculus.software.handtracking (required=false)");
+                }
+            }
+
             // nuvc build: aandusb normally contributes the USB_DEVICE_ATTACHED
             // intent-filter (auto-launch + auto-grant on plug-in). Add it to the
             // MAIN activity here.
-            if (HDMRBuildNuvc.Active)
+            if (HDMRBuildNuvc.Active || HDMRBuildNuvcXR.Active)
             {
                 XmlElement main = null;
                 foreach (XmlElement a in doc.GetElementsByTagName("activity"))

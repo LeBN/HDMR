@@ -168,11 +168,22 @@ public static class HDMRBuildNuvcXR
         fh.GetMethod("RefreshFeatures", BindingFlags.Public | BindingFlags.Static)
           .Invoke(null, new object[] { BuildTargetGroup.Android });
         var getFeat = fh.GetMethod("GetFeatureWithIdForBuildTarget", BindingFlags.Public | BindingFlags.Static);
-        foreach (var fid in new[] { "com.unity.openxr.feature.metaquest", "com.unity.openxr.feature.input.metaquestplus" })
+        // only Meta Quest Support — NO controller interaction profile (passive
+        // viewer, no input; a profile makes Horizon OS demand a live controller).
+        foreach (var fid in new[] { "com.unity.openxr.feature.metaquest" })
         {
             var feat = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, fid });
             if (feat == null) { Debug.LogWarning("[HDMRBuildNuvcXR] feature not found: " + fid); continue; }
             feat.GetType().GetProperty("enabled").SetValue(feat, true);
+            EditorUtility.SetDirty((UnityEngine.Object)feat);
+        }
+        // make sure a controller profile enabled by an earlier run is off
+        foreach (var fid in new[] { "com.unity.openxr.feature.input.metaquestplus",
+                                    "com.unity.openxr.feature.input.metaquestpro" })
+        {
+            var feat = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, fid });
+            if (feat == null) continue;
+            feat.GetType().GetProperty("enabled").SetValue(feat, false);
             EditorUtility.SetDirty((UnityEngine.Object)feat);
         }
         AssetDatabase.SaveAssets();
