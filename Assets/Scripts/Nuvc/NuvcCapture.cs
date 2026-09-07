@@ -50,14 +50,14 @@ namespace HdmrNuvc
         [NonSerialized] public bool StereoOn = false;
         [NonSerialized] public int SMode = 0;        // 0 full 1 L 2 R 3 SBS-fit 4 anaglyph 5 overlay
         [NonSerialized] public float SSplitX = 0.5f; // where the two halves meet in the source
-        [NonSerialized] public float SScale = 1f;
+        [NonSerialized] public float SScale = 0.8f;
         [NonSerialized] public float SOffXL = 0f, SOffYL = 0f, SOffXR = 0f, SOffYR = 0f;
         [NonSerialized] public float SConverge = 0f;
-        [NonSerialized] public float SK1 = -1.0f, SK2 = 0f;
+        [NonSerialized] public float SK1 = -0.82f, SK2 = 0.6f;
         // per-eye distortion centre, half-uv (0.5,0.5 = middle of the half)
         [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
         // zoom the corrected image so the 16:9 game frame fills the eye
-        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.8f;
+        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.75f;
         [NonSerialized] public bool SGrid = false;
 
         [NonSerialized] public bool TestPattern = false;
@@ -127,24 +127,23 @@ namespace HdmrNuvc
         {
             StereoOn  = PlayerPrefs.GetInt(SK_ + "on", 0) == 1;
             SMode     = PlayerPrefs.GetInt(SK_ + "mode", 0);
-            // defaults from the offline distortion fit against the Switch-2
-            // VR-glasses SBS output (Zelda, 2026-09-07): the source is barrel
-            // pre-distorted; k1 ~ -0.23 around the half centre flattens it.
+            // defaults: user-tuned against the Switch-2 VR SBS (Zelda, 2026-09-07)
+            // k1 -0.82 k2 0.6 scale 0.8 fillY 1.75 — all still tunable in-app.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
-            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 1.0f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.8f);
             SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
             SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
             SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
-            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -1.0f);
-            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.82f);
+            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.6f);
             SCenXL    = PlayerPrefs.GetFloat(SK_ + "cxl", 0.5f);
             SCenYL    = PlayerPrefs.GetFloat(SK_ + "cyl", 0.5f);
             SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
-            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.8f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.75f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -173,10 +172,10 @@ namespace HdmrNuvc
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 1.0f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = 0f; SK1 = -1.0f; SK2 = 0f;
+            SSplitX = 0.5f; SScale = 0.8f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
+            SConverge = 0f; SK1 = -0.82f; SK2 = 0.6f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.8f;
+            SFillX = 1.0f; SFillY = 1.75f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
@@ -297,10 +296,35 @@ namespace HdmrNuvc
                 if ((v = S("detect")) != null && (v == "1" || v == "true")) { _detectOnFrame = true; any = true; }
                 if ((v = S("dump")) != null && (v == "1" || v == "true")) { _dumpOnFrame = 3; any = true; }
                 if ((v = S("autograde")) != null && (v == "1" || v == "true")) { _autoGradeDone = false; _lumaSamples = 0; _gradeIsUserSet = false; any = true; }
+                if ((v = S("dumpvals")) != null && (v == "1" || v == "true")) DumpVals();
                 if (any) { SaveStereo(); Debug.Log($"[nuvc] launch extras applied: stereo={StereoOn} testpat={TestPattern} smode={SMode} grid={SGrid} detect={_detectOnFrame}"); }
             }
             catch (Exception e) { Debug.LogWarning("[nuvc] launch extras: " + e.Message); }
 #endif
+        }
+
+        // Write the current stereo params to a text file (+ a ready-to-paste
+        // `am start` line) so a tuning session survives a rebuild / reinstall.
+        public void DumpVals()
+        {
+            try
+            {
+                var ic = System.Globalization.CultureInfo.InvariantCulture;   // dots, not the device locale's commas
+                string P(string k, float v) => $"--es nuvc.{k} {v.ToString("0.####", ic)} ";
+                string ex =
+                    P("split", SSplitX) + P("scale", SScale) + P("conv", SConverge) +
+                    P("k1", SK1) + P("k2", SK2) + P("fillx", SFillX) + P("filly", SFillY) +
+                    P("oxl", SOffXL) + P("oyl", SOffYL) + P("oxr", SOffXR) + P("oyr", SOffYR) +
+                    P("cxl", SCenXL) + P("cyl", SCenYL) + P("cxr", SCenXR) + P("cyr", SCenYR);
+                string txt =
+                    $"# nuvc stereo params  {DateTime.Now:yyyy-MM-dd HH:mm}\n" +
+                    $"stereo={StereoOn} mode={SMode} grid={SGrid}\n{ex.TrimEnd()}\n\n" +
+                    $"am start -S -W -n com.natis.hdmr.nuvc/com.unity3d.player.UnityPlayerGameActivity " +
+                    $"--es nuvc.stereo 1 --es nuvc.smode {SMode} --es nuvc.grid {(SGrid ? 1 : 0)} --es nuvc.autograde 1 {ex.TrimEnd()}\n";
+                System.IO.File.WriteAllText(System.IO.Path.Combine(Application.persistentDataPath, "dump-vals.txt"), txt);
+                Debug.Log("[nuvc] dump-vals.txt written\n" + txt);
+            }
+            catch (Exception e) { Debug.LogWarning("[nuvc] dumpvals: " + e); }
         }
 
         void OnDestroy()
