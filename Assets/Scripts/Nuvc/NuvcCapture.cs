@@ -50,14 +50,14 @@ namespace HdmrNuvc
         [NonSerialized] public bool StereoOn = false;
         [NonSerialized] public int SMode = 0;        // 0 full 1 L 2 R 3 SBS-fit 4 anaglyph 5 overlay
         [NonSerialized] public float SSplitX = 0.5f; // where the two halves meet in the source
-        [NonSerialized] public float SScale = 0.8f;
+        [NonSerialized] public float SScale = 0.89f;
         [NonSerialized] public float SOffXL = 0f, SOffYL = 0f, SOffXR = 0f, SOffYR = 0f;
         [NonSerialized] public float SConverge = 0f;
-        [NonSerialized] public float SK1 = -0.82f, SK2 = 0.6f;
+        [NonSerialized] public float SK1 = -0.78f, SK2 = 0.43f;
         // per-eye distortion centre, half-uv (0.5,0.5 = middle of the half)
         [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
         // zoom the corrected image so the 16:9 game frame fills the eye
-        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.75f;
+        [NonSerialized] public float SFillX = 1.0f, SFillY = 1.78f;
         [NonSerialized] public bool SGrid = false;
 
         [NonSerialized] public bool TestPattern = false;
@@ -130,20 +130,20 @@ namespace HdmrNuvc
             // defaults: user-tuned against the Switch-2 VR SBS (Zelda, 2026-09-07)
             // k1 -0.82 k2 0.6 scale 0.8 fillY 1.75 — all still tunable in-app.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
-            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.8f);
+            SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.89f);
             SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0f);
             SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", 0f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
-            SConverge = PlayerPrefs.GetFloat(SK_ + "conv", 0f);
-            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.82f);
-            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.6f);
+            SConverge = PlayerPrefs.GetFloat(SK_ + "conv", -0.06f);
+            SK1       = PlayerPrefs.GetFloat(SK_ + "k1", -0.78f);
+            SK2       = PlayerPrefs.GetFloat(SK_ + "k2", 0.43f);
             SCenXL    = PlayerPrefs.GetFloat(SK_ + "cxl", 0.5f);
             SCenYL    = PlayerPrefs.GetFloat(SK_ + "cyl", 0.5f);
             SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
-            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.75f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.78f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -172,10 +172,10 @@ namespace HdmrNuvc
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 0.8f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
-            SConverge = 0f; SK1 = -0.82f; SK2 = 0.6f;
+            SSplitX = 0.5f; SScale = 0.89f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
+            SConverge = -0.06f; SK1 = -0.78f; SK2 = 0.43f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.75f;
+            SFillX = 1.0f; SFillY = 1.78f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.

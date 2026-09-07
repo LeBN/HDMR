@@ -12,21 +12,21 @@ Shader "Hdmr/NuvcStereoXR"
     {
         _MainTex  ("Capture RGB", 2D) = "black" {}
         _SplitX   ("SBS split X", Float) = 0.5
-        _Scale    ("Scale", Float) = 0.8
+        _Scale    ("Scale", Float) = 0.89
         _OffXL ("Off X L", Float) = 0
         _OffYL ("Off Y L", Float) = 0
         _OffXR ("Off X R", Float) = 0
         _OffYR ("Off Y R", Float) = 0
-        _Converge ("Converge", Float) = 0
-        _K1 ("Distortion k1", Float) = -0.82
-        _K2 ("Distortion k2", Float) = 0.6
+        _Converge ("Converge", Float) = -0.06
+        _K1 ("Distortion k1", Float) = -0.78
+        _K2 ("Distortion k2", Float) = 0.43
         _Aspect ("Aspect (half w/h)", Float) = 0.889
         _CenXL ("Distortion centre X L", Float) = 0.5
         _CenYL ("Distortion centre Y L", Float) = 0.5
         _CenXR ("Distortion centre X R", Float) = 0.5
         _CenYR ("Distortion centre Y R", Float) = 0.5
         _FillX ("Fill X", Float) = 1.0
-        _FillY ("Fill Y", Float) = 1.75
+        _FillY ("Fill Y", Float) = 1.78
         _BgGrid ("Bg grid", Float) = 0
         _Opacity ("Opacity", Float) = 1
     }

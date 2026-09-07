@@ -13,21 +13,21 @@ Shader "Hdmr/NuvcStereo"
         _MainTex   ("Capture RGB", 2D) = "black" {}
         _Mode      ("Mode", Float) = 0
         _SplitX    ("SBS split X", Float) = 0.5
-        _Scale     ("Scale", Float) = 0.8
+        _Scale     ("Scale", Float) = 0.89
         _OffXL ("Off X L", Float) = 0
         _OffYL ("Off Y L", Float) = 0
         _OffXR ("Off X R", Float) = 0
         _OffYR ("Off Y R", Float) = 0
-        _Converge  ("Converge", Float) = 0
-        _K1 ("Distortion k1", Float) = -0.82
-        _K2 ("Distortion k2", Float) = 0.6
+        _Converge  ("Converge", Float) = -0.06
+        _K1 ("Distortion k1", Float) = -0.78
+        _K2 ("Distortion k2", Float) = 0.43
         _Aspect ("Aspect (half w/h)", Float) = 0.889
         _CenXL ("Distortion centre X L", Float) = 0.5
         _CenYL ("Distortion centre Y L", Float) = 0.5
         _CenXR ("Distortion centre X R", Float) = 0.5
         _CenYR ("Distortion centre Y R", Float) = 0.5
         _FillX ("Fill X (zoom to fill the eye)", Float) = 1.0
-        _FillY ("Fill Y", Float) = 1.75
+        _FillY ("Fill Y", Float) = 1.78
         _BgGrid ("Bg grid", Float) = 0
     }
     SubShader
@@ -61,7 +61,7 @@ Shader "Hdmr/NuvcStereo"
             // Work in a metric where the source half is `_Aspect` wide, 1 tall.
             // Output pixel o -> sample the source at  c + (o-c)/scale * (1 + k1 r^2 + k2 r^4)
             // Switch-2 VR SBS: strong barrel + higher-order term. The user
-            // converged on k1 ~ -0.82, k2 ~ 0.6, scale ~0.8, fillY ~1.75.
+            // converged (Zelda) on k1 ~ -0.78, k2 ~ 0.43, scale ~0.89, fillY ~1.78.
             float4 sampleEye(float2 uv, float eye)
             {
                 float offx = eye < 0 ? _OffXL : _OffXR;
