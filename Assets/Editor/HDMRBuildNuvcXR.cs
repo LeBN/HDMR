@@ -112,83 +112,71 @@ public static class HDMRBuildNuvcXR
         Debug.Log("[HDMRBuildNuvcXR] player settings configured");
     }
 
-    // Assign the OpenXR loader for Android and enable the Meta Quest feature,
-    // all via reflection so this file compiles even before the packages resolve.
+    // Assign the OpenXR loader for Android + enable the Meta Quest feature.
+    // Reflection throughout (no asmdef needed on this Editor script), using only
+    // public APIs: EditorBuildSettings config object + public instance methods.
     static void ConfigureXR()
     {
-        // 1. XRGeneralSettingsPerBuildTarget.GetOrCreate() -> AssignedSettings (XRManagerSettings for Android)
         var perBTType = FindType("UnityEditor.XR.Management.XRGeneralSettingsPerBuildTarget");
-        var mdStoreType = FindType("UnityEditor.XR.Management.Metadata.XRPackageMetadataStore");
-        if (perBTType == null || mdStoreType == null)
+        var genType   = FindType("UnityEngine.XR.Management.XRGeneralSettings");
+        var mdStore   = FindType("UnityEditor.XR.Management.Metadata.XRPackageMetadataStore");
+        if (perBTType == null || genType == null || mdStore == null)
+        { Debug.LogError("[HDMRBuildNuvcXR] XR Management types missing — packages not resolved?"); return; }
+
+        string key = (string)genType.GetField("k_SettingsKey", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+
+        // EditorBuildSettings.TryGetConfigObject<T>(string, out T)
+        var tryGet = typeof(EditorBuildSettings).GetMethods()
+            .First(m => m.Name == "TryGetConfigObject" && m.IsGenericMethod)
+            .MakeGenericMethod(perBTType);
+        var args = new object[] { key, null };
+        bool have = (bool)tryGet.Invoke(null, args);
+        var perBT = args[1];
+
+        if (perBT == null || perBT.Equals(null))
         {
-            Debug.LogWarning("[HDMRBuildNuvcXR] XR Management editor types not found — is com.unity.xr.management resolved?");
-            return;
-        }
-        var getOrCreate = perBTType.GetMethod("GetOrCreate", BindingFlags.Public | BindingFlags.Static);
-        var perBT = getOrCreate.Invoke(null, null);
-        var getSettingsForBT = perBTType.GetMethod("SettingsForBuildTarget", BindingFlags.Public | BindingFlags.Instance);
-        var general = getSettingsForBT?.Invoke(perBT, new object[] { BuildTargetGroup.Android });
-        if (general == null)
-        {
-            var createDefault = perBTType.GetMethod("GetOrCreate", BindingFlags.Public | BindingFlags.Static);
-            // fall through — AssignLoader below can still work on the manager
-        }
-        var generalType = general?.GetType() ?? FindType("UnityEngine.XR.Management.XRGeneralSettings");
-        object manager = null;
-        if (general != null)
-        {
-            var mgrProp = generalType.GetProperty("Manager") ?? generalType.GetProperty("AssignedSettings");
-            manager = mgrProp?.GetValue(general);
-        }
-        if (manager == null)
-        {
-            // create a fresh XRManagerSettings and stash it
-            var xrMgrType = FindType("UnityEngine.XR.Management.XRManagerSettings");
-            manager = ScriptableObject.CreateInstance(xrMgrType);
+            perBT = ScriptableObject.CreateInstance(perBTType);
+            Directory.CreateDirectory("Assets/XR");
+            AssetDatabase.CreateAsset((UnityEngine.Object)perBT, "Assets/XR/XRGeneralSettings.asset");
+            typeof(EditorBuildSettings).GetMethod("AddConfigObject")
+                .Invoke(null, new object[] { key, (UnityEngine.Object)perBT, true });
         }
 
-        // 2. AssignLoader(manager, "UnityEngine.XR.OpenXR.OpenXRLoader", Android)
-        var assign = mdStoreType.GetMethod("AssignLoader", BindingFlags.Public | BindingFlags.Static);
+        var hasMgr = perBTType.GetMethod("HasManagerSettingsForBuildTarget");
+        var createMgr = perBTType.GetMethod("CreateDefaultManagerSettingsForBuildTarget");
+        var getMgr = perBTType.GetMethod("ManagerSettingsForBuildTarget");
+        if (!(bool)hasMgr.Invoke(perBT, new object[] { BuildTargetGroup.Android }))
+            createMgr.Invoke(perBT, new object[] { BuildTargetGroup.Android });
+        var manager = getMgr.Invoke(perBT, new object[] { BuildTargetGroup.Android });
+        if (manager == null) { Debug.LogError("[HDMRBuildNuvcXR] no XRManagerSettings for Android"); return; }
+
+        var assign = mdStore.GetMethod("AssignLoader", BindingFlags.Public | BindingFlags.Static);
         bool ok = (bool)assign.Invoke(null, new object[] { manager, "UnityEngine.XR.OpenXR.OpenXRLoader", BuildTargetGroup.Android });
         Debug.Log("[HDMRBuildNuvcXR] AssignLoader(OpenXR, Android) -> " + ok);
 
-        // persist the general settings (SetSettingsForBuildTarget)
-        var setSettingsForBT = perBTType.GetMethod("SetSettingsForBuildTarget", BindingFlags.Public | BindingFlags.Instance);
-        if (setSettingsForBT != null && general != null)
-            setSettingsForBT.Invoke(perBT, new object[] { BuildTargetGroup.Android, general });
+        // keep the manager init-on-start so the runtime brings XR up by itself
+        var initProp = genType.GetProperty("InitManagerOnStart");
+        var genForBT = perBTType.GetMethod("SettingsForBuildTarget").Invoke(perBT, new object[] { BuildTargetGroup.Android });
+        if (genForBT != null && initProp != null && initProp.CanWrite) initProp.SetValue(genForBT, true);
+
         EditorUtility.SetDirty((UnityEngine.Object)perBT);
         AssetDatabase.SaveAssets();
 
-        // 3. Refresh + enable OpenXR features
-        var fhType = FindType("UnityEditor.XR.OpenXR.Features.FeatureHelpers");
-        if (fhType != null)
+        // OpenXR features
+        var fh = FindType("UnityEditor.XR.OpenXR.Features.FeatureHelpers");
+        if (fh == null) { Debug.LogError("[HDMRBuildNuvcXR] FeatureHelpers missing"); return; }
+        fh.GetMethod("RefreshFeatures", BindingFlags.Public | BindingFlags.Static)
+          .Invoke(null, new object[] { BuildTargetGroup.Android });
+        var getFeat = fh.GetMethod("GetFeatureWithIdForBuildTarget", BindingFlags.Public | BindingFlags.Static);
+        foreach (var fid in new[] { "com.unity.openxr.feature.metaquest", "com.unity.openxr.feature.input.metaquestplus" })
         {
-            fhType.GetMethod("RefreshFeatures", BindingFlags.Public | BindingFlags.Static)
-                  ?.Invoke(null, new object[] { BuildTargetGroup.Android });
-
-            EnableFeature(fhType, "com.unity.openxr.feature.metaquest");           // Meta Quest Support
-            EnableFeature(fhType, "com.unity.openxr.feature.input.metaquestplus"); // Touch Plus controller
-            AssetDatabase.SaveAssets();
-            Debug.Log("[HDMRBuildNuvcXR] OpenXR Meta Quest features enabled");
+            var feat = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, fid });
+            if (feat == null) { Debug.LogWarning("[HDMRBuildNuvcXR] feature not found: " + fid); continue; }
+            feat.GetType().GetProperty("enabled").SetValue(feat, true);
+            EditorUtility.SetDirty((UnityEngine.Object)feat);
         }
-        else Debug.LogWarning("[HDMRBuildNuvcXR] FeatureHelpers not found — is com.unity.xr.openxr resolved?");
-    }
-
-    static void EnableFeature(Type featureHelpers, string featureId)
-    {
-        try
-        {
-            var get = featureHelpers.GetMethod("GetFeatureWithIdForBuildTarget", BindingFlags.Public | BindingFlags.Static)
-                   ?? featureHelpers.GetMethod("GetFeatureWithIdForActiveBuildTarget", BindingFlags.Public | BindingFlags.Static);
-            object feature = get.GetParameters().Length == 2
-                ? get.Invoke(null, new object[] { BuildTargetGroup.Android, featureId })
-                : get.Invoke(null, new object[] { featureId });
-            if (feature == null) { Debug.LogWarning("[HDMRBuildNuvcXR] feature not found: " + featureId); return; }
-            var enabledProp = feature.GetType().GetProperty("enabled");
-            enabledProp.SetValue(feature, true);
-            EditorUtility.SetDirty((UnityEngine.Object)feature);
-        }
-        catch (Exception e) { Debug.LogWarning($"[HDMRBuildNuvcXR] EnableFeature({featureId}): {e.Message}"); }
+        AssetDatabase.SaveAssets();
+        Debug.Log("[HDMRBuildNuvcXR] OpenXR + Meta Quest features enabled for Android");
     }
 
     static Type FindType(string full)

@@ -8,4 +8,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/HDMRNuvc.unity
     guid: f559c75d49ba78146a462746d3995835
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 9178088190139954a9d6388e7026fcb5, type: 2}
