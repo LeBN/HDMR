@@ -58,6 +58,10 @@ namespace HdmrNuvc
         [NonSerialized] public float SCenXL = 0.5f, SCenYL = 0.5f, SCenXR = 0.5f, SCenYR = 0.5f;
         // zoom the corrected image so the 16:9 game frame fills the eye
         [NonSerialized] public float SFillX = 1.0f, SFillY = 1.78f;
+        // XR-only: theta_Switch / theta_Quest (how much of the Quest eye FOV the
+        // image fills), a symmetric per-eye X shift (IPD/convergence trim since
+        // parallax is baked), and an overall brightness knob.
+        [NonSerialized] public float SFovFrac = 0.68f, SEyeShiftX = 0f, SBright = 1.0f;
         [NonSerialized] public bool SGrid = false;
 
         [NonSerialized] public bool TestPattern = false;
@@ -144,6 +148,9 @@ namespace HdmrNuvc
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
             SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.78f);
+            SFovFrac  = PlayerPrefs.GetFloat(SK_ + "fovfrac", 0.68f);
+            SEyeShiftX= PlayerPrefs.GetFloat(SK_ + "eyeshiftx", 0f);
+            SBright   = PlayerPrefs.GetFloat(SK_ + "bright", 1.0f);
             SGrid     = PlayerPrefs.GetInt(SK_ + "grid", 0) == 1;
             TestPattern = PlayerPrefs.GetInt(SK_ + "testpat", 0) == 1;
         }
@@ -166,6 +173,9 @@ namespace HdmrNuvc
             PlayerPrefs.SetFloat(SK_ + "cyr", SCenYR);
             PlayerPrefs.SetFloat(SK_ + "fillx", SFillX);
             PlayerPrefs.SetFloat(SK_ + "filly", SFillY);
+            PlayerPrefs.SetFloat(SK_ + "fovfrac", SFovFrac);
+            PlayerPrefs.SetFloat(SK_ + "eyeshiftx", SEyeShiftX);
+            PlayerPrefs.SetFloat(SK_ + "bright", SBright);
             PlayerPrefs.SetInt(SK_ + "grid", SGrid ? 1 : 0);
             PlayerPrefs.SetInt(SK_ + "testpat", TestPattern ? 1 : 0);
             PlayerPrefs.Save();
@@ -175,7 +185,7 @@ namespace HdmrNuvc
             SSplitX = 0.5f; SScale = 0.89f; SOffXL = SOffYL = SOffXR = SOffYR = 0f;
             SConverge = -0.06f; SK1 = -0.78f; SK2 = 0.43f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.78f;
+            SFillX = 1.0f; SFillY = 1.78f; SFovFrac = 0.68f; SEyeShiftX = 0f; SBright = 1.0f;
         }
 
         // NV12 rows are top-down; GL texture sampling is bottom-up -> flip Y by default.
@@ -293,6 +303,7 @@ namespace HdmrNuvc
                 F("conv", ref SConverge); F("k1", ref SK1); F("k2", ref SK2);
                 F("cxl", ref SCenXL); F("cyl", ref SCenYL); F("cxr", ref SCenXR); F("cyr", ref SCenYR);
                 F("fillx", ref SFillX); F("filly", ref SFillY);
+                F("fovfrac", ref SFovFrac); F("eyeshiftx", ref SEyeShiftX); F("bright", ref SBright);
                 if ((v = S("detect")) != null && (v == "1" || v == "true")) { _detectOnFrame = true; any = true; }
                 if ((v = S("dump")) != null && (v == "1" || v == "true")) { _dumpOnFrame = 3; any = true; }
                 if ((v = S("autograde")) != null && (v == "1" || v == "true")) { _autoGradeDone = false; _lumaSamples = 0; _gradeIsUserSet = false; any = true; }

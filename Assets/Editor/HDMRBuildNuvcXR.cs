@@ -92,8 +92,10 @@ public static class HDMRBuildNuvcXR
         PlayerSettings.runInBackground = true;
         try { PlayerSettings.Android.resizableWindow = false; } catch { }
 
-        // colour space – linear is what Quest wants
-        PlayerSettings.colorSpace = ColorSpace.Linear;
+        // Gamma colour space — matches the 2D build the user tuned against, and
+        // avoids the sRGB double-encode that tinted the NV12 output ("filtre
+        // lumineux"). The nuvc RGB is already display-referred.
+        PlayerSettings.colorSpace = ColorSpace.Gamma;
 
         // keep the blit shaders (nothing references them by asset)
         var g = GraphicsSettings.GetGraphicsSettings();
