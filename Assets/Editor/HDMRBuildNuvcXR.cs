@@ -205,16 +205,37 @@ public static class HDMRBuildNuvcXR
         Directory.CreateDirectory("Assets/Scenes");
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
+        // XR rig root at floor/eye origin
+        var rigRoot = new GameObject("XR Rig");
+
         var camGo = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener));
         camGo.tag = "MainCamera";
+        camGo.transform.SetParent(rigRoot.transform, false);
         var cam = camGo.GetComponent<Camera>();
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = Color.black;
         cam.nearClipPlane = 0.05f;
         cam.farClipPlane = 100f;
-        // head tracking
+
+        // head tracking — legacy SpatialTracking.TrackedPoseDriver (from
+        // com.unity.xr.legacyinputhelpers), pose source = centre eye.
         var tpdType = FindType("UnityEngine.SpatialTracking.TrackedPoseDriver");
-        if (tpdType != null) camGo.AddComponent(tpdType);
+        if (tpdType != null)
+        {
+            var tpd = camGo.AddComponent(tpdType);
+            try
+            {
+                // SetPoseSource(DeviceType.GenericXRDevice=0, TrackedPose.Center=2)
+                var devEnum = FindType("UnityEngine.SpatialTracking.TrackedPoseDriver+DeviceType");
+                var poseEnum = FindType("UnityEngine.SpatialTracking.TrackedPoseDriver+TrackedPose");
+                var setPose = tpdType.GetMethod("SetPoseSource");
+                if (setPose != null && devEnum != null && poseEnum != null)
+                    setPose.Invoke(tpd, new object[] {
+                        System.Enum.ToObject(devEnum, 0),
+                        System.Enum.ToObject(poseEnum, 2) });
+            }
+            catch (Exception e) { Debug.LogWarning("[HDMRBuildNuvcXR] TPD config: " + e.Message); }
+        }
         else Debug.LogWarning("[HDMRBuildNuvcXR] TrackedPoseDriver not found — head tracking may be missing");
 
         var rig = new GameObject("Nuvc");
