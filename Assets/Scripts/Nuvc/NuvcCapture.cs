@@ -139,7 +139,7 @@ namespace HdmrNuvc
             // these out of the box; all still tunable in-app / via --es.
             SSplitX   = PlayerPrefs.GetFloat(SK_ + "split", 0.5f);
             SScale    = PlayerPrefs.GetFloat(SK_ + "scale", 0.8796f);
-            SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0.0037f);
+            SOffXL    = PlayerPrefs.GetFloat(SK_ + "oxl", 0.003f);
             SOffYL    = PlayerPrefs.GetFloat(SK_ + "oyl", -0.0006f);
             SOffXR    = PlayerPrefs.GetFloat(SK_ + "oxr", 0f);
             SOffYR    = PlayerPrefs.GetFloat(SK_ + "oyr", 0f);
@@ -151,7 +151,7 @@ namespace HdmrNuvc
             SCenXR    = PlayerPrefs.GetFloat(SK_ + "cxr", 0.5f);
             SCenYR    = PlayerPrefs.GetFloat(SK_ + "cyr", 0.5f);
             SFillX    = PlayerPrefs.GetFloat(SK_ + "fillx", 1.0f);
-            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.7767f);
+            SFillY    = PlayerPrefs.GetFloat(SK_ + "filly", 1.8467f);
             SFovFrac  = PlayerPrefs.GetFloat(SK_ + "fovfrac", 0.68f);
             SEyeShiftX= PlayerPrefs.GetFloat(SK_ + "eyeshiftx", 0f);
             SBright   = PlayerPrefs.GetFloat(SK_ + "bright", 1.0f);
@@ -194,10 +194,10 @@ namespace HdmrNuvc
         }
         public void ResetStereo()
         {
-            SSplitX = 0.5f; SScale = 0.8796f; SOffXL = 0.0037f; SOffYL = -0.0006f; SOffXR = SOffYR = 0f;
+            SSplitX = 0.5f; SScale = 0.8796f; SOffXL = 0.003f; SOffYL = -0.0006f; SOffXR = SOffYR = 0f;
             SConverge = -0.0617f; SK1 = -0.78f; SK2 = 0.43f;
             SCenXL = SCenYL = SCenXR = SCenYR = 0.5f;
-            SFillX = 1.0f; SFillY = 1.7767f; SBright = 1.0f; SXrDist = 2.2f; SXrFov = 55f; SFovFrac = 0.68f; SEyeShiftX = 0f;
+            SFillX = 1.0f; SFillY = 1.8467f; SBright = 1.0f; SXrDist = 2.2f; SXrFov = 55f; SFovFrac = 0.68f; SEyeShiftX = 0f;
             SXrFlipX = true; SXrFlipY = false;
         }
 

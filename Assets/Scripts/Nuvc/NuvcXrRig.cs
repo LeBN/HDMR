@@ -85,10 +85,14 @@ namespace HdmrNuvc
             _mat.SetFloat("_Aspect", asp);
             _mat.SetFloat("_SplitX", _cap.SSplitX);
             _mat.SetFloat("_Scale", _cap.SScale);
+            // The SBS halves are pre-distorted symmetrically, so the correction
+            // offset the user tuned on the left eye is mirrored onto the right:
+            // X inverted (both images shift the same way relative to the seam),
+            // Y identical. SOffXR/SOffYR stay as an extra per-eye trim on top.
             _mat.SetFloat("_OffXL", _cap.SOffXL);
             _mat.SetFloat("_OffYL", _cap.SOffYL);
-            _mat.SetFloat("_OffXR", _cap.SOffXR);
-            _mat.SetFloat("_OffYR", _cap.SOffYR);
+            _mat.SetFloat("_OffXR", _cap.SOffXR - _cap.SOffXL);
+            _mat.SetFloat("_OffYR", _cap.SOffYR + _cap.SOffYL);
             _mat.SetFloat("_Converge", _cap.SConverge);
             _mat.SetFloat("_K1", _cap.SK1);
             _mat.SetFloat("_K2", _cap.SK2);
