@@ -170,26 +170,15 @@ public static class HDMRBuildNuvcXR
         fh.GetMethod("RefreshFeatures", BindingFlags.Public | BindingFlags.Static)
           .Invoke(null, new object[] { BuildTargetGroup.Android });
         var getFeat = fh.GetMethod("GetFeatureWithIdForBuildTarget", BindingFlags.Public | BindingFlags.Static);
-        // only Meta Quest Support — NO controller interaction profile (passive
-        // viewer, no input; a profile makes Horizon OS demand a live controller).
-        foreach (var fid in new[] { "com.unity.openxr.feature.metaquest" })
-        {
-            var feat = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, fid });
-            if (feat == null) { Debug.LogWarning("[HDMRBuildNuvcXR] feature not found: " + fid); continue; }
-            feat.GetType().GetProperty("enabled").SetValue(feat, true);
-            EditorUtility.SetDirty((UnityEngine.Object)feat);
-        }
-        // make sure a controller profile enabled by an earlier run is off
-        foreach (var fid in new[] { "com.unity.openxr.feature.input.metaquestplus",
-                                    "com.unity.openxr.feature.input.metaquestpro" })
-        {
-            var feat = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, fid });
-            if (feat == null) continue;
-            feat.GetType().GetProperty("enabled").SetValue(feat, false);
-            EditorUtility.SetDirty((UnityEngine.Object)feat);
-        }
+        // Meta Quest Support is what makes it a Quest app. The Touch-Plus
+        // controller profile can stay enabled — the app takes no input, and the
+        // manifest declares oculus.software.handtracking (required=false), which
+        // is what lets Horizon OS launch it without an active controller.
+        var mq = getFeat.Invoke(null, new object[] { BuildTargetGroup.Android, "com.unity.openxr.feature.metaquest" });
+        if (mq == null) Debug.LogWarning("[HDMRBuildNuvcXR] Meta Quest Support feature not found");
+        else { mq.GetType().GetProperty("enabled").SetValue(mq, true); EditorUtility.SetDirty((UnityEngine.Object)mq); }
         AssetDatabase.SaveAssets();
-        Debug.Log("[HDMRBuildNuvcXR] OpenXR + Meta Quest features enabled for Android");
+        Debug.Log("[HDMRBuildNuvcXR] OpenXR + Meta Quest Support enabled for Android");
     }
 
     static Type FindType(string full)
