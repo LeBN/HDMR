@@ -61,7 +61,9 @@ Demande de passer la console/l'appareil en VR
 
 L'écran **Menu Principal** (preview + gond + 2 tiles primaires + rangée secondaire alignée à gauche + barre Profils/Accueil/Paramètres + reflow in-place sur Paramètres) est implémenté dans le prototype HTML — mêmes lien/mécaniques de feel que le reste (curseur, pop, lévitation, son).
 
-Le **process de calibrage** (5 étapes, navigables librement via les puces ou ←/→) est maintenant implémenté aussi : sélection de la tile « Calibrage stéréo » ouvre le mini-flux (VR → Résolution → Preset → Distance → Test), avec les réglages complets (gain/gamma/lift) repliables à l'étape Preset et les 3 modes de test à l'étape finale. Les 3 modes de présentation eux-mêmes (3DS/MR, Full VR, Cinéma) restent à construire comme véritables écrans — pour l'instant le wizard ne fait que les référencer en option de test.
+Le **process de calibrage** (5 étapes, navigables librement via les puces ou ←/→) est implémenté : sélection de la tile « Calibrage stéréo » ouvre le mini-flux (VR → Résolution → Preset → Distance → Test), avec les réglages complets (gain/gamma/lift) repliables à l'étape Preset et les 3 modes de test à l'étape finale — « Terminer » avec un mode choisi y entre directement.
+
+Les **3 modes de présentation** (3DS/MR, Full VR, Cinéma) sont implémentés aussi : accessibles depuis les tiles Home (Stéréo VR / mode MR / Cinéma), depuis la fin du wizard, et interconnectés entre eux (←/→ ou la barre modeSwitch bascule direct de l'un à l'autre, sans repasser par le menu). Full VR reste 0DoF (aucun sol, aucune distance affichée) ; 3DS/MR et Cinéma sont 6DoF avec un sol suggéré (passthrough simulé — pas de vraie caméra dans ce prototype), une distance à l'écran randomisée à chaque « Replacer l'écran » (stand-in pour un vrai placement 6DoF, que l'input souris/clavier de ce prototype ne peut pas représenter honnêtement), et Cinéma ajoute un reflet évoqué sous l'écran.
 
 ## Précisions confirmées (2026-09-15)
 
