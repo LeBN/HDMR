@@ -1,5 +1,15 @@
 {
+  "scopedRegistries": [
+    {
+      "name": "Meta",
+      "url": "https://npm.developer.oculus.com",
+      "scopes": [ "com.meta.xr" ]
+    }
+  ],
   "dependencies": {
+    "com.meta.xr.sdk.core": "205.0.0",
+    "com.meta.xr.sdk.interaction": "205.0.0",
+    "com.meta.xr.sdk.interaction.ovr": "205.0.0",
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#v10.1.2",
     "com.unity.inputsystem": "1.20.0",
     "com.unity.xr.core-utils": "2.6.0",
