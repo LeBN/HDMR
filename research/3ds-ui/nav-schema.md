@@ -59,7 +59,9 @@ Demande de passer la console/l'appareil en VR
 
 ## Statut
 
-L'écran **Menu Principal** (preview + gond + 2 tiles primaires + rangée secondaire alignée à gauche + barre Profils/Accueil/Paramètres + reflow in-place sur Paramètres) est implémenté dans le prototype HTML — mêmes lien/mécaniques de feel que le reste (curseur, pop, lévitation, son). Les 3 modes de présentation (3DS/MR, Full VR, Cinéma) et le wizard de calibrage restent à construire.
+L'écran **Menu Principal** (preview + gond + 2 tiles primaires + rangée secondaire alignée à gauche + barre Profils/Accueil/Paramètres + reflow in-place sur Paramètres) est implémenté dans le prototype HTML — mêmes lien/mécaniques de feel que le reste (curseur, pop, lévitation, son).
+
+Le **process de calibrage** (5 étapes, navigables librement via les puces ou ←/→) est maintenant implémenté aussi : sélection de la tile « Calibrage stéréo » ouvre le mini-flux (VR → Résolution → Preset → Distance → Test), avec les réglages complets (gain/gamma/lift) repliables à l'étape Preset et les 3 modes de test à l'étape finale. Les 3 modes de présentation eux-mêmes (3DS/MR, Full VR, Cinéma) restent à construire comme véritables écrans — pour l'instant le wizard ne fait que les référencer en option de test.
 
 ## Précisions confirmées (2026-09-15)
 
