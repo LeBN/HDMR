@@ -60,6 +60,14 @@ Horizon-OS relogin screen blocking on-device testing.
   neither restricts *outbound* traffic, which is what `startSession` needs.
 - **Not a zombie/locked Editor process** — `tasklist` confirmed no lingering
   `Unity.exe` before each retry, and `Temp/UnityLockfile` was never held.
+- **Not a system/WinHTTP proxy** — `netsh winhttp show proxy` reports direct
+  access, no `HTTP_PROXY`/`HTTPS_PROXY` env vars, IE proxy settings disabled.
+- **Not Tailscale rerouting traffic** — this machine has no exit node active
+  and no subnet routes; it's a plain tailnet peer, general internet traffic
+  never touches it.
+- **Confirmed persistent, not transient** — retested again ~30min after the
+  first write-up with no changes to the project; identical hang, same log
+  line, same missing "completed successfully" line.
 
 ## Leading hypothesis (unconfirmed)
 
