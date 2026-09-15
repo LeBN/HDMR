@@ -97,7 +97,7 @@ public static class HDMRBuildHome
         PlayerSettings.Android.forceInternetPermission = false;
         PlayerSettings.Android.renderOutsideSafeArea = true;
         PlayerSettings.runInBackground = true;
-        try { PlayerSettings.Android.resizableWindow = false; } catch { }
+        try { PlayerSettings.Android.resizeableActivity = false; } catch { }
         PlayerSettings.colorSpace = ColorSpace.Gamma;
 
         Debug.Log("[HDMRBuildHome] player settings configured");

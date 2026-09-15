@@ -48,7 +48,7 @@ android {
     // path ... from inputs: [...jetified-openxr_loader..., ...jetified-OVRPlugin...]".
     // Either copy works at runtime (both are the same Khronos loader ABI) —
     // pickFirst just picks one deterministically instead of erroring.
-    packagingOptions {
+    packaging {
         jniLibs {
             pickFirst 'lib/*/libopenxr_loader.so'
         }

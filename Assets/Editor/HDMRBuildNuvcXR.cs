@@ -90,7 +90,7 @@ public static class HDMRBuildNuvcXR
         PlayerSettings.Android.forceInternetPermission = false;
         PlayerSettings.Android.renderOutsideSafeArea = true;
         PlayerSettings.runInBackground = true;
-        try { PlayerSettings.Android.resizableWindow = false; } catch { }
+        try { PlayerSettings.Android.resizeableActivity = false; } catch { }
 
         // Gamma colour space — matches the 2D build the user tuned against, and
         // avoids the sRGB double-encode that tinted the NV12 output ("filtre

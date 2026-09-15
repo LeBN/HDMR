@@ -89,7 +89,7 @@ public static class HDMRBuildNuvc
 
         try
         {
-            PlayerSettings.Android.resizableWindow = true;
+            PlayerSettings.Android.resizeableActivity = true;
             PlayerSettings.Android.defaultWindowWidth = 1600;
             PlayerSettings.Android.defaultWindowHeight = 900;
             PlayerSettings.Android.minimumWindowWidth = 480;
