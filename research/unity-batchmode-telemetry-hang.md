@@ -152,6 +152,25 @@ no Unity needed for that. **Confirmed: the 2D app launches clean** —
 no blocking-boot-state — `MetaManifestCleanup.cs` is verified working
 end-to-end now, not just at the APK-manifest-inspection level.
 
+## Update 2026-09-15 ~16:08 — PC-side Oculus relogin didn't help either
+
+Confirmed via the service log itself that the PC-side Oculus service
+("Meta Quest Link" desktop app) also reconnected cleanly (its own
+"Connection rejected: bad user name or password" loop stopped, last
+failure 16:04:53, `PINGRESP` succeeding right after). Retested
+`Ping.Run()` immediately — **identical hang, same spot, no change.**
+
+So both account-session-level fixes tried (headset relogin, PC Oculus
+service relogin) and neither touched this. That weakens the account-session
+theory considerably — it's looking more like something cached specifically
+in Unity's own process/Editor state (not the OS-level Oculus session at
+all), or it really is the no-GUI-dialog-can-render theory from the original
+write-up. Both would explain why neither external relogin helped: an
+interactive Editor launch is the one thing that's still genuinely
+untried, and increasingly the most likely candidate — it's the only
+thing left that differs between a batch session and whatever worked
+at 07:51 this morning.
+
 ## Status
 
 Unresolved as of this writing. `HDMRBuildHome.cs` and the
