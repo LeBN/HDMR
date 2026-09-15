@@ -43,6 +43,7 @@ public static class HDMRBuildHome
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
                 EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
 
+            EnsureTMPEssentials();
             ConfigurePlayerSettings();
             ConfigureXR();
             ConfigureOvrProjectConfig();
@@ -73,6 +74,94 @@ public static class HDMRBuildHome
         finally { Active = false; }
     }
 
+    const string TMPMarkerAsset = "Assets/TextMesh Pro/Resources/TMP Settings.asset";
+
+    // First attempt at this called ImportResources(...) inline inside
+    // Build() and logged success right after — WRONG. AssetDatabase.
+    // ImportPackage is asynchronous; -quit tore the process down before the
+    // import actually finished, so the log lied by trusting its own call
+    // instead of checking the real result (caught by the user testing it,
+    // rightly furious that the popup kept coming back). Real fix: a
+    // SEPARATE Unity.exe invocation
+    // (-executeMethod HDMRBuildHome.ImportTMPEssentialsBlocking) that
+    // triggers the import then polls via EditorApplication.update — the
+    // same async-in-batch-mode pattern already proven this session for the
+    // Package Manager registry check — until the file genuinely exists on
+    // disk, before exiting. Run this once; Build() itself only checks.
+    public static void ImportTMPEssentialsBlocking()
+    {
+        if (System.IO.File.Exists(TMPMarkerAsset))
+        {
+            Debug.Log("[HDMRBuildHome] TMP Essentials already present, nothing to do");
+            EditorApplication.Exit(0);
+            return;
+        }
+        TMPro.TMP_PackageResourceImporter.ImportResources(importEssentials: true, importExamples: false, interactive: false);
+        double start = EditorApplication.timeSinceStartup;
+        EditorApplication.CallbackFunction tick = null;
+        tick = () =>
+        {
+            if (System.IO.File.Exists(TMPMarkerAsset))
+            {
+                EditorApplication.update -= tick;
+                AssetDatabase.Refresh();
+                Debug.Log("[HDMRBuildHome] TMP Essentials import CONFIRMED on disk");
+                EditorApplication.Exit(0);
+            }
+            else if (EditorApplication.timeSinceStartup - start > 60)
+            {
+                EditorApplication.update -= tick;
+                Debug.LogError("[HDMRBuildHome] TMP Essentials import did not appear on disk within 60s");
+                EditorApplication.Exit(1);
+            }
+        };
+        EditorApplication.update += tick;
+    }
+
+    // Build() only checks — it does not attempt the import itself, so it
+    // can never again claim success without verifying the file is real.
+    static void EnsureTMPEssentials()
+    {
+        if (!System.IO.File.Exists(TMPMarkerAsset))
+            Debug.LogError("[HDMRBuildHome] TMP Essentials missing — run " +
+                "-executeMethod HDMRBuildHome.ImportTMPEssentialsBlocking once first (separate invocation, the import is async)");
+    }
+
+    // Meta's own Project Setup Tool (UPST) — the actual, authoritative
+    // config checker, verified against the installed package source
+    // (OVRProjectSetup.cs: public static Task FixAllAsync(BuildTargetGroup)).
+    // Run this ONCE (separate Unity.exe invocation, no -quit — same reason
+    // as ImportTMPEssentialsBlocking: it returns a Task, and trusting a log
+    // line without waiting for it is exactly the mistake that already
+    // burned an entire round-trip tonight on the TMP import) before Build()
+    // — lets Meta's own tooling catch and fix real config gaps (found live
+    // in an interactive Editor session: min Android API 29 -> should be 32,
+    // no Oculus Touch interaction profile registered under OpenXR) instead
+    // of guessing at PlayerSettings/OVRManager fields by hand.
+    public static void FixProjectSetupBlocking()
+    {
+        var task = OVRProjectSetup.FixAllAsync(BuildTargetGroup.Android);
+        EditorApplication.CallbackFunction tick = null;
+        double start = EditorApplication.timeSinceStartup;
+        tick = () =>
+        {
+            if (task.IsCompleted)
+            {
+                EditorApplication.update -= tick;
+                AssetDatabase.SaveAssets();
+                Debug.Log($"[HDMRBuildHome] OVRProjectSetup.FixAllAsync completed (status={task.Status})");
+                EditorApplication.Exit(task.Status == System.Threading.Tasks.TaskStatus.RanToCompletion ? 0 : 1);
+            }
+            else if (EditorApplication.timeSinceStartup - start > 120)
+            {
+                EditorApplication.update -= tick;
+                Debug.LogError("[HDMRBuildHome] OVRProjectSetup.FixAllAsync did not complete within 120s");
+                EditorApplication.Exit(1);
+            }
+        };
+        EditorApplication.update += tick;
+    }
+
     static void ConfigurePlayerSettings()
     {
         var android = NamedBuildTarget.Android;
@@ -100,7 +189,14 @@ public static class HDMRBuildHome
         PlayerSettings.Android.renderOutsideSafeArea = true;
         PlayerSettings.runInBackground = true;
         try { PlayerSettings.Android.resizeableActivity = false; } catch { }
-        PlayerSettings.colorSpace = ColorSpace.Gamma;
+        // NOT Gamma — that's copied from nuvc/nuvc.xr, which don't use
+        // OVRPlugin at all. Home does (Meta XR Core SDK), and
+        // OVRGradleGeneration hard-fails the build otherwise: "Oculus
+        // Utilities Plugin with OpenXR only supports linear lighting."
+        // Copying a setting across builds without checking whether it
+        // still applies is exactly how this broke.
+        PlayerSettings.colorSpace = ColorSpace.Linear;
+        PlayerSettings.SplashScreen.show = false; // was never set on any of the 3 builds — real miss, caught by the user
 
         Debug.Log("[HDMRBuildHome] player settings configured");
     }
@@ -228,9 +324,42 @@ public static class HDMRBuildHome
         rig.name = "OVRCameraRig";
         rig.transform.position = Vector3.zero;
 
+        // Never set — the real "Add Comprehensive Interaction Rig" wizard's
+        // CreateMissingCameraRig() step does this automatically when it
+        // creates a fresh OVRCameraRig; I used an existing prefab instance
+        // instead and skipped it entirely. Default here reads as EyeLevel
+        // (Y=0 is wherever the headset happened to be when tracking
+        // started, not the physical floor) — confirmed by the user: "un
+        // sol que mon casque traverse", the virtual floor plane not lining
+        // up with the real one. _trackingOriginType has no public Editor-
+        // time setter (the wizard's own comment: the runtime property is
+        // runtime-only) — same reflection approach the wizard itself uses.
+        var ovrManager = rig.GetComponent<OVRManager>();
+        if (ovrManager != null)
+        {
+            var trackingOriginField = typeof(OVRManager).GetField("_trackingOriginType",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            if (trackingOriginField != null)
+                trackingOriginField.SetValue(ovrManager, OVRManager.TrackingOrigin.FloorLevel);
+            else
+                Debug.LogWarning("[HDMRBuildHome] _trackingOriginType field not found — OVRManager API may have changed");
+        }
+        else Debug.LogWarning("[HDMRBuildHome] no OVRManager on the rig — can't set tracking origin");
+
         var light = new GameObject("Directional Light", typeof(Light));
         light.GetComponent<Light>().type = LightType.Directional;
         light.transform.rotation = Quaternion.Euler(50, -30, 0);
+
+        // A scene with literally nothing but a light and a UI panel is
+        // disorienting in VR — no parallax reference at all means head
+        // rotation gives you no visual feedback that anything is actually
+        // world-locked, which reads exactly like "0DoF, stuck to my head"
+        // even though tracking itself is fine. Found the hard way (user
+        // tested a build without this and reported exactly that).
+        var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        floor.name = "Floor (reference)";
+        floor.transform.position = Vector3.zero;
+        floor.transform.localScale = new Vector3(3f, 1f, 3f); // Unity's default Plane is 10x10, so this is a 30x30m floor
 
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), ScenePath);
         Debug.Log("[HDMRBuildHome] scene written -> " + ScenePath + " (prefab: " + prefabPath + ")");
@@ -320,13 +449,16 @@ public static class HDMRBuildHome
         {
             var canvasGo = (GameObject)PrefabUtility.InstantiatePrefab(canvasPrefab);
             canvasGo.name = "HomeCanvas (placeholder)";
-            // Rough placeholder placement, facing back toward the rig origin
-            // — not tuned, just enough to exist for a ray to reach once
-            // someone's actually wearing the headset. Real placement is a
-            // feel/UX call, not something to guess headless.
-            canvasGo.transform.position = new Vector3(0f, 1.4f, 1.6f);
-            canvasGo.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-            Debug.Log("[HDMRBuildHome] EmptyUIBackplateWithCanvas placeholder added");
+            // A fixed WORLD-SPACE position/rotation was the actual bug that
+            // made the first build's menu invisible: a build script has no
+            // way to know the player's Guardian-calibrated forward
+            // direction (it's not a fixed Unity world axis), so "in front"
+            // at build time could be anywhere at runtime. Real fix: spawn
+            // relative to wherever the camera is actually facing when the
+            // app starts — see SpawnInFrontOfHead.cs.
+            canvasGo.transform.localScale *= 2.5f; // the 0.25m default panel also read as too small/hard to find
+            canvasGo.AddComponent<Hdmr.Home.SpawnInFrontOfHead>();
+            Debug.Log("[HDMRBuildHome] EmptyUIBackplateWithCanvas placeholder added (spawns relative to head at runtime)");
 
             AddHomeTiles(canvasGo);
             AddTabbar(canvasGo);
