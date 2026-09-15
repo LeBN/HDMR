@@ -100,6 +100,34 @@ the supported opt-out and pre-seed it before ever running batch mode again
 package's own assembly without `InternalsVisibleTo`, so this needs Meta's
 supported public toggle, not a reflection hack).
 
+## Update 2026-09-15 ~13:00 — likely tied to the same account-relogin issue as the headset
+
+The user confirmed Meta emailed them to force a relogin due to suspicious
+account activity — which matches the Horizon-OS relogin block exactly. The
+local **Oculus PC service** (`Meta Quest Link`, `%LOCALAPPDATA%\Oculus`,
+used for cable/Link connectivity) is hitting the same wall on the same
+machine, continuously, since **04:27 today**:
+
+```
+[MessengerSession] ClientImpl.cpp:452 Connection rejected: 4 Connection
+Refused: bad user name or password.
+[MessengerSession] ClientImpl.cpp:436 Reconnecting in 30000 ms
+```
+
+(1990+ occurrences by ~13:00, one every ~30s, in
+`%LOCALAPPDATA%\Oculus\Service_2026-09-14_20.01.41.txt`.)
+
+This doesn't prove `OVRTelemetry` uses this exact same session — the last
+*working* batch run was at 07:51, after this auth loop had already started
+failing (04:27), so if they share a session it's likely `OVRTelemetry` was
+running on a still-valid cached/in-memory token at 07:51 that later expired,
+rather than checking live each time. But the timing is close enough, and the
+account-level cause is now independently confirmed (the user's email), that
+**this is now the leading hypothesis, not just a guess**: once the Meta
+account is relogged in, both blockers may clear from the same fix — worth
+retrying a batch build immediately after the headset relogin is done,
+before assuming a second, separate problem needs solving.
+
 ## Status
 
 Unresolved as of this writing. `HDMRBuildHome.cs` and the
