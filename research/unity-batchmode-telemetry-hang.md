@@ -171,7 +171,36 @@ untried, and increasingly the most likely candidate — it's the only
 thing left that differs between a batch session and whatever worked
 at 07:51 this morning.
 
-## Status
+## RESOLVED 2026-09-15 ~17:25 — interactive Editor launch was the fix, as predicted
+
+Launched Unity **without** `-batchmode` (real window, `-quit` +
+`-executeMethod` kept) instead of guessing further. Two real modal dialogs
+appeared — a "Script Updating Consent" prompt (deprecated API rename in the
+3 build scripts) and later an "Unsupported Input Handling" warning — neither
+would have been fatal in batch mode (both are auto-declined/skipped there),
+but answering the first one this way is very likely what let the process
+past whatever was gating it: right after, `Telemetry_Init: startSession
+completed successfully` appeared for the first time since 07:51 this
+morning, and `HDMRBuildHome.Build()` ran end-to-end —
+**`result=Succeeded errors=0`**, `Build/HDMR-home.apk` produced (45.8MB,
+9m35s). A third dialog (Unity's own "launcherTemplate.gradle needs to be
+updated" — `packagingOptions` → `packaging`, the modern AGP 8+ DSL) also
+appeared and was accepted, auto-fixing the pickFirst rule to non-deprecated
+syntax with no behavior change.
+
+**Root cause, best available read**: not the Meta account (tried, didn't
+help), not the PC-side Oculus service account (tried, didn't help) — some
+part of Editor startup in this Unity version needs a real window / can't
+proceed while a blocking dialog would be needed but batch mode can't render
+one. The exact mechanism (why *this specific* dialog, why it only started
+mattering ~08:00 today when the same code had been batch-buildable before)
+is still not nailed down, but the practical takeaway holds either way:
+**future batch-mode hangs on this project should be diagnosed by first
+trying a non-batch, windowed `-executeMethod` run** — cheap, and it just
+solved a blocker that survived two account relogins and ~15 failed batch
+attempts.
+
+## Status (superseded by the RESOLVED section above — kept for the full trail)
 
 Unresolved as of this writing. `HDMRBuildHome.cs` and the
 `launcherTemplate.gradle` native-lib fix (see main build-fix commit) are
