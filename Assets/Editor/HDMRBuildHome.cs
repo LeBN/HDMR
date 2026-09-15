@@ -327,10 +327,121 @@ public static class HDMRBuildHome
             canvasGo.transform.position = new Vector3(0f, 1.4f, 1.6f);
             canvasGo.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
             Debug.Log("[HDMRBuildHome] EmptyUIBackplateWithCanvas placeholder added");
+
+            AddHomeTiles(canvasGo);
+            AddTabbar(canvasGo);
         }
 
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), ScenePath);
     }
+
+    // Port step 2: the prototype's two primary tiles ("Lancer le mode
+    // Stéréo VR" / "Calibrage stéréo" — see research/3ds-ui/nav-schema.md)
+    // as real, ray/poke-interactable buttons. Copy only for now — the
+    // prototype's feel (pop/lift/idle animation, cursor highlight, sound)
+    // is a later pass once this basic layout is confirmed working
+    // in-headset; onClick is a placeholder log, not real navigation yet.
+    // From the prototype's TILES array (hdmr-home.html) / nav-schema.md.
+    // Same button prefab for every tile in this pass — the prototype's
+    // visual distinction (primary vs. secondary size, "wide" MR/Cinéma,
+    // the quieter/inverted profile style, the empty-profile dashed state)
+    // is layout/skin work for a later pass once this structural port is
+    // confirmed working in-headset. Getting every tile PRESENT and
+    // CLICKABLE first, per the user's "continue le portage, on testera à
+    // la fin" — not stopping to polish each row before the next exists.
+    static readonly (string label, string key)[] PrimaryTiles =
+    {
+        ("Lancer le mode\nStéréo VR", "vr"),
+        ("Calibrage\nstéréo",         "cal"),
+    };
+    static readonly (string label, string key)[] SecondaryTiles =
+    {
+        ("Mode MR",        "mr"),
+        ("Cinéma",         "cine"),
+        ("Profil 1",       "profile0"),
+        ("Nouveau profil", "profile1-new"),
+        ("Étalonnage",     "etal"),
+    };
+
+    static void AddHomeTiles(GameObject canvasGo)
+    {
+        var canvasRoot = canvasGo.transform.Find("CanvasRoot");
+        if (canvasRoot == null)
+        {
+            // Fallback in case the sample's internal naming changes —
+            // still find something Canvas-shaped rather than silently
+            // no-op'ing.
+            var canvas = canvasGo.GetComponentInChildren<Canvas>(true);
+            canvasRoot = canvas != null ? canvas.transform : null;
+        }
+        if (canvasRoot == null) { Debug.LogError("[HDMRBuildHome] CanvasRoot not found in canvas prefab"); return; }
+
+        var tileButtonPrefab = LoadUniquePrefab("TextTileButton_IconAndLabel_Regular_UnityUIButton");
+        if (tileButtonPrefab == null) return;
+
+        int n1 = AddTileRow(canvasRoot, tileButtonPrefab, PrimaryTiles, y: 80f, tileW: 180f, gap: 20f);
+        int n2 = AddTileRow(canvasRoot, tileButtonPrefab, SecondaryTiles, y: -100f, tileW: 100f, gap: 14f);
+        Debug.Log($"[HDMRBuildHome] tiles added under {canvasRoot.name}: {n1} primary, {n2} secondary");
+    }
+
+    // Prototype's bottom bar: Profils | Accueil | Paramètres. Same
+    // placeholder-button approach as the tiles — real 3DS-style dividers,
+    // centring and the "flush with the bounding box" look (per the user's
+    // explicit description this session) are layout/skin, not structure.
+    static readonly (string label, string key)[] TabbarItems =
+    {
+        ("Profils",    "profils"),
+        ("Accueil",    "accueil"),
+        ("Paramètres", "parametres"),
+    };
+
+    static void AddTabbar(GameObject canvasGo)
+    {
+        var canvasRoot = canvasGo.transform.Find("CanvasRoot");
+        if (canvasRoot == null) { Debug.LogError("[HDMRBuildHome] CanvasRoot not found for tabbar"); return; }
+        var tileButtonPrefab = LoadUniquePrefab("TextTileButton_IconAndLabel_Regular_UnityUIButton");
+        if (tileButtonPrefab == null) return;
+
+        int n = AddTileRow(canvasRoot, tileButtonPrefab, TabbarItems, y: -240f, tileW: 130f, gap: 10f);
+        Debug.Log($"[HDMRBuildHome] tabbar added under {canvasRoot.name}: {n} items");
+    }
+
+    static int AddTileRow(Transform parent, GameObject tileButtonPrefab, (string label, string key)[] tiles, float y, float tileW, float gap)
+    {
+        float startX = -(tiles.Length * tileW + (tiles.Length - 1) * gap) / 2f + tileW / 2f;
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            var (label, key) = tiles[i];
+            var tileGo = (GameObject)PrefabUtility.InstantiatePrefab(tileButtonPrefab, parent);
+            tileGo.name = "Tile_" + key;
+            var rt = tileGo.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchoredPosition = new Vector2(startX + i * (tileW + gap), y);
+                rt.sizeDelta = new Vector2(tileW, tileW);
+            }
+
+            var label3d = tileGo.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (label3d != null) label3d.text = label;
+            else Debug.LogWarning($"[HDMRBuildHome] no TMP_Text found on tile '{key}' — prefab structure may have changed");
+
+            var btn = tileGo.GetComponentInChildren<UnityEngine.UI.Button>(true);
+            if (btn != null)
+            {
+                string capturedKey = key; // local copy for the closure — foreach/for pitfall
+                UnityEditor.Events.UnityEventTools.AddStringPersistentListener(
+                    btn.onClick, LogTileClickTarget, capturedKey);
+            }
+            else Debug.LogWarning($"[HDMRBuildHome] no Button found on tile '{key}' — prefab structure may have changed");
+        }
+        return tiles.Length;
+    }
+
+    // Placeholder click target, wired as a real persistent UnityEvent
+    // listener (survives into the build, not just an Editor-only closure)
+    // so the button genuinely does something observable on-device before
+    // real navigation exists.
+    public static void LogTileClickTarget(string key) => Debug.Log("[HDMRBuildHome] tile clicked: " + key);
 
     static GameObject LoadUniquePrefab(string exactName)
     {
