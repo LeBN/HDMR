@@ -1,0 +1,102 @@
+# Unity batch-mode builds silently hanging (2026-09-15)
+
+## Symptom
+
+Since ~08:00 this session, every `Unity.exe -batchmode -quit -executeMethod ...`
+invocation on this project hangs and exits **without ever running the
+requested method** — no target log line, no exception, no error text.
+`Unity.exe` itself exits 0 ("Shut down.") within a bounded time (roughly
+1.5–3 minutes), it just never reaches the method.
+
+The log always stops at the exact same point, right after the *second*
+domain reload of a batch-mode session:
+
+```
+Refreshing native plugins compatible for Editor in ~25 ms, found 12 plugins.
+Native extension for Android target not found      <- harmless, appears in working runs too
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in ~30 ms, found 12 plugins.
+I0915 HH:MM:SS.ffffff PID OVRTelemetry.cpp:57] Telemetry_Init: calling startSession with engineName=Unity, pluginVersion=1.205.0
+Shut down.
+```
+
+Compare to a **working** run from earlier the same session (07:51), where the
+identical `Telemetry_Init: calling startSession` line is followed within
+~150ms by `Telemetry_Init: startSession completed successfully` (twice, once
+per bundled plugin version — 1.205.0 and 1.204.0), and the requested
+`-executeMethod` runs normally right after.
+
+So: the call starts, but the "completed successfully" line never appears —
+`OVRTelemetry`'s native `startSession` call (Meta XR Core SDK's own
+first-run/session telemetry, added when `com.meta.xr.sdk.core` was installed
+this session) is stalling, and something downstream treats that stall as
+"nothing left to do" rather than continuing to the queued `-executeMethod`.
+
+## What this blocks
+
+**Every** Android batch build in this project, not just the new
+`HDMRBuildHome` target — reproduced on the untouched, previously-working
+`HDMRBuildNuvc.BuildNuvc` (2D) too. This is the actual blocker on finishing
+the 10h Unity-port loop's build/regression-test steps, independent of the
+Horizon-OS relogin screen blocking on-device testing.
+
+## Ruled out (each tested directly, not assumed)
+
+- **Not the new code** — reproduces on a one-line `Debug.Log` + `Exit(0)`
+  method with no Android/build-pipeline involvement at all.
+- **Not the new `launcherTemplate.gradle`** — removed it entirely, same hang.
+- **Not stale `Library/Bee` cache** — wiped `Library/Bee` +
+  `Library/ScriptAssemblies` for a from-scratch recompile, same hang.
+- **Not a one-off/flaky hiccup** — retried unchanged back-to-back, identical
+  hang every time (5+ consecutive repros as of first write-up; see log below
+  for a later, delayed retest).
+- **Not general internet loss** — `graph.oculus.com:443` and a plain
+  `https://www.google.com` both responded in well under a second via `curl`
+  and `Test-NetConnection` run *during* the hang window.
+- **Not a Windows Firewall block** — the only `Unity 6000.5.10f1 Editor`
+  firewall rules present are the standard auto-created *inbound* rules
+  (Allow/Domain, Block/Public) that Windows creates for any networked app;
+  neither restricts *outbound* traffic, which is what `startSession` needs.
+- **Not a zombie/locked Editor process** — `tasklist` confirmed no lingering
+  `Unity.exe` before each retry, and `Temp/UnityLockfile` was never held.
+
+## Leading hypothesis (unconfirmed)
+
+`OVRTelemetryConsent` / `OVRPlugin.UnifiedConsent` (see
+`Library/PackageCache/com.meta.xr.sdk.core@.../Editor/OVRTelemetry/
+OVRTelemetryConsent.cs`) reads/writes a "unified consent" value that may
+itself require a round-trip (to Meta's backend, or to a local consent-prompt
+UI) the *first* time it's touched in a given local state. Batch mode has no
+UI to show a consent dialog, and if the underlying call blocks instead of
+timing out fast or defaulting when headless, that would explain: (a) it
+worked the first couple of times right after installing the package
+(consent state was presumably already resolved/cached from interactive setup
+earlier), and (b) it now hangs unconditionally regardless of which script
+runs, since the stall happens before user code is ever reached.
+
+**Not verified further** — reading the actual gate would require decompiling
+`OVRPlugin`'s native library, which wasn't worth the time relative to the
+loop's other goals. This is a plausible lead for whoever picks this back up,
+not a confirmed root cause.
+
+## Recommended next step (needs the user or an interactive session)
+
+Batch mode can't answer a UI dialog it can't render. Open the Unity Editor
+**interactively** (normal double-click launch, not `-batchmode`) once, let
+anything pending (a consent prompt, a sign-in, a "send data?" toggle) resolve
+normally, close it, then retry a batch build. If that clears it, the fix
+going forward is either: dismiss/accept that dialog once per machine, or find
+the supported opt-out and pre-seed it before ever running batch mode again
+(the naive per-field `internal` consent API isn't reachable from outside the
+package's own assembly without `InternalsVisibleTo`, so this needs Meta's
+supported public toggle, not a reflection hack).
+
+## Status
+
+Unresolved as of this writing. `HDMRBuildHome.cs` and the
+`launcherTemplate.gradle` native-lib fix (see main build-fix commit) are
+believed correct but **not yet build-verified end to end** because of this —
+the last real signal before the hang started was a legitimate, understood,
+and fixed Gradle failure (`:launcher:mergeReleaseNativeLibs` — two AARs
+shipping the same `libopenxr_loader.so`), not a problem with either file.
