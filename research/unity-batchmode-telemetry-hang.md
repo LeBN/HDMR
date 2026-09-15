@@ -128,6 +128,30 @@ account is relogged in, both blockers may clear from the same fix — worth
 retrying a batch build immediately after the headset relogin is done,
 before assuming a second, separate problem needs solving.
 
+## Update 2026-09-15 ~15:58 — relogin done, hang did NOT clear
+
+The headset's account relogin resolved (user back, fresh boot, `mCurrentFocus`
+back to `com.oculus.vrshell.HomeActivity`) and the local Oculus PC service's
+"bad user name or password" loop presumably cleared with it. Immediately
+retested the plain `Ping.Run()` batch-mode repro right after — **still hangs
+at the exact same spot** (`OVRTelemetry.cpp:57 Telemetry_Init: calling
+startSession`, no completion line, no exception, clean exit).
+
+**So the "same account" hypothesis from the ~13:00 update is disproven** —
+or at least, whatever Unity's telemetry init is stuck on isn't fixed by
+just relogging in the headset/PC Oculus service. Two blockers, two separate
+fixes needed. Don't assume this clears itself again if the account changes;
+it needs its own diagnosis (interactive Editor launch remains the next
+untried step — still hasn't been attempted).
+
+Silver lining: the headset working again let the *actual* on-device test
+this whole investigation was blocking run directly off the last known-good
+APK (`Build/HDMR-nuvc.apk`, built 06:13 today, before the hang started) —
+no Unity needed for that. **Confirmed: the 2D app launches clean** —
+`Displayed +157ms`, `Fully drawn +831ms`, no "controller required" dialog,
+no blocking-boot-state — `MetaManifestCleanup.cs` is verified working
+end-to-end now, not just at the APK-manifest-inspection level.
+
 ## Status
 
 Unresolved as of this writing. `HDMRBuildHome.cs` and the
