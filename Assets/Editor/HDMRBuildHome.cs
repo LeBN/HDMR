@@ -8,6 +8,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Oculus.Interaction.Input;
 
 /// <summary>
 ///   Unity.exe -batchmode -quit -projectPath HDMR -buildTarget Android \
@@ -46,6 +47,7 @@ public static class HDMRBuildHome
             ConfigureXR();
             ConfigureOvrProjectConfig();
             EnsureScene();
+            AddInteractionAndUI();
             GenerateManifest();
 
             string outDir = Path.Combine(Directory.GetCurrentDirectory(), "Build");
@@ -232,5 +234,118 @@ public static class HDMRBuildHome
 
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), ScenePath);
         Debug.Log("[HDMRBuildHome] scene written -> " + ScenePath + " (prefab: " + prefabPath + ")");
+    }
+
+    // Step 1 of porting the HTML prototype's UI: the interaction foundation
+    // (ray + poke, hands + controllers) and a bare Canvas placeholder to
+    // point it at — verified as "compiles, builds, boots clean on-device",
+    // NOT as "looks/feels right", which needs the user in-headset. The
+    // actual tile grid / wizard / mode-screen content from the prototype is
+    // a separate, later pass on top of this.
+    //
+    // Prefabs verified against Meta's current docs (2026-09-15, via
+    // developers.meta.com — metavr MCP was unavailable this session) rather
+    // than assumed from memory:
+    //   - OVRComprehensiveInteractionRig, child of OVRCameraRig — the
+    //     current (non-Legacy) all-in-one ray/poke/grab rig.
+    //   - EmptyUIBackplateWithCanvas (Meta XR Interaction SDK's own sample
+    //     content, ships un-gated under Runtime/Sample/) — a Canvas already
+    //     wired for ray+poke pointer events, standing in for the prototype's
+    //     "deck" panel until real tile content replaces it.
+    static void AddInteractionAndUI()
+    {
+        var rigGo = GameObject.Find("OVRCameraRig");
+        if (rigGo == null) { Debug.LogError("[HDMRBuildHome] OVRCameraRig not found in scene — EnsureScene ran?"); return; }
+
+        var interactionPrefab = LoadUniquePrefab("OVRComprehensiveInteractionRig");
+        if (interactionPrefab != null)
+        {
+            var interactionGo = (GameObject)PrefabUtility.InstantiatePrefab(interactionPrefab, rigGo.transform);
+            interactionGo.name = "OVRComprehensiveInteractionRig";
+            interactionGo.transform.localPosition = Vector3.zero;
+            interactionGo.transform.localRotation = Quaternion.identity;
+
+            // The real "Add OVR Comprehensive Interaction Rig" wizard
+            // (OVRComprehensiveInteractionRigWizard.cs, internal — not
+            // callable from here) unpacks this prefab instance completely
+            // before wiring it (its MakeInteractionRigEditable step).
+            PrefabUtility.UnpackPrefabInstance(interactionGo, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+
+            // The prefab ships with every component's _cameraRigRef field
+            // empty (no OVRCameraRigRef of its own) — the wizard fills it
+            // via an internal OnObjectCreated hook we can't call from here.
+            // Reproduced via public API only: add one OVRCameraRigRef,
+            // inject it with this OVRCameraRig, fill every component's
+            // empty _cameraRigRef with it.
+            var ovrCameraRig = rigGo.GetComponent<OVRCameraRig>();
+            var rigRef = interactionGo.AddComponent<OVRCameraRigRef>();
+            rigRef.InjectInteractionOVRCameraRig(ovrCameraRig);
+            int wired = 0;
+            foreach (var comp in interactionGo.GetComponentsInChildren<Component>(true))
+            {
+                if (comp == null || comp == rigRef) continue;
+                var so = new SerializedObject(comp);
+                var prop = so.FindProperty("_cameraRigRef");
+                if (prop != null && prop.propertyType == SerializedPropertyType.ObjectReference && prop.objectReferenceValue == null)
+                {
+                    prop.objectReferenceValue = rigRef;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    wired++;
+                }
+            }
+
+            // KNOWN ISSUE (2026-09-15, not yet fixed): even with the above
+            // — confirmed via SerializedObject that every _cameraRigRef is
+            // correctly wired — the hand-tracking path still throws a
+            // continuous (non-fatal) NullReferenceException on-device:
+            // TrackingToWorldTransformerOVR.get_Transform() ->
+            // Oculus.Interaction.Input.Hand.get_Scale() ->
+            // ShadowHandExtensions.FromHandRoot/FromHand ->
+            // TouchHandGrabInteractor.DoPreprocess(). Tried and ruled out:
+            // (a) the unpack above, (b) confirming the reference wiring
+            // itself is correct at the SerializedObject level. Ray/poke via
+            // controllers is unaffected (the exception is specific to the
+            // hand-tracking interactor stack) and the app stays stable —
+            // becomes the foreground VR app, 72fps, no crash. Root-causing
+            // further needs interactive Play Mode debugging (step through
+            // Awake/Start ordering, or diff against a rig actually built by
+            // the real Editor wizard) — not something to keep guessing at
+            // headlessly. Left in place since it doesn't block anything;
+            // revisit before shipping hand-tracking interaction.
+            Debug.Log($"[HDMRBuildHome] OVRComprehensiveInteractionRig added under OVRCameraRig, {wired} _cameraRigRef wired (hand-tracking NRE known issue, see comment)");
+        }
+
+        var canvasPrefab = LoadUniquePrefab("EmptyUIBackplateWithCanvas");
+        if (canvasPrefab != null)
+        {
+            var canvasGo = (GameObject)PrefabUtility.InstantiatePrefab(canvasPrefab);
+            canvasGo.name = "HomeCanvas (placeholder)";
+            // Rough placeholder placement, facing back toward the rig origin
+            // — not tuned, just enough to exist for a ray to reach once
+            // someone's actually wearing the headset. Real placement is a
+            // feel/UX call, not something to guess headless.
+            canvasGo.transform.position = new Vector3(0f, 1.4f, 1.6f);
+            canvasGo.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            Debug.Log("[HDMRBuildHome] EmptyUIBackplateWithCanvas placeholder added");
+        }
+
+        EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene(), ScenePath);
+    }
+
+    static GameObject LoadUniquePrefab(string exactName)
+    {
+        var guids = AssetDatabase.FindAssets(exactName + " t:Prefab");
+        if (guids.Length == 0) { Debug.LogError($"[HDMRBuildHome] prefab '{exactName}' not found — package missing/not resolved?"); return null; }
+        string path = null;
+        foreach (var g in guids)
+        {
+            var p = AssetDatabase.GUIDToAssetPath(g);
+            if (Path.GetFileNameWithoutExtension(p) == exactName) { path = p; break; }
+        }
+        if (path == null) path = AssetDatabase.GUIDToAssetPath(guids[0]); // fall back to best guess, still logged below
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null) Debug.LogError($"[HDMRBuildHome] failed to load prefab at {path}");
+        else Debug.Log($"[HDMRBuildHome] resolved '{exactName}' -> {path}");
+        return prefab;
     }
 }
