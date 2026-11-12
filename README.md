@@ -10,7 +10,7 @@ Personal project, made with Unity 6 and Claude Code (CLI).
 
 - **Capture**: a USB capture card (UVC, the same standard as webcams), read directly by the Quest, up to 4K at 60 fps
 - **nuvc**: my own UVC/UAC plugin, written from scratch in C++ and Java on top of libusb (`_dev/nuvc/`)
-  - raw NV12, solid 60 fps in 720p
+  - up to 4K at 60 fps
   - about 7 ms between the end of a frame and the moment Unity gets it
 - **Stereo mode**: the Switch 2 VR image (side by side) is split per eye, with a live inverse of the Nintendo lens distortion to get back a clean 16:9 picture, then shown per eye with OpenXR
 - **Fallback path**: the UVC4UnityAndroid plugin
