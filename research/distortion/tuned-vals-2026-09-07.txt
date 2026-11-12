@@ -1,0 +1,5 @@
+# nuvc stereo params  2026-09-07 15:29
+stereo=True mode=1 grid=True
+--es nuvc.split 0.5 --es nuvc.scale 0.8896 --es nuvc.conv -0.0617 --es nuvc.k1 -0.78 --es nuvc.k2 0.43 --es nuvc.fillx 1 --es nuvc.filly 1.7767 --es nuvc.oxl 0.0037 --es nuvc.oyl -0.0006 --es nuvc.oxr 0 --es nuvc.oyr 0 --es nuvc.cxl 0.5 --es nuvc.cyl 0.5 --es nuvc.cxr 0.5 --es nuvc.cyr 0.5
+
+am start -S -W -n com.natis.hdmr.nuvc/com.unity3d.player.UnityPlayerGameActivity --es nuvc.stereo 1 --es nuvc.smode 1 --es nuvc.grid 1 --es nuvc.autograde 1 --es nuvc.split 0.5 --es nuvc.scale 0.8896 --es nuvc.conv -0.0617 --es nuvc.k1 -0.78 --es nuvc.k2 0.43 --es nuvc.fillx 1 --es nuvc.filly 1.7767 --es nuvc.oxl 0.0037 --es nuvc.oyl -0.0006 --es nuvc.oxr 0 --es nuvc.oyr 0 --es nuvc.cxl 0.5 --es nuvc.cyl 0.5 --es nuvc.cxr 0.5 --es nuvc.cyr 0.5

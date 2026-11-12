@@ -6,6 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/HDMRNuvc.unity
-    guid: f559c75d49ba78146a462746d3995835
-  m_configObjects: {}
+    path: Assets/Scenes/HDMRNuvcXR.unity
+    guid: bfed31e37318a0d409dc3f8f7e79df96
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 724c5f13ba0bac24b80e30b6bfc4c541, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 9178088190139954a9d6388e7026fcb5, type: 2}

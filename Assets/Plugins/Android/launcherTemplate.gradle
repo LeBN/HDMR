@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+apply from: 'setupSymbols.gradle'
+apply from: '../shared/keepUnitySymbols.gradle'
+apply from: '../shared/common.gradle'
+
+dependencies {
+    implementation project(':unityLibrary')
+}
+
+android {
+    namespace "**NAMESPACE**"
+    ndkPath "**NDKPATH**"
+    ndkVersion "**NDKVERSION**"
+    compileSdk **APIVERSION**
+    buildToolsVersion "**BUILDTOOLS**"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        minSdk **MINSDK**
+        targetSdk **TARGETSDK**
+        applicationId '**APPLICATIONID**'
+        ndk {
+            abiFilters **ABIFILTERS**
+            debugSymbolLevel **DEBUGSYMBOLLEVEL**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+    }
+
+    androidResources {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**SIGN**
+
+    lint {
+        abortOnError false
+    }
+
+    // Meta XR Core SDK's OVRPlugin.aar and Unity's own com.unity.xr.openxr
+    // package each ship their own copy of libopenxr_loader.so for arm64-v8a
+    // — harmless when only one is actually linked (nuvc/nuvc.xr), but the
+    // Home build references OVRManager directly, which pulls in both and
+    // makes :launcher:mergeReleaseNativeLibs fail with "2 files found with
+    // path ... from inputs: [...jetified-openxr_loader..., ...jetified-OVRPlugin...]".
+    // Either copy works at runtime (both are the same Khronos loader ABI) —
+    // pickFirst just picks one deterministically instead of erroring.
+    packaging {
+        jniLibs {
+            pickFirst 'lib/*/libopenxr_loader.so'
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled **MINIFY_DEBUG**
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')**SIGNCONFIG**
+        }
+        release {
+            minifyEnabled **MINIFY_RELEASE**
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')**SIGNCONFIG**
+        }
+    }**PACKAGING****PLAY_ASSET_PACKS****SPLITS**
+**BUILT_APK_LOCATION**
+    bundle {
+        language {
+            enableSplit false
+        }
+        density {
+            enableSplit false
+        }
+        abi {
+            enableSplit true
+        }
+        texture {
+            enableSplit true
+        }
+    }
+
+	**GOOGLE_PLAY_DEPENDENCIES**
+}**SPLITS_VERSION_CODE****LAUNCHER_SOURCE_BUILD_SETUP**

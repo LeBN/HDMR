@@ -9,6 +9,9 @@ Shader "Hdmr/NV12"
         _FullRange ("Full range", Float) = 0
         _FlipX ("Flip X", Float) = 0
         _FlipY ("Flip Y", Float) = 0
+        _Gain ("Gain (exposure)", Float) = 1
+        _Gamma ("Gamma", Float) = 1
+        _Lift ("Black lift", Float) = 0
     }
     SubShader
     {
@@ -23,7 +26,7 @@ Shader "Hdmr/NV12"
 
             sampler2D _YTex;
             sampler2D _UVTex;
-            float _FullRange, _FlipX, _FlipY;
+            float _FullRange, _FlipX, _FlipY, _Gain, _Gamma, _Lift;
 
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; };
 
@@ -51,7 +54,13 @@ Shader "Hdmr/NV12"
                 float r = y + 1.79274107 * cr;
                 float g = y - 0.21324861 * cb - 0.53290933 * cr;
                 float b = y + 2.11240179 * cb;
-                return fixed4(saturate(float3(r, g, b)), 1.0);
+                float3 rgb = saturate(float3(r, g, b));
+
+                // grade: black-lift, exposure gain, gamma
+                rgb = rgb * (1.0 - _Lift) + _Lift;
+                rgb = saturate(rgb * _Gain);
+                if (abs(_Gamma - 1.0) > 0.001) rgb = pow(rgb, 1.0 / max(_Gamma, 0.01));
+                return fixed4(rgb, 1.0);
             }
             ENDCG
         }

@@ -21,3 +21,10 @@ _dev/nuvc/**/third_party/libusb/
 
 build-nuvc*.log
 build-*.log
+
+# Local only: headset screenshots, Claude Code tooling, Meta SDK session ids
+/Assets/Screenshots/
+/Assets/Screenshots.meta
+/.claude/
+/Assets/#Meta/
+/Assets/#Meta.meta

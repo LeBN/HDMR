@@ -19,7 +19,7 @@ a universal MJPEG fallback.
 | P1.5| transfer-ring throughput tuning | **done** — solid 60 fps 720p NV12 inside a rendering app |
 | P3  | frame delivery API + first picture in the headset | **done** — live game on the panel, `com.natis.hdmr.nuvc` |
 | P5  | latency instrumentation | **done** — capture→pull 8–9 ms, USB span ~16 ms; ~24 ms our added latency vs aandusb's 24 ms **+ 350 ms that's now gone** |
-| P4  | audio (from-scratch UAC iso, own context/fd/thread) | **iso pipe opens clean, reads 0 bytes** — see `../uac-zero-bytes-analysis.md`. Leading theory: the card gates audio on an active video stream; fix in NuvcCapture (audio starts only after video frames flow) + uac.cpp diagnostics — untested, needs the card |
+| P4  | audio (from-scratch UAC iso, own context/fd/thread) | **fixed and confirmed on-device 2026-09-07** — root cause was the card gating audio on an active video stream; fix = detach `snd-usb-audio` from the AC interface + start audio only after real video frames flow (`Seq>0 && _framesSeen>30` in `NuvcCapture.ServiceAudio`). Confirmed via `nuvc-uac` logcat: okPkt climbing, 48000Hz 2ch, real PCM bytes. See `../uac-zero-bytes-analysis.md` for the original zero-bytes diagnosis. **Not re-verified since** — worth a fresh on-device pass alongside the next regression round, not assumed still-broken. |
 | —   | MJPEG path (libjpeg-turbo), 1080p/4K mode selection | not started |
 | —   | fold nuvc into the real 3-page HDMR UX (or swap it into the b-line) | not started — `com.natis.hdmr.nuvc` is a bare spike scene |
 

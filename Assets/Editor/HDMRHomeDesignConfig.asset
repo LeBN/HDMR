@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5afc02dc45535c488628f47d2b94570, type: 3}
+  m_Name: HDMRHomeDesignConfig
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::Hdmr.Editor.HDMRHomeDesignConfig
+  tileBackplateTop: {r: 0.17254902, g: 0.27450982, b: 0.3254902, a: 1}
+  tileBackplateBottom: {r: 0.12941177, g: 0.20784314, b: 0.24705882, a: 1}
+  tileBackplateRadius: 20
+  previewBackplateColor: {r: 0.047058824, g: 0.08235294, b: 0.09803922, a: 1}
+  previewBackplateRadius: 16
+  hingeTop: {r: 0.17254902, g: 0.27450982, b: 0.3254902, a: 1}
+  hingeBottom: {r: 0.12941177, g: 0.20784314, b: 0.24705882, a: 1}
+  amberAccent: {r: 1, g: 0.6156863, b: 0.3019608, a: 1}
+  aquaAccent: {r: 0.2784314, g: 0.76862746, b: 0.8117647, a: 1}
+  badgeChipRadius: 5

@@ -1,0 +1,378 @@
+<title>nuvc stereo calibration bench</title>
+<meta name="description" content="Web bench that mirrors the HDMR nuvc stereo shader — dial the split, per-eye offset, convergence and lens warp against a screenshot, then read the values into the headset app." />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #0c0f11;
+    --panel: #161b1e;
+    --panel-2: #1e2529;
+    --line: #2b3338;
+    --ink: #dae0e3;
+    --ink-dim: #8b969c;
+    --accent: #2dd4bf;
+    --accent-dim: #14776c;
+    --seam: #e879c9;
+    --warn: #f0a35e;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #eef1f2; --panel: #fff; --panel-2: #f4f6f7; --line: #d6dcde;
+      --ink: #1b2226; --ink-dim: #5a666c; --accent: #0d9488; --accent-dim: #5eead4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0f11; --panel: #161b1e; --panel-2: #1e2529; --line: #2b3338;
+    --ink: #dae0e3; --ink-dim: #8b969c; --accent: #2dd4bf; --accent-dim: #14776c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
+         font-size: 14px; line-height: 1.5; }
+  .wrap { display: grid; grid-template-columns: 1fr 400px; gap: 0; min-height: 100vh; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+
+  .stage { position: relative; display: flex; flex-direction: column;
+           background: #000; min-width: 0; }
+  .stage header { padding: 12px 18px; background: var(--panel); border-bottom: 1px solid var(--line);
+                  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .stage header h1 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+  .stage header .sub { color: var(--ink-dim); font-size: 12px; }
+  .canvas-holder { flex: 1; display: grid; place-items: center; padding: 18px; min-height: 320px; }
+  canvas#gl { max-width: 100%; max-height: 72vh; background: #000; border: 1px solid var(--line);
+              image-rendering: auto; }
+
+  .rail { background: var(--panel); border-left: 1px solid var(--line);
+          padding: 16px 16px 40px; overflow-y: auto; max-height: 100vh; }
+  @media (max-width: 900px) { .rail { max-height: none; border-left: none; border-top: 1px solid var(--line); } }
+
+  .group { margin-bottom: 18px; }
+  .group > .label { text-transform: uppercase; font-size: 11px; letter-spacing: .12em;
+                    color: var(--ink-dim); margin-bottom: 8px; }
+
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .modes button, .srcbtns button, .actions button {
+    font: inherit; font-size: 12px; padding: 7px 4px; border: 1px solid var(--line);
+    background: var(--panel-2); color: var(--ink); border-radius: 5px; cursor: pointer; }
+  .modes button.on { background: var(--accent); color: #04110f; border-color: var(--accent); font-weight: 600; }
+  .modes button:hover, .srcbtns button:hover, .actions button:hover { border-color: var(--accent); }
+
+  .srcbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 6px; }
+  .srcbtns label { font-size: 12px; padding: 7px 4px; border: 1px solid var(--line);
+    background: var(--panel-2); border-radius: 5px; cursor: pointer; text-align: center; }
+  .srcbtns input[type=file] { display: none; }
+
+  .slider { margin: 9px 0; }
+  .slider .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .slider .row .name { font-size: 12.5px; }
+  .slider .row .val { font-family: var(--mono); font-size: 12px; color: var(--accent);
+                      background: var(--panel-2); padding: 1px 6px; border-radius: 4px; }
+  .slider input[type=range] { width: 100%; margin: 3px 0 0; accent-color: var(--accent); }
+  .slider .eyehint { font-size: 10.5px; color: var(--ink-dim); }
+
+  .toggle-line { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .toggle-line button { flex: 1; }
+
+  .out { font-family: var(--mono); font-size: 11.5px; background: var(--panel-2);
+         border: 1px solid var(--line); border-radius: 6px; padding: 10px; white-space: pre;
+         overflow-x: auto; color: var(--ink); }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .hint { font-size: 11.5px; color: var(--ink-dim); margin-top: 6px; }
+  .hint b { color: var(--warn); font-weight: 600; }
+  a { color: var(--accent); }
+  kbd { font-family: var(--mono); font-size: 11px; background: var(--panel-2); border: 1px solid var(--line);
+        border-radius: 3px; padding: 0 4px; }
+</style>
+
+<div class="wrap">
+  <div class="stage">
+    <header>
+      <h1>nuvc stereo calibration bench</h1>
+      <span class="sub">mirrors <span style="font-family:var(--mono)">Hdmr/NuvcStereo</span> — values read straight into the headset sliders</span>
+    </header>
+    <div class="canvas-holder"><canvas id="gl" width="1280" height="720"></canvas></div>
+  </div>
+
+  <div class="rail">
+    <div class="group">
+      <div class="label">Source</div>
+      <div class="srcbtns">
+        <button id="srcPattern">Synthetic SBS</button>
+        <label>Load screenshot<input type="file" id="srcFile" accept="image/*"></label>
+      </div>
+      <div class="hint">Load a screenshot of the Switch in VR/stereo mode (a full side-by-side frame). The synthetic pattern has no baked lens distortion — good for split/convergence, not for k1/k2.</div>
+    </div>
+
+    <div class="group">
+      <div class="label">View</div>
+      <div class="modes" id="modes"></div>
+      <div class="toggle-line">
+        <button id="gridBtn">Guides: off</button>
+        <button id="swapBtn">Swap L/R: off</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="label">Geometry</div>
+      <div id="sliders"></div>
+    </div>
+
+    <div class="group">
+      <div class="label">Values → headset</div>
+      <div class="out" id="out"></div>
+      <div class="actions">
+        <button id="copyBtn">Copy values</button>
+        <button id="resetBtn">Reset geometry</button>
+      </div>
+      <div class="hint">Type these into the app's <b>Stereo ▼</b> panel. They are also the <span style="font-family:var(--mono)">nuvc.st.*</span> PlayerPrefs keys.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const gl = document.getElementById('gl').getContext('webgl', { preserveDrawingBuffer: true });
+const canvas = gl.canvas;
+
+const VS = `attribute vec2 p; varying vec2 v;
+void main(){ v = p*0.5+0.5; gl_Position = vec4(p,0.,1.); }`;
+
+const FS = `precision highp float;
+varying vec2 v;
+uniform sampler2D tex;
+uniform vec2 texSize;
+uniform float mode, splitX, scale, offXL, offYL, offXR, offYR, converge, k1, k2, aspect, grid, swapLR;
+
+vec2 warp(vec2 uv, vec2 c){
+  vec2 d = uv - c; d.x *= aspect;
+  float r2 = dot(d,d);
+  float f = 1.0 + k1*r2 + k2*r2*r2;
+  d *= f; d.x /= aspect;
+  return c + d;
+}
+vec4 sampleEye(vec2 uv, float eye){
+  float offx = eye < 0.0 ? offXL : offXR;
+  float offy = eye < 0.0 ? offYL : offYR;
+  vec2 pp = (uv - 0.5) / max(scale, 0.01) + 0.5;
+  pp += vec2(offx + eye * converge * 0.5, offy);
+  pp = warp(pp, vec2(0.5));
+  float sx = splitX;
+  if (eye < 0.0) pp.x = pp.x * sx;
+  else           pp.x = sx + pp.x * (1.0 - sx);
+  if (pp.x < 0.0 || pp.x > 1.0 || pp.y < 0.0 || pp.y > 1.0) return vec4(0.,0.,0.,1.);
+  return texture2D(tex, vec2(pp.x, 1.0 - pp.y));
+}
+vec4 addGuides(vec4 c, vec2 uv){
+  if (grid < 0.5) return c;
+  float px = 0.0016;
+  if (abs(uv.x-0.5) < px || abs(uv.y-0.5) < px) c.rgb = mix(c.rgb, vec3(0.,1.,0.), 0.7);
+  vec2 g = abs(fract(uv*20.0)-0.5);
+  if (min(g.x,g.y) < 0.015) c.rgb = mix(c.rgb, vec3(0.,0.7,0.), 0.3);
+  return c;
+}
+void main(){
+  vec2 uv = v;
+  float eL = swapLR > 0.5 ? 1.0 : -1.0;
+  float eR = -eL;
+  int m = int(mode + 0.5);
+
+  if (m == 0){
+    vec2 pp = (uv-0.5)/max(scale,0.01) + 0.5 + vec2(offXL, offYL);
+    pp = warp(pp, vec2(0.5));
+    vec4 c = (pp.x<0.0||pp.x>1.0||pp.y<0.0||pp.y>1.0) ? vec4(0.,0.,0.,1.) : texture2D(tex, vec2(pp.x, 1.0-pp.y));
+    if (grid > 0.5){
+      if (abs(uv.x - splitX) < 0.0015) c.rgb = vec3(0.91,0.47,0.79);
+      if (abs(uv.x - splitX*0.5) < 0.0012 || abs(uv.x - (splitX + (1.0-splitX)*0.5)) < 0.0012 || abs(uv.y-0.5) < 0.0012)
+        c.rgb = mix(c.rgb, vec3(0.,1.,0.), 0.7);
+    }
+    gl_FragColor = c; return;
+  }
+  if (m == 1){ gl_FragColor = addGuides(sampleEye(uv, eL), uv); return; }
+  if (m == 2){ gl_FragColor = addGuides(sampleEye(uv, eR), uv); return; }
+  if (m == 3){
+    if (uv.x < 0.5){ vec2 e = vec2(uv.x*2.0, uv.y); vec4 c = sampleEye(e, eL);
+      if (grid>0.5 && abs(uv.x-0.5)<0.001) c.rgb = vec3(1.,1.,0.); gl_FragColor = addGuides(c, e); return; }
+    vec2 e = vec2((uv.x-0.5)*2.0, uv.y); gl_FragColor = addGuides(sampleEye(e, eR), e); return;
+  }
+  if (m == 4){
+    vec4 L = sampleEye(uv, eL), R = sampleEye(uv, eR);
+    float lg = dot(L.rgb, vec3(0.299,0.587,0.114));
+    float rg = dot(R.rgb, vec3(0.299,0.587,0.114));
+    gl_FragColor = vec4(lg, rg, rg, 1.0); return;
+  }
+  vec4 a = sampleEye(uv, eL), b = sampleEye(uv, eR);
+  gl_FragColor = (a + b) * 0.5;
+}`;
+
+function sh(type, src){ const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s; }
+const prog = gl.createProgram();
+gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw gl.getProgramInfoLog(prog);
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, 'p');
+gl.enableVertexAttribArray(loc);
+gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+const U = {};
+['tex','texSize','mode','splitX','scale','offXL','offYL','offXR','offYR','converge','k1','k2','aspect','grid','swapLR']
+  .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+
+// ---- state -----------------------------------------------------------
+const DEF = { splitX:0.5, scale:1, offXL:0, offYL:0, offXR:0, offYR:0, converge:0, k1:0, k2:0 };
+const S = Object.assign({}, DEF);
+let mode = 5, grid = false, swapLR = false, imgW = 1280, imgH = 720;
+
+const MODES = ['Full source','Left eye','Right eye','SBS fit','Anaglyph','Ghost overlay'];
+const SLIDERS = [
+  ['splitX','Source split X','where the L | R halves meet', 0.30, 0.70, 0.001],
+  ['scale','Scale','zoom each eye', 0.40, 2.50, 0.005],
+  ['offXL','Left eye offset X','slide the left half sideways', -0.5, 0.5, 0.002],
+  ['offYL','Left eye offset Y','', -0.5, 0.5, 0.002],
+  ['offXR','Right eye offset X','slide the right half sideways', -0.5, 0.5, 0.002],
+  ['offYR','Right eye offset Y','', -0.5, 0.5, 0.002],
+  ['converge','Convergence','symmetric toe-in (fixes double vision at distance)', -0.30, 0.30, 0.002],
+  ['k1','Distortion k1','− barrel · + pincushion — cancel the source lens warp', -0.60, 0.60, 0.004],
+  ['k2','Distortion k2','second-order distortion', -0.40, 0.40, 0.004],
+];
+
+// ---- UI build ------------------------------------------------------
+const modesEl = document.getElementById('modes');
+MODES.forEach((label, i) => {
+  const b = document.createElement('button');
+  b.textContent = label; b.dataset.i = i;
+  b.onclick = () => { mode = i; syncModes(); render(); };
+  modesEl.appendChild(b);
+});
+function syncModes(){ [...modesEl.children].forEach((b,i) => b.classList.toggle('on', i === mode)); }
+
+const slidersEl = document.getElementById('sliders');
+const sliderInputs = {};
+SLIDERS.forEach(([key, name, hint, lo, hi, step]) => {
+  const wrap = document.createElement('div'); wrap.className = 'slider';
+  wrap.innerHTML = `<div class="row"><span class="name">${name}</span><span class="val" id="v_${key}"></span></div>` +
+    (hint ? `<div class="eyehint">${hint}</div>` : '') +
+    `<input type="range" min="${lo}" max="${hi}" step="${step}" id="s_${key}">`;
+  slidersEl.appendChild(wrap);
+  const inp = wrap.querySelector('input');
+  sliderInputs[key] = inp;
+  inp.oninput = () => { S[key] = parseFloat(inp.value); refreshValues(); render(); };
+});
+
+function refreshValues(){
+  SLIDERS.forEach(([key]) => {
+    sliderInputs[key].value = S[key];
+    document.getElementById('v_' + key).textContent = S[key].toFixed(3);
+  });
+  const keymap = { splitX:'split', scale:'scale', offXL:'oxl', offYL:'oyl', offXR:'oxr', offYR:'oyr', converge:'conv', k1:'k1', k2:'k2' };
+  document.getElementById('out').textContent =
+    SLIDERS.map(([k]) => `${('nuvc.st.'+keymap[k]).padEnd(14)} ${S[k].toFixed(3)}`).join('\n');
+}
+
+document.getElementById('gridBtn').onclick = e => { grid = !grid; e.target.textContent = 'Guides: ' + (grid ? 'on' : 'off'); render(); };
+document.getElementById('swapBtn').onclick = e => { swapLR = !swapLR; e.target.textContent = 'Swap L/R: ' + (swapLR ? 'on' : 'off'); render(); };
+document.getElementById('resetBtn').onclick = () => { Object.assign(S, DEF); refreshValues(); render(); };
+document.getElementById('copyBtn').onclick = e => {
+  navigator.clipboard.writeText(document.getElementById('out').textContent).then(() => {
+    const t = e.target.textContent; e.target.textContent = 'Copied ✓'; setTimeout(() => e.target.textContent = t, 1200);
+  }).catch(() => {});
+};
+document.getElementById('srcPattern').onclick = () => loadPattern();
+document.getElementById('srcFile').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = () => { uploadImage(img, img.naturalWidth, img.naturalHeight); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f);
+};
+
+// ---- source images -----------------------------------------------
+function uploadImage(source, w, h){
+  imgW = w; imgH = h;
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+  resizeCanvas();
+  render();
+}
+
+function loadPattern(){
+  const c = document.createElement('canvas'); c.width = 1280; c.height = 720;
+  const x = c.getContext('2d');
+  for (let half = 0; half < 2; half++){
+    const ox = half * 640;
+    x.fillStyle = half ? '#0f1220' : '#0d1512';
+    x.fillRect(ox, 0, 640, 720);
+    // ruled grid
+    x.strokeStyle = half ? 'rgba(120,170,255,.30)' : 'rgba(90,255,150,.30)';
+    x.lineWidth = 1;
+    for (let i = 0; i <= 10; i++){ x.beginPath(); x.moveTo(ox + i*64, 0); x.lineTo(ox + i*64, 720); x.stroke(); }
+    for (let i = 0; i <= 11; i++){ x.beginPath(); x.moveTo(ox, i*64); x.lineTo(ox + 640, i*64); x.stroke(); }
+    // concentric rings — right half nudged 3% inward (converged target)
+    const cx = ox + (half ? 640 * 0.47 : 320), cy = 360;
+    x.strokeStyle = half ? '#6cc0ff' : '#4dffa0'; x.lineWidth = 3;
+    [86, 172, 258].forEach(r => { x.beginPath(); x.arc(cx, cy, r, 0, 7); x.stroke(); });
+    x.beginPath(); x.moveTo(cx - 300, cy); x.lineTo(cx + 300, cy);
+    x.moveTo(cx, cy - 300); x.lineTo(cx, cy + 300); x.stroke();
+    // corner marker
+    x.fillStyle = half ? '#ff9a26' : '#ffffff';
+    x.fillRect(ox + 12, 12, 56, 56);
+    x.fillStyle = half ? '#04110f' : '#04110f'; x.font = 'bold 34px monospace';
+    x.fillText(half ? 'R' : 'L', ox + 24, 52);
+    // frame
+    x.strokeStyle = half ? '#ffd98c' : '#ffffff'; x.lineWidth = 4;
+    x.strokeRect(ox + 4, 4, 632, 712);
+  }
+  x.strokeStyle = '#e879c9'; x.lineWidth = 2;
+  x.beginPath(); x.moveTo(640, 0); x.lineTo(640, 720); x.stroke();
+  uploadImage(c, 1280, 720);
+}
+
+// ---- render ------------------------------------------------------
+function resizeCanvas(){
+  // per-eye modes show one eye's frame (aspect ~ (w/2)/h); full/anaglyph/ghost keep w/h
+  const targetAR = (mode === 1 || mode === 2) ? (imgW * 0.5) / imgH : imgW / imgH;
+  let w = 1280, h = Math.round(w / targetAR);
+  canvas.width = w; canvas.height = h;
+  gl.viewport(0, 0, w, h);
+}
+
+function render(){
+  resizeCanvas();
+  const perEye = mode >= 1 && mode <= 5;
+  const aspect = (imgW * (perEye ? 0.5 : 1)) / imgH;
+  gl.uniform1i(U.tex, 0);
+  gl.uniform2f(U.texSize, imgW, imgH);
+  gl.uniform1f(U.mode, mode);
+  gl.uniform1f(U.splitX, S.splitX);
+  gl.uniform1f(U.scale, S.scale);
+  gl.uniform1f(U.offXL, S.offXL);
+  gl.uniform1f(U.offYL, S.offYL);
+  gl.uniform1f(U.offXR, S.offXR);
+  gl.uniform1f(U.offYR, S.offYR);
+  gl.uniform1f(U.converge, S.converge);
+  gl.uniform1f(U.k1, S.k1);
+  gl.uniform1f(U.k2, S.k2);
+  gl.uniform1f(U.aspect, aspect);
+  gl.uniform1f(U.grid, grid ? 1 : 0);
+  gl.uniform1f(U.swapLR, swapLR ? 1 : 0);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+syncModes();
+refreshValues();
+loadPattern();
+</script>

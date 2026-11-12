@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -32,6 +34,7 @@ public static class HDMRBuildNuvc
         try
         {
             ConfigurePlayerSettings();
+            DisableXR();          // this is the FLAT 2D panel build — never boot into VR
             EnsureScene();
 
             string outDir = Path.Combine(Directory.GetCurrentDirectory(), "Build");
@@ -86,7 +89,7 @@ public static class HDMRBuildNuvc
 
         try
         {
-            PlayerSettings.Android.resizableWindow = true;
+            PlayerSettings.Android.resizeableActivity = true;
             PlayerSettings.Android.defaultWindowWidth = 1600;
             PlayerSettings.Android.defaultWindowHeight = 900;
             PlayerSettings.Android.minimumWindowWidth = 480;
@@ -94,30 +97,76 @@ public static class HDMRBuildNuvc
         }
         catch (Exception e) { Debug.LogWarning("[HDMRBuildNuvc] window size: " + e.Message); }
 
-        // keep the YUV shader — nothing in a scene references it by asset
+        // keep our blit shaders — nothing in a scene references them by asset
         var g = GraphicsSettings.GetGraphicsSettings();
         var so = new SerializedObject(g);
         var arr = so.FindProperty("m_AlwaysIncludedShaders");
-        bool has = false;
-        for (int i = 0; i < arr.arraySize; i++)
+        bool anyAdded = false;
+        foreach (var name in new[] { "Hdmr/NV12", "Hdmr/NuvcStereo", "Hdmr/NuvcTestSBS" })
         {
-            var sh = arr.GetArrayElementAtIndex(i).objectReferenceValue as Shader;
-            if (sh != null && sh.name == "Hdmr/NV12") { has = true; break; }
-        }
-        if (!has)
-        {
-            var shader = Shader.Find("Hdmr/NV12");
+            bool has = false;
+            for (int i = 0; i < arr.arraySize; i++)
+            {
+                var sh = arr.GetArrayElementAtIndex(i).objectReferenceValue as Shader;
+                if (sh != null && sh.name == name) { has = true; break; }
+            }
+            if (has) continue;
+            var shader = Shader.Find(name);
             if (shader != null)
             {
                 arr.InsertArrayElementAtIndex(arr.arraySize);
                 arr.GetArrayElementAtIndex(arr.arraySize - 1).objectReferenceValue = shader;
-                so.ApplyModifiedProperties();
-                Debug.Log("[HDMRBuildNuvc] added Hdmr/NV12 to always-included shaders");
+                anyAdded = true;
+                Debug.Log("[HDMRBuildNuvc] added " + name + " to always-included shaders");
             }
-            else Debug.LogWarning("[HDMRBuildNuvc] Shader.Find(Hdmr/NV12) == null");
+            else Debug.LogWarning("[HDMRBuildNuvc] Shader.Find(" + name + ") == null");
         }
+        if (anyAdded) so.ApplyModifiedProperties();
 
         Debug.Log("[HDMRBuildNuvc] player settings configured");
+    }
+
+    // The XR nuvc build adds OpenXR project-wide (loader + init-on-start). Undo
+    // it for THIS build so the flat 2D APK never initialises XR / goes immersive.
+    static void DisableXR()
+    {
+        try
+        {
+            var perBTType = FindType("UnityEditor.XR.Management.XRGeneralSettingsPerBuildTarget");
+            var genType   = FindType("UnityEngine.XR.Management.XRGeneralSettings");
+            var mdStore   = FindType("UnityEditor.XR.Management.Metadata.XRPackageMetadataStore");
+            if (perBTType == null || genType == null || mdStore == null) { Debug.Log("[HDMRBuildNuvc] XR mgmt not present — nothing to disable"); return; }
+
+            string key = (string)genType.GetField("k_SettingsKey", BindingFlags.Public | BindingFlags.Static).GetValue(null);
+            var tryGet = typeof(EditorBuildSettings).GetMethods()
+                .First(m => m.Name == "TryGetConfigObject" && m.IsGenericMethod).MakeGenericMethod(perBTType);
+            var args = new object[] { key, null };
+            if (!(bool)tryGet.Invoke(null, args) || args[1] == null) { Debug.Log("[HDMRBuildNuvc] no XRGeneralSettings — ok"); return; }
+            var perBT = args[1];
+
+            var getMgr = perBTType.GetMethod("ManagerSettingsForBuildTarget");
+            var mgr = perBTType.GetMethod("HasManagerSettingsForBuildTarget")?.Invoke(perBT, new object[] { BuildTargetGroup.Android }) is bool has && has
+                ? getMgr.Invoke(perBT, new object[] { BuildTargetGroup.Android }) : null;
+            if (mgr != null)
+            {
+                var rm = mdStore.GetMethod("RemoveLoader", BindingFlags.Public | BindingFlags.Static);
+                bool ok = (bool)rm.Invoke(null, new object[] { mgr, "UnityEngine.XR.OpenXR.OpenXRLoader", BuildTargetGroup.Android });
+                Debug.Log("[HDMRBuildNuvc] RemoveLoader(OpenXR, Android) -> " + ok);
+            }
+            var genForBT = perBTType.GetMethod("SettingsForBuildTarget").Invoke(perBT, new object[] { BuildTargetGroup.Android });
+            var initProp = genType.GetProperty("InitManagerOnStart");
+            if (genForBT != null && initProp != null && initProp.CanWrite) initProp.SetValue(genForBT, false);
+            EditorUtility.SetDirty((UnityEngine.Object)perBT);
+            AssetDatabase.SaveAssets();
+        }
+        catch (Exception e) { Debug.LogWarning("[HDMRBuildNuvc] DisableXR: " + e.Message); }
+    }
+
+    static Type FindType(string full)
+    {
+        foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+        { var t = a.GetType(full); if (t != null) return t; }
+        return null;
     }
 
     static void EnsureScene()

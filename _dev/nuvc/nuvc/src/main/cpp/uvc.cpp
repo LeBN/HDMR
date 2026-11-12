@@ -77,7 +77,30 @@ void Uvc::close() {
     if (ctx_) { libusb_exit(ctx_); ctx_ = nullptr; }
 }
 
-// ---- descriptor scan -> pick a 720p mode ---------------------------------
+// max sustained bulk bandwidth we'll ask of USB-3 (bytes/s). 4K raw @60 is
+// ~750 MB/s and won't fit; 1440p raw @60 ~330 MB/s is fine.
+static const double BW_BUDGET = 380e6;
+
+// don't auto-select a mode slower than this (fps). Keeps us off the card's
+// 4K@30 / 1440p@30 entries, which are unusable for live VR.
+static const double MIN_FPS = 50.0;
+
+// cap on the raw width we auto-select (override with -DNUVC_MAXW=3840 etc).
+// 2560 -> up to 1440p NV12 @60; the Switch's actual HDMI output is the real
+// limit (it upscales to whatever mode we negotiate, so past its native res
+// there's no more detail — compare in-headset).
+#ifndef NUVC_MAXW
+#define NUVC_MAXW 2560
+#endif
+
+static double mode_bw(const Mode& m) {
+    double fs = m.max_frame_size ? m.max_frame_size
+                                 : (double)m.w * m.h * (m.mjpeg ? 0.3 : 1.5);
+    double fps = m.interval ? 1.0e7 / (double)m.interval : 30.0;
+    return fs * fps;
+}
+
+// ---- descriptor scan -> pick the biggest raw mode that fits -------------
 static bool scan_720p(libusb_device_handle* h, int& vs_ifnum, uint8_t& ep_in, Mode& out) {
     libusb_device* dev = libusb_get_device(h);
     libusb_config_descriptor* cfg = nullptr;
@@ -123,10 +146,25 @@ static bool scan_720p(libusb_device_handle* h, int& vs_ifnum, uint8_t& ep_in, Mo
                         uint32_t maxfs = p[17] | (p[18]<<8) | (p[19]<<16) | (uint32_t)(p[20]<<24);
                         uint32_t def_iv = p[21] | (p[22]<<8) | (p[23]<<16) | (uint32_t)(p[24]<<24);
                         Mode m{ cur_fmt_idx, fr_idx, w, hgt, def_iv, cur_mjpeg, maxfs };
-                        LI("  mode fmt%u fr%u  %ux%u  %s  iv=%u maxfs=%u",
-                           cur_fmt_idx, fr_idx, w, hgt, cur_mjpeg ? "MJPEG" : "raw", def_iv, maxfs);
+                        double bw = mode_bw(m);
+                        // NV12 vs YUY2 guess: maxfs ~ w*h*1.5 (NV12) or *2 (YUY2)
+                        const char* raw_kind = cur_mjpeg ? "MJPEG"
+                            : (maxfs >= (uint32_t)w * hgt * 2u ? "YUY2" : "NV12");
+                        LI("  mode fmt%u fr%u  %ux%u  %s  iv=%u maxfs=%u  ~%.0f MB/s",
+                           cur_fmt_idx, fr_idx, w, hgt, raw_kind, def_iv, maxfs, bw / 1e6);
+
                         if (best.w == 0 || (uint32_t)w * hgt < (uint32_t)best.w * best.h) best = m;
-                        if (w == 1280 && hgt == 720 && !cur_mjpeg) { out = m; vs_ifnum = id.bInterfaceNumber; ep_in = ep; found = true; }
+
+                        // pick: the largest NV12 raw mode within NUVC_MAXW and the
+                        // bulk budget. Never MJPEG (no decoder) and never YUY2
+                        // (no shader). Falls back to smallest raw, then 720p.
+                        bool is_nv12 = !cur_mjpeg && maxfs < (uint32_t)w * hgt * 2u;
+                        double m_fps = def_iv ? 1.0e7 / (double)def_iv : 30.0;
+                        bool within = w <= (uint32_t)NUVC_MAXW && bw <= BW_BUDGET && m_fps >= MIN_FPS;
+                        bool bigger = (uint32_t)w * hgt > (uint32_t)out.w * out.h;
+                        if (is_nv12 && ep && within && (!found || bigger)) {
+                            out = m; vs_ifnum = id.bInterfaceNumber; ep_in = ep; found = true;
+                        }
                     }
                 }
                 p += len; left -= len;
@@ -139,7 +177,9 @@ static bool scan_720p(libusb_device_handle* h, int& vs_ifnum, uint8_t& ep_in, Mo
     }
     libusb_free_config_descriptor(cfg);
     if (out.w == 0 || vs_ifnum < 0 || ep_in == 0) { LE("no usable VS mode/endpoint"); return false; }
-    if (!found) LW("no 1280x720 raw — falling back to %ux%u %s", out.w, out.h, out.mjpeg ? "MJPEG" : "raw");
+    if (!found) LW("no raw mode within budget — falling back to smallest %ux%u %s", out.w, out.h, out.mjpeg ? "MJPEG" : "raw");
+    LI("selected mode fmt%u fr%u  %ux%u %s  ~%.0f MB/s", out.fmt_index, out.frame_index,
+       out.w, out.h, out.mjpeg ? "MJPEG" : "raw", mode_bw(out) / 1e6);
     return true;
 }
 
