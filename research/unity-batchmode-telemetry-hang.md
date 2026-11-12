@@ -208,3 +208,112 @@ believed correct but **not yet build-verified end to end** because of this —
 the last real signal before the hang started was a legitimate, understood,
 and fixed Gradle failure (`:launcher:mergeReleaseNativeLibs` — two AARs
 shipping the same `libopenxr_loader.so`), not a problem with either file.
+
+## Update 2026-09-15 ~23:20 — a SECOND blocking dialog found: "Unsupported Input Handling"
+
+Same family of bug as the original RESOLVED issue above (a modal dialog
+that only an interactive, non-batch Editor session can show — and which
+silently blocks the main thread until a human dismisses it), but a
+**different** dialog this time: **"Unsupported Input Handling"** — surfaced
+mid-`BuildPipeline.BuildPlayer()`, specifically after Gradle/native build
+steps kick off, evidently a warning about the project's Active Input
+Handling setting.
+
+### How this was found — the detection heuristic that worked
+
+No GUI automation tool exists in this session for native Windows dialogs
+(confirmed earlier this session too), so it can't be detected by directly
+inspecting the popup. It WAS reliably diagnosed from the *pattern* of
+symptoms, all via Unity MCP + shell, with no false positives once cross-
+checked:
+
+1. **`mcpforunity://editor/state` returns `"ping not answered"` repeatedly**
+   — Unity's main thread isn't processing MCP messages.
+2. **`Unity.exe` is still alive and using substantial memory** (checked via
+   `tasklist //FI "IMAGENAME eq Unity.exe"`) — not crashed, not exited.
+3. **No build-tool subprocess is running** — checked
+   `tasklist //FI "IMAGENAME eq java.exe"` (Gradle/JVM) — genuinely absent,
+   not a snapshot-timing fluke (checked twice, ~a minute apart).
+4. **`Logs/Editor.log` stops advancing** at a specific, known checkpoint —
+   in this case right after the `Gradle: '...gradle' (Gradle Version:
+   ...)` invocation line, with nothing after it but repeating unrelated
+   noise (this session it was `MCP-FOR-UNITY: [WebSocket] Receive loop
+   error` spam from an unrelated dropped connection — don't mistake
+   continued log GROWTH for build progress; check what's actually being
+   logged, not just whether new lines appear).
+
+**All four together = very likely a blocking native dialog, not real
+work.** Any one alone isn't conclusive (Unity can legitimately sit idle
+between subprocess calls for a few seconds), but the combination held for
+several minutes straight here.
+
+### How this was actually resolved
+
+Could NOT be dismissed by Claude (no native-dialog GUI automation tool in
+this environment) — the user was physically at the machine, saw the
+popup, dismissed it manually, then told Claude what it was. Right after
+that: `Editor.log` immediately started showing real Bee/IL2CPP progress
+(`[485/1576] CopyFiles ...`), confirming the dialog really was the sole
+blocker — nothing else needed to change.
+
+### Practical takeaway for next time
+
+If a build (or any interactive, non-batch `-executeMethod` run) appears
+stalled by the 4-point pattern above: **don't keep guessing at the C#
+side or re-invoking the build** — say so plainly and ask the user to
+check their screen for a Unity dialog and click through it. This is now
+the SECOND distinct dialog found this way (first: "Script Updating
+Consent", see the RESOLVED section above; second: "Unsupported Input
+Handling"). There may be others. A real fix — proactively setting
+whatever Player Setting this dialog is warning about before it can ever
+trigger — hasn't been identified yet; that's the next thing worth trying
+if this recurs (likely `PlayerSettings` active input handling mode, not
+yet confirmed which field/value).
+
+## Update 2026-09-16 ~01:37 — a THIRD blocking dialog, this one identified by name via Win32 window enumeration
+
+After the Editor force-quit (see hdmr-project.md memory, "Unity a quitté"
+section) and a relaunch (by an autonomous workflow agent), the same
+4-point stall pattern reappeared: `mcpforunity://instances` stuck at
+`instance_count: 0`, `Editor.log` AND both `AssetImportWorkerHW0/1.log`
+completely static for 15+ minutes, yet `Unity.exe`'s own CPU time kept
+climbing (168s → 221s → 235s over ~5 min) — ruling out a plain idle
+freeze, consistent with an active dialog repaint loop.
+
+**New technique that pinned it down exactly, without any GUI automation
+tool**: enumerated every top-level window belonging to the Unity PID via
+raw Win32 (`user32.dll` `EnumWindows` + `GetWindowThreadProcessId` +
+`GetWindowText`, called from PowerShell via `Add-Type`) instead of relying
+on `Get-Process`'s `MainWindowTitle` (which only ever reports ONE window —
+the main Editor frame, "HDMR - HDMRHome - Android..." here — and silently
+hides any other top-level window the same process owns). That surfaced:
+
+```
+hwnd=11142662 visible=True class='UnityContainerWndClass' title='Welcome to Meta XR SDK'
+hwnd=723354   visible=True class='UnityContainerWndClass' title='MCP for Unity'
+hwnd=2752626  visible=True class='UnityContainerWndClass' title='Background Tasks'
+hwnd=7800144  visible=True class='UnityContainerWndClass' title='HDMR - HDMRHome - Android - Unity 6.5 (6000.5.10f1) <DX11>'
+```
+
+**"Welcome to Meta XR SDK"** — a first-run splash/setup window the Meta XR
+Core SDK shows once per... something (fresh install? fresh Library after
+the crash forced a reimport? not yet confirmed which trigger). This is the
+new prime suspect for this specific stall — not yet 100% confirmed as the
+actual blocker (never got to test "does closing it unblock everything")
+because dismissing it programmatically (`PostMessage(WM_CLOSE)` to that
+hwnd) was correctly refused by Claude Code's own auto-mode safety
+classifier ("Interfere With Workloads") — sending window messages to
+another process's window is exactly the kind of cross-process interference
+that guard exists to catch, and no attempt was made to route around it
+(no SendKeys, no simulated click, no alternate tool).
+
+**Practical takeaway, updated**: the Win32-EnumWindows technique above is
+now the go-to first step for diagnosing this whole dialog family — it
+gives an exact window title instead of a guess, in one PowerShell call,
+still with zero risk (pure read). Actually dismissing the window still
+needs a human at the keyboard (or an explicit, user-approved exception to
+the interference guard) — that part hasn't changed. Third distinct dialog
+found this way in one project, in one day: "Script Updating Consent",
+"Unsupported Input Handling", now "Welcome to Meta XR SDK". Worth checking
+early each time Unity looks stuck, rather than assuming it's always the
+same one or two already-known dialogs.

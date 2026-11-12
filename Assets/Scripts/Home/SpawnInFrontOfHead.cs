@@ -25,10 +25,22 @@ namespace Hdmr.Home
     /// </summary>
     public class SpawnInFrontOfHead : MonoBehaviour
     {
+        [Tooltip("Meters in front of the head (flattened forward direction) to spawn at.")]
         [SerializeField] float _distance = 1.2f;
+        [Tooltip("Meters added/subtracted from the camera's own height.")]
         [SerializeField] float _heightOffset = 0f;
+        [Tooltip("Seconds to wait before reading the camera pose — avoids the near-vertical default pose before OVRManager delivers a real tracked pose.")]
         [SerializeField] float _initialDelaySeconds = 0.5f;
 
+        // 2026-09-16: this component now sits on a neutral "HomeAnchor"
+        // parent (see HDMRBuildHome.SetupPassthroughAndAura's sibling,
+        // the anchor built in AddInteractionAndUI) — the tile panel's
+        // podium tilt and the stream-preview panel's upright angle are
+        // both fixed LOCAL rotations on the anchor's two children, set
+        // once at build time, not runtime state here. Keeping this
+        // component itself tilt-free means it stays reusable for any
+        // future head-locked panel that just needs "in front, facing me",
+        // without every user of it inheriting a lectern-specific angle.
         IEnumerator Start()
         {
             yield return new WaitForSeconds(_initialDelaySeconds);
